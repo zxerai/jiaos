@@ -19,8 +19,8 @@ export interface ChatPageSessionSummary {
   readonly messageCount: number;
 }
 
-const BOOK_CREATE_SESSION_KEY = "jiaos.book-create.session-id";
-const PROJECT_CHAT_SESSION_KEY = "jiaos.project-chat.session-id";
+const BOOK_CREATE_SESSION_KEY = "novelix.book-create.session-id";
+const PROJECT_CHAT_SESSION_KEY = "novelix.project-chat.session-id";
 
 export function getBookCreateSessionId(): string | null {
   return globalThis.localStorage?.getItem(BOOK_CREATE_SESSION_KEY) ?? null;

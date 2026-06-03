@@ -1,0 +1,91 @@
+{
+  "sessionId": "1780377813471",
+  "projectRoot": "/Users/jiaiiac/Desktop/cc/agent/jiaos",
+  "activeBookId": "赘婿仙帝",
+  "draftRounds": [],
+  "automationMode": "semi",
+  "messages": [],
+  "events": [
+    {
+      "kind": "task.failed",
+      "timestamp": 1780378030702,
+      "status": "failed",
+      "detail": "Architect output missing required sections: story_frame, volume_map, roles, book_rules, pending_hooks"
+    },
+    {
+      "kind": "task.started",
+      "timestamp": 1780400211517,
+      "status": "persisting",
+      "bookId": "赘婿仙帝",
+      "detail": "开始执行 export_book。"
+    },
+    {
+      "kind": "task.completed",
+      "timestamp": 1780400211520,
+      "status": "completed",
+      "bookId": "赘婿仙帝",
+      "detail": "已导出 赘婿仙帝。"
+    },
+    {
+      "kind": "task.started",
+      "timestamp": 1780400234957,
+      "status": "persisting",
+      "bookId": "赘婿仙帝",
+      "detail": "开始执行 export_book。"
+    },
+    {
+      "kind": "task.completed",
+      "timestamp": 1780400234959,
+      "status": "completed",
+      "bookId": "赘婿仙帝",
+      "detail": "已导出 赘婿仙帝。"
+    },
+    {
+      "kind": "task.started",
+      "timestamp": 1780403028486,
+      "status": "persisting",
+      "bookId": "赘婿仙帝",
+      "detail": "开始执行 export_book。"
+    },
+    {
+      "kind": "task.completed",
+      "timestamp": 1780403028491,
+      "status": "completed",
+      "bookId": "赘婿仙帝",
+      "detail": "已导出 赘婿仙帝。"
+    },
+    {
+      "kind": "task.started",
+      "timestamp": 1780403066200,
+      "status": "persisting",
+      "bookId": "赘婿仙帝",
+      "detail": "开始执行 export_book。"
+    },
+    {
+      "kind": "task.completed",
+      "timestamp": 1780403066204,
+      "status": "completed",
+      "bookId": "赘婿仙帝",
+      "detail": "已导出 赘婿仙帝。"
+    },
+    {
+      "kind": "task.started",
+      "timestamp": 1780415944902,
+      "status": "persisting",
+      "bookId": "赘婿仙帝",
+      "detail": "开始执行 export_book。"
+    },
+    {
+      "kind": "task.completed",
+      "timestamp": 1780415944906,
+      "status": "completed",
+      "bookId": "赘婿仙帝",
+      "detail": "已导出 赘婿仙帝。"
+    }
+  ],
+  "currentExecution": {
+    "status": "completed",
+    "bookId": "赘婿仙帝",
+    "stageLabel": "已完成"
+  }
+}

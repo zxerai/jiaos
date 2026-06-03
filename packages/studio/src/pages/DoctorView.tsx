@@ -5,7 +5,7 @@ import { useColors } from "../hooks/use-colors";
 import { Stethoscope, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 
 interface DoctorChecks {
-  readonly jiaosJson: boolean;
+  readonly novelixJson: boolean;
   readonly projectEnv: boolean;
   readonly globalEnv: boolean;
   readonly booksDir: boolean;
@@ -57,7 +57,7 @@ export function DoctorView({ nav, theme, t }: { nav: Nav; theme: Theme; t: TFunc
         </div>
       ) : (
         <div className={`border ${c.cardStatic} rounded-lg p-5`}>
-          <CheckRow label={t("doctor.jiaosJson")} ok={data.jiaosJson} />
+          <CheckRow label={t("doctor.novelixJson")} ok={data.novelixJson} />
           <CheckRow label={t("doctor.projectEnv")} ok={data.projectEnv} />
           <CheckRow label={t("doctor.globalEnv")} ok={data.globalEnv} />
           <CheckRow label={t("doctor.booksDir")} ok={data.booksDir} detail={`${data.bookCount} book(s)`} />
@@ -67,11 +67,11 @@ export function DoctorView({ nav, theme, t }: { nav: Nav; theme: Theme; t: TFunc
 
       {data && (
         <div className={`px-4 py-3 rounded-lg text-sm font-medium ${
-          data.jiaosJson && (data.projectEnv || data.globalEnv) && data.llmConnected
+          data.novelixJson && (data.projectEnv || data.globalEnv) && data.llmConnected
             ? "bg-emerald-500/10 text-emerald-600"
             : "bg-amber-500/10 text-amber-600"
         }`}>
-          {data.jiaosJson && (data.projectEnv || data.globalEnv) && data.llmConnected
+          {data.novelixJson && (data.projectEnv || data.globalEnv) && data.llmConnected
             ? t("doctor.allPassed")
             : t("doctor.someFailed")
           }

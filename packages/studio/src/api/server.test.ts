@@ -284,7 +284,7 @@ describe("createStudioServer daemon lifecycle", () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-studio-server-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-studio-server-"));
     await writeFile(join(root, "novelix.json"), JSON.stringify(projectConfig, null, 2), "utf-8");
     schedulerStartMock.mockReset();
     initBookMock.mockReset();

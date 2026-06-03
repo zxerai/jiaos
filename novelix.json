@@ -1,0 +1,33 @@
+{
+  "name": "jiaos",
+  "version": "0.1.0",
+  "language": "zh",
+  "llm": {
+    "provider": "openai",
+    "service": "deepseek",
+    "configSource": "studio",
+    "baseUrl": "https://api.deepseek.com",
+    "model": "deepseek-v4-flash",
+    "apiFormat": "chat",
+    "stream": true,
+    "services": [
+      {
+        "service": "deepseek",
+        "temperature": 0.7,
+        "apiFormat": "chat",
+        "stream": true
+      }
+    ],
+    "defaultModel": "deepseek-v4-flash",
+    "temperature": 0.7
+  },
+  "notify": [],
+  "inputGovernanceMode": "v2",
+  "daemon": {
+    "schedule": {
+      "radarCron": "0 */6 * * *",
+      "writeCron": "*/15 * * * *"
+    },
+    "maxConcurrentBooks": 3
+  }
+}

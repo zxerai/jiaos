@@ -163,7 +163,7 @@ const strings = {
   // Doctor
   "doctor.title": { zh: "环境诊断", en: "Environment Check" },
   "doctor.recheck": { zh: "重新检查", en: "Re-check" },
-  "doctor.jiaosJson": { zh: "novelix.json 配置", en: "novelix.json configuration" },
+  "doctor.novelixJson": { zh: "novelix.json 配置", en: "novelix.json configuration" },
   "doctor.projectEnv": { zh: "项目 .env 文件", en: "Project .env file" },
   "doctor.globalEnv": { zh: "全局 ~/.novelix/.env", en: "Global ~/.novelix/.env" },
   "doctor.booksDir": { zh: "书籍目录", en: "Books directory" },

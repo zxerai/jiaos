@@ -23,8 +23,8 @@ const KNOWN_RUNTIME_REPLACEMENTS: ReadonlyArray<{
     replacement: "Studio 模型 API Key 未设置。请打开“模型配置”，为当前服务保存 API Key。",
   },
   {
-    pattern: /NOVELIX_LLM_API_KEY not set\. Run 'jiaos config set-global' or add it to project \.env file\./g,
-    replacement: "NOVELIX_LLM_API_KEY 未设置。请运行 `jiaos config set-global`，或在项目 .env 文件中添加它。",
+    pattern: /NOVELIX_LLM_API_KEY not set\. Run 'novelix config set-global' or add it to project \.env file\./g,
+    replacement: "NOVELIX_LLM_API_KEY 未设置。请运行 `novelix config set-global`，或在项目 .env 文件中添加它。",
   },
 ];
 
