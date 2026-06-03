@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { StateManager, formatLengthCount, readGenreProfile, resolveLengthCountingMode } from "@actalk/jiaos-core";
+import { StateManager, formatLengthCount, readGenreProfile, resolveLengthCountingMode } from "@actalk/novelix-core";
 import { findProjectRoot, resolveBookId, log, logError } from "../utils.js";
 
 export const reviewCommand = new Command("review")

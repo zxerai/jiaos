@@ -347,7 +347,7 @@ const CREATE_BOOK_TOOL: ToolDefinition = {
 };
 
 const BOOK_DRAFT_SYSTEM_PROMPT = [
-  "你是 JiaOS 的建书助手。用户会描述想写的书，你需要调用 create_book 工具来生成建书参数。",
+  "你是 Novelix 的建书助手。用户会描述想写的书，你需要调用 create_book 工具来生成建书参数。",
   "",
   "规则：",
   "1. 从用户描述中推断所有字段，大胆预填合理默认值。",
@@ -594,7 +594,7 @@ export function createInteractionToolsFromDeps(
               {
                 role: "system",
                 content: [
-                  "You are JiaOS inside the terminal workbench.",
+                  "You are Novelix inside the terminal workbench.",
                   "Respond conversationally and briefly.",
                   "If there is no active book, help the user decide what to write next.",
                   "If there is an active book, keep the answer grounded in that book context.",

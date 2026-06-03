@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { findProjectRoot, log, logError, GLOBAL_ENV_PATH } from "../utils.js";
-import { fetchWithProxy } from "@actalk/jiaos-core";
+import { fetchWithProxy } from "@actalk/novelix-core";
 import {
   ensureNodeRuntimePinFiles,
   evaluateSqliteMemorySupport,
@@ -126,12 +126,12 @@ export const doctorCommand = new Command("doctor")
       ...await inspectNodeRuntimePinFiles(root),
     });
 
-    // 2. Check jiaos.json exists
+    // 2. Check novelix.json exists
     try {
-      await readFile(join(root, "jiaos.json"), "utf-8");
-      checks.push({ name: "jiaos.json", ok: true, detail: "Found" });
+      await readFile(join(root, "novelix.json"), "utf-8");
+      checks.push({ name: "novelix.json", ok: true, detail: "Found" });
     } catch {
-      checks.push({ name: "jiaos.json", ok: false, detail: "Not found. Run 'jiaos init'" });
+      checks.push({ name: "novelix.json", ok: false, detail: "Not found. Run 'jiaos init'" });
     }
 
     // 3. Check .env exists
@@ -147,7 +147,7 @@ export const doctorCommand = new Command("doctor")
       let hasGlobal = false;
       try {
         const globalContent = await readFile(GLOBAL_ENV_PATH, "utf-8");
-        hasGlobal = globalContent.includes("JIAOS_LLM_API_KEY=") && !globalContent.includes("your-api-key-here");
+        hasGlobal = globalContent.includes("NOVELIX_LLM_API_KEY=") && !globalContent.includes("your-api-key-here");
       } catch { /* no global config */ }
       checks.push({
         name: "Global Config",
@@ -159,7 +159,7 @@ export const doctorCommand = new Command("doctor")
     // 5. Check effective LLM config (Studio project base + env/CLI overlay, or legacy env)
     {
       const { loadConfigWithDiagnostics } = await import("../utils.js");
-      const { isApiKeyOptionalForEndpoint } = await import("@actalk/jiaos-core");
+      const { isApiKeyOptionalForEndpoint } = await import("@actalk/novelix-core");
       let configResult: Awaited<ReturnType<typeof loadConfigWithDiagnostics>> | undefined;
       try {
         configResult = await loadConfigWithDiagnostics({ requireApiKey: false });
@@ -192,7 +192,7 @@ export const doctorCommand = new Command("doctor")
 
     // 5. Check books directory
     try {
-      const { StateManager } = await import("@actalk/jiaos-core");
+      const { StateManager } = await import("@actalk/novelix-core");
       const state = new StateManager(root);
       const books = await state.listBooks();
       checks.push({
@@ -209,7 +209,7 @@ export const doctorCommand = new Command("doctor")
       const { existsSync } = await import("node:fs");
       const hasStructuredState = existsSync(join(root, "books"));
       if (hasStructuredState) {
-        const { StateManager } = await import("@actalk/jiaos-core");
+        const { StateManager } = await import("@actalk/novelix-core");
         const sm = new StateManager(root);
         const bookIds = await sm.listBooks();
         let legacyCount = 0;
@@ -236,7 +236,7 @@ export const doctorCommand = new Command("doctor")
 
     // 6. API connectivity test
     try {
-      const { createLLMClient, chatCompletion, LLMConfigSchema, isApiKeyOptionalForEndpoint, resolveServiceModelsBaseUrl } = await import("@actalk/jiaos-core");
+      const { createLLMClient, chatCompletion, LLMConfigSchema, isApiKeyOptionalForEndpoint, resolveServiceModelsBaseUrl } = await import("@actalk/novelix-core");
       const { loadConfig } = await import("../utils.js");
 
       let llmConfig;
@@ -249,15 +249,15 @@ export const doctorCommand = new Command("doctor")
         loadDotenv({ path: GLOBAL_ENV_PATH });
         const env = process.env;
         const apiKeyOptional = isApiKeyOptionalForEndpoint({
-          provider: env.JIAOS_LLM_PROVIDER,
-          baseUrl: env.JIAOS_LLM_BASE_URL,
+          provider: env.NOVELIX_LLM_PROVIDER,
+          baseUrl: env.NOVELIX_LLM_BASE_URL,
         });
-        if ((env.JIAOS_LLM_API_KEY || apiKeyOptional) && env.JIAOS_LLM_BASE_URL && env.JIAOS_LLM_MODEL) {
+        if ((env.NOVELIX_LLM_API_KEY || apiKeyOptional) && env.NOVELIX_LLM_BASE_URL && env.NOVELIX_LLM_MODEL) {
           llmConfig = LLMConfigSchema.parse({
-            provider: env.JIAOS_LLM_PROVIDER ?? "custom",
-            baseUrl: env.JIAOS_LLM_BASE_URL,
-            apiKey: env.JIAOS_LLM_API_KEY ?? "",
-            model: env.JIAOS_LLM_MODEL,
+            provider: env.NOVELIX_LLM_PROVIDER ?? "custom",
+            baseUrl: env.NOVELIX_LLM_BASE_URL,
+            apiKey: env.NOVELIX_LLM_API_KEY ?? "",
+            model: env.NOVELIX_LLM_MODEL,
           });
         }
       }
@@ -352,14 +352,14 @@ export const doctorCommand = new Command("doctor")
       const hints: string[] = [];
 
       if (errMsg.includes("Connection error") || errMsg.includes("ECONNREFUSED") || errMsg.includes("fetch failed")) {
-        hints.push("baseUrl 可能不正确，检查 JIAOS_LLM_BASE_URL 是否包含完整路径（如 /v1）");
+        hints.push("baseUrl 可能不正确，检查 NOVELIX_LLM_BASE_URL 是否包含完整路径（如 /v1）");
       }
       if (errMsg.includes("400")) {
         hints.push("检查提供方文档，确认该接口要求 stream=true、stream=false，还是根本不支持 stream");
-        hints.push("检查模型名称是否正确（JIAOS_LLM_MODEL）");
+        hints.push("检查模型名称是否正确（NOVELIX_LLM_MODEL）");
       }
       if (errMsg.includes("401")) {
-        hints.push("API Key 无效，检查 JIAOS_LLM_API_KEY");
+        hints.push("API Key 无效，检查 NOVELIX_LLM_API_KEY");
       }
 
       checks.push({
@@ -376,7 +376,7 @@ export const doctorCommand = new Command("doctor")
     }
 
     // Output
-    log("\nJiaOS Doctor\n");
+    log("\nNovelix Doctor\n");
     for (const check of checks) {
       const icon = check.ok ? "[OK]" : "[!!]";
       log(`  ${icon} ${check.name}: ${check.detail}`);

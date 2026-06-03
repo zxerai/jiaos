@@ -1,4 +1,4 @@
-import { normalizePlatformOrOther, type Platform } from "@actalk/jiaos-core";
+import { normalizePlatformOrOther, type Platform } from "@actalk/novelix-core";
 
 export interface StudioCreateBookBody {
   readonly title: string;

@@ -54,7 +54,7 @@ describe("context-filter", () => {
     expect(capped.length).toBeLessThanOrEqual(1200);
     expect(capped).toContain("BEGIN-ANCHOR");
     expect(capped).toContain("LATEST-TAIL");
-    expect(capped).toContain("JiaOS context budget");
+    expect(capped).toContain("Novelix context budget");
     expect(capped).toContain("story_bible");
   });
 });

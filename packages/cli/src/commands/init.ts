@@ -5,7 +5,7 @@ import { log, logError } from "../utils.js";
 import { initializeProjectDirectory } from "../project-bootstrap.js";
 
 export const initCommand = new Command("init")
-  .description("Initialize an JiaOS project (current directory by default)")
+  .description("Initialize an Novelix project (current directory by default)")
   .argument("[name]", "Project name (creates subdirectory). Omit to init current directory.")
   .option("--lang <language>", "Default writing language: zh (Chinese) or en (English)", "zh")
   .action(async (name: string | undefined, opts: { lang?: string }) => {

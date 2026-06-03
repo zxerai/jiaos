@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { runAgentLoop } from "@actalk/jiaos-core";
+import { runAgentLoop } from "@actalk/novelix-core";
 import { loadConfig, createClient, findProjectRoot, resolveContext, log, logError } from "../utils.js";
 
 export const agentCommand = new Command("agent")

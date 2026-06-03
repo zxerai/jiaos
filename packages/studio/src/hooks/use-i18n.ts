@@ -163,9 +163,9 @@ const strings = {
   // Doctor
   "doctor.title": { zh: "环境诊断", en: "Environment Check" },
   "doctor.recheck": { zh: "重新检查", en: "Re-check" },
-  "doctor.jiaosJson": { zh: "jiaos.json 配置", en: "jiaos.json configuration" },
+  "doctor.jiaosJson": { zh: "novelix.json 配置", en: "novelix.json configuration" },
   "doctor.projectEnv": { zh: "项目 .env 文件", en: "Project .env file" },
-  "doctor.globalEnv": { zh: "全局 ~/.jiaos/.env", en: "Global ~/.jiaos/.env" },
+  "doctor.globalEnv": { zh: "全局 ~/.novelix/.env", en: "Global ~/.novelix/.env" },
   "doctor.booksDir": { zh: "书籍目录", en: "Books directory" },
   "doctor.llmApi": { zh: "LLM API 连接", en: "LLM API connectivity" },
   "doctor.connected": { zh: "已连接", en: "Connected" },

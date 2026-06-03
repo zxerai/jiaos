@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeAnalytics } from "@actalk/jiaos-core";
+import { computeAnalytics } from "@actalk/novelix-core";
 
 describe("computeAnalytics", () => {
   it("returns zeros for empty chapters", () => {

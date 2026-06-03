@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { Scheduler } from "@actalk/jiaos-core";
+import { Scheduler } from "@actalk/novelix-core";
 import { loadConfig, findProjectRoot, buildPipelineConfig, log, logError } from "../utils.js";
 import { createWriteStream, type WriteStream } from "node:fs";
 import { writeFile, readFile, unlink } from "node:fs/promises";
@@ -8,7 +8,7 @@ import { join } from "node:path";
 const PID_FILE = "jiaos.pid";
 
 export const upCommand = new Command("up")
-  .description("Start the JiaOS daemon (autonomous mode)")
+  .description("Start the Novelix daemon (autonomous mode)")
   .option("-q, --quiet", "Suppress console output")
   .action(async (opts) => {
     let logStream: WriteStream | undefined;
@@ -27,7 +27,7 @@ export const upCommand = new Command("up")
         // No PID file, good
       }
 
-      log("Starting JiaOS daemon...");
+      log("Starting Novelix daemon...");
       log(`  Write cycle: ${config.daemon.schedule.writeCron}`);
       log(`  Radar scan: ${config.daemon.schedule.radarCron}`);
       log(`  Max concurrent books: ${config.daemon.maxConcurrentBooks}`);
@@ -37,7 +37,7 @@ export const upCommand = new Command("up")
       await writeFile(pidPath, String(process.pid), "utf-8");
 
       // File logging for daemon
-      const logPath = join(root, "jiaos.log");
+      const logPath = join(root, "novelix.log");
       logStream = createWriteStream(logPath, { flags: "a" });
 
       const scheduler = new Scheduler({
@@ -101,7 +101,7 @@ export const upCommand = new Command("up")
   });
 
 export const downCommand = new Command("down")
-  .description("Stop the JiaOS daemon")
+  .description("Stop the Novelix daemon")
   .action(async () => {
     const root = findProjectRoot();
     const pidPath = join(root, PID_FILE);

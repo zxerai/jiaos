@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { assertSafeBookId, deriveBookIdFromTitle, isSafeBookId } from "../utils/book-id.js";
 
 describe("book id safety", () => {
-  it("accepts ids produced by JiaOS title derivation", () => {
+  it("accepts ids produced by Novelix title derivation", () => {
     expect(deriveBookIdFromTitle("夜港账本")).toBe("夜港账本");
     expect(deriveBookIdFromTitle(" Harbor: Ledger! ")).toBe("harbor-ledger");
     expect(isSafeBookId("harbor-ledger")).toBe(true);

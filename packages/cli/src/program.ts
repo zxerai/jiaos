@@ -45,8 +45,8 @@ export function createProgram(hooks: ProgramHooks = {}): Command {
   const program = new Command();
 
   program
-    .name("jiaos")
-    .description("JiaOS — Multi-agent novel production system")
+    .name("novelix")
+    .description("Novelix — Multi-agent novel production system")
     .version(version)
     .enablePositionalOptions()
     .option("--service <service>", "Override LLM service for this CLI run")

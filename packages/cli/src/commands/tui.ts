@@ -7,7 +7,7 @@ export interface TuiCommandHooks {
 
 export function createTuiCommand(hooks: TuiCommandHooks = {}): Command {
   return new Command("tui")
-    .description("Open the JiaOS project workspace TUI")
+    .description("Open the Novelix project workspace TUI")
     .action(async () => {
       if (hooks.launchTui) {
         await hooks.launchTui(process.cwd());

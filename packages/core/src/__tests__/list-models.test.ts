@@ -2,16 +2,16 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { listModelsForService, resolveServiceModelsBaseUrl } from "../llm/service-presets.js";
 
 describe("listModelsForService (B8)", () => {
-  const originalEnv = process.env.JIAOS_LLM_MODEL;
+  const originalEnv = process.env.NOVELIX_LLM_MODEL;
   const originalFetch = global.fetch;
 
   beforeEach(() => {
-    delete process.env.JIAOS_LLM_MODEL;
+    delete process.env.NOVELIX_LLM_MODEL;
   });
 
   afterEach(() => {
-    if (originalEnv) process.env.JIAOS_LLM_MODEL = originalEnv;
-    else delete process.env.JIAOS_LLM_MODEL;
+    if (originalEnv) process.env.NOVELIX_LLM_MODEL = originalEnv;
+    else delete process.env.NOVELIX_LLM_MODEL;
     global.fetch = originalFetch;
   });
 
@@ -60,8 +60,8 @@ describe("listModelsForService (B8)", () => {
     expect(models.some((m) => m.id === "qwen3.6:35b-a3b")).toBe(true);
   });
 
-  it("R4：env 补丁已删除 — JIAOS_LLM_MODEL 不再污染跨 service 菜单", async () => {
-    process.env.JIAOS_LLM_MODEL = "my-secret-model";
+  it("R4：env 补丁已删除 — NOVELIX_LLM_MODEL 不再污染跨 service 菜单", async () => {
+    process.env.NOVELIX_LLM_MODEL = "my-secret-model";
     const models = await listModelsForService("anthropic");
     // my-secret-model 不在 anthropic bank → 不应该出现
     expect(models.some((m) => m.id === "my-secret-model")).toBe(false);

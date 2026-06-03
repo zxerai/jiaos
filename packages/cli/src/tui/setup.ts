@@ -157,7 +157,7 @@ export function buildAutoInitMessages(projectName: string, locale: TuiLocale): {
 }
 
 export async function ensureProject(cwd: string): Promise<SetupResult> {
-  const configPath = join(cwd, "jiaos.json");
+  const configPath = join(cwd, "novelix.json");
   const hasConfig = await fileExists(configPath);
 
   if (!hasConfig) {
@@ -230,11 +230,11 @@ export async function interactiveLlmSetup(
     const finalService = resolveSetupService(provider, effectiveBaseUrl);
 
     const envContent = [
-      `JIAOS_LLM_PROVIDER=${finalProvider}`,
-      ...(finalService ? [`JIAOS_LLM_SERVICE=${finalService}`] : []),
-      `JIAOS_LLM_BASE_URL=${effectiveBaseUrl}`,
-      `JIAOS_LLM_API_KEY=${apiKey.trim()}`,
-      `JIAOS_LLM_MODEL=${model.trim()}`,
+      `NOVELIX_LLM_PROVIDER=${finalProvider}`,
+      ...(finalService ? [`NOVELIX_LLM_SERVICE=${finalService}`] : []),
+      `NOVELIX_LLM_BASE_URL=${effectiveBaseUrl}`,
+      `NOVELIX_LLM_API_KEY=${apiKey.trim()}`,
+      `NOVELIX_LLM_MODEL=${model.trim()}`,
     ].join("\n");
 
     if (useGlobal) {
@@ -269,9 +269,9 @@ async function autoInit(cwd: string): Promise<void> {
     version: "0.1.0",
     language: "zh",
     llm: {
-      provider: process.env.JIAOS_LLM_PROVIDER ?? "openai",
-      baseUrl: process.env.JIAOS_LLM_BASE_URL ?? "",
-      model: process.env.JIAOS_LLM_MODEL ?? "",
+      provider: process.env.NOVELIX_LLM_PROVIDER ?? "openai",
+      baseUrl: process.env.NOVELIX_LLM_BASE_URL ?? "",
+      model: process.env.NOVELIX_LLM_MODEL ?? "",
     },
     notify: [],
     daemon: {
@@ -284,7 +284,7 @@ async function autoInit(cwd: string): Promise<void> {
   };
 
   await writeFile(
-    join(cwd, "jiaos.json"),
+    join(cwd, "novelix.json"),
     JSON.stringify(config, null, 2),
     "utf-8",
   );
@@ -295,10 +295,10 @@ async function autoInit(cwd: string): Promise<void> {
       join(cwd, ".env"),
       [
         messages.envTemplateHeader,
-        "JIAOS_LLM_PROVIDER=openai",
-        "JIAOS_LLM_BASE_URL=",
-        "JIAOS_LLM_API_KEY=",
-        "JIAOS_LLM_MODEL=",
+        "NOVELIX_LLM_PROVIDER=openai",
+        "NOVELIX_LLM_BASE_URL=",
+        "NOVELIX_LLM_API_KEY=",
+        "NOVELIX_LLM_MODEL=",
       ].join("\n"),
       "utf-8",
     );
@@ -322,7 +322,7 @@ async function hasGlobalConfig(): Promise<boolean> {
 async function checkEnvForKey(envPath: string): Promise<boolean> {
   try {
     const content = await readFile(envPath, "utf-8");
-    const match = content.match(/JIAOS_LLM_API_KEY=(.+)/);
+    const match = content.match(/NOVELIX_LLM_API_KEY=(.+)/);
     return !!match && match[1]!.trim().length > 0 && !match[1]!.includes("your-api-key");
   } catch {
     return false;
@@ -360,7 +360,7 @@ export async function detectModelInfo(projectRoot: string): Promise<ModelInfo | 
 
 export async function detectProjectLanguage(projectRoot: string): Promise<string | undefined> {
   try {
-    const raw = await readFile(join(projectRoot, "jiaos.json"), "utf-8");
+    const raw = await readFile(join(projectRoot, "novelix.json"), "utf-8");
     const parsed = JSON.parse(raw) as { language?: string };
     return parsed.language;
   } catch {
@@ -375,12 +375,12 @@ async function parseEnvModel(envPath: string): Promise<ModelInfo | undefined> {
       const m = content.match(new RegExp(`^${key}=(.+)$`, "m"));
       return m?.[1]?.trim() ?? "";
     };
-    const key = get("JIAOS_LLM_API_KEY");
+    const key = get("NOVELIX_LLM_API_KEY");
     if (!key || key.includes("your-api-key")) return undefined;
     return {
-      provider: get("JIAOS_LLM_PROVIDER") || "openai",
-      model: get("JIAOS_LLM_MODEL") || "unknown",
-      baseUrl: get("JIAOS_LLM_BASE_URL") || "",
+      provider: get("NOVELIX_LLM_PROVIDER") || "openai",
+      model: get("NOVELIX_LLM_MODEL") || "unknown",
+      baseUrl: get("NOVELIX_LLM_BASE_URL") || "",
     };
   } catch {
     return undefined;

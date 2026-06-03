@@ -1,4 +1,4 @@
-import { formatLengthCount, resolveLengthCountingMode } from "@actalk/jiaos-core";
+import { formatLengthCount, resolveLengthCountingMode } from "@actalk/novelix-core";
 
 export type CliLanguage = "zh" | "en";
 

@@ -14,10 +14,10 @@ import {
   type Logger,
   type OnStreamProgress,
   type ShortFictionReference,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import { buildPipelineConfig, findProjectRoot, loadConfig, log, logError } from "../utils.js";
 
-export { extractResponsesImageBase64, resolveCoverApiKey } from "@actalk/jiaos-core";
+export { extractResponsesImageBase64, resolveCoverApiKey } from "@actalk/novelix-core";
 
 export const shortCommand = new Command("short")
   .description("Short fiction production workflow");
@@ -211,7 +211,7 @@ async function createShortRuntime(
       onStreamProgress: pipelineConfig.onStreamProgress,
     };
   } catch (e) {
-    if (!String(e).includes("jiaos.json not found")) throw e;
+    if (!String(e).includes("novelix.json not found")) throw e;
     const llmConfig = buildEnvLLMConfig(options);
     return {
       client: createLLMClient(llmConfig),
@@ -224,21 +224,21 @@ function buildEnvLLMConfig(options: {
   readonly llmBaseUrl?: string;
   readonly model?: string;
 }): LLMConfig {
-  const baseUrl = options.llmBaseUrl ?? process.env.JIAOS_LLM_BASE_URL;
-  const model = options.model ?? process.env.JIAOS_LLM_MODEL;
-  if (!baseUrl) throw new Error("LLM base URL is required. Set JIAOS_LLM_BASE_URL or pass --llm-base-url.");
-  if (!model) throw new Error("LLM model is required. Set JIAOS_LLM_MODEL or pass --model.");
+  const baseUrl = options.llmBaseUrl ?? process.env.NOVELIX_LLM_BASE_URL;
+  const model = options.model ?? process.env.NOVELIX_LLM_MODEL;
+  if (!baseUrl) throw new Error("LLM base URL is required. Set NOVELIX_LLM_BASE_URL or pass --llm-base-url.");
+  if (!model) throw new Error("LLM model is required. Set NOVELIX_LLM_MODEL or pass --model.");
   return {
     provider: "openai",
-    service: process.env.JIAOS_LLM_SERVICE ?? "custom",
+    service: process.env.NOVELIX_LLM_SERVICE ?? "custom",
     configSource: "env",
     baseUrl,
-    apiKey: process.env.JIAOS_LLM_API_KEY ?? "",
+    apiKey: process.env.NOVELIX_LLM_API_KEY ?? "",
     model,
-    temperature: parseEnvNumber(process.env.JIAOS_LLM_TEMPERATURE, 0.1),
-    thinkingBudget: parseEnvInteger(process.env.JIAOS_LLM_THINKING_BUDGET, 0),
-    apiFormat: process.env.JIAOS_LLM_API_FORMAT === "responses" ? "responses" : "chat",
-    stream: process.env.JIAOS_LLM_STREAM === "false" ? false : true,
+    temperature: parseEnvNumber(process.env.NOVELIX_LLM_TEMPERATURE, 0.1),
+    thinkingBudget: parseEnvInteger(process.env.NOVELIX_LLM_THINKING_BUDGET, 0),
+    apiFormat: process.env.NOVELIX_LLM_API_FORMAT === "responses" ? "responses" : "chat",
+    stream: process.env.NOVELIX_LLM_STREAM === "false" ? false : true,
   };
 }
 

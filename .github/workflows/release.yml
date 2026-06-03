@@ -29,8 +29,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm --filter @actalk/jiaos-core typecheck
-      - run: pnpm --filter @actalk/jiaos typecheck
+      - run: pnpm --filter @actalk/novelix-core typecheck
+      - run: pnpm --filter @actalk/novelix typecheck
       - run: pnpm test
 
   smoke-test:
@@ -148,7 +148,7 @@ jobs:
 
           ACTUAL_CANARY=""
           for _ in 1 2 3 4 5 6; do
-            ACTUAL_CANARY=$(npm view @actalk/jiaos@canary version 2>/dev/null || true)
+            ACTUAL_CANARY=$(npm view @actalk/novelix@canary version 2>/dev/null || true)
             if [ "$ACTUAL_CANARY" = "$EXPECTED_CANARY" ]; then
               break
             fi
@@ -163,30 +163,30 @@ jobs:
           TMPDIR=$(mktemp -d)
           cd "$TMPDIR"
           npm init -y
-          npm install "@actalk/jiaos@$EXPECTED_CANARY"
+          npm install "@actalk/novelix@$EXPECTED_CANARY"
 
-          if grep -q '"workspace:' node_modules/@actalk/jiaos/package.json; then
+          if grep -q '"workspace:' node_modules/@actalk/novelix/package.json; then
             echo "FATAL: canary CLI package still contains workspace: protocol"
-            cat node_modules/@actalk/jiaos/package.json | grep workspace
+            cat node_modules/@actalk/novelix/package.json | grep workspace
             exit 1
           fi
 
-          if grep -q '"workspace:' node_modules/@actalk/jiaos-studio/package.json; then
+          if grep -q '"workspace:' node_modules/@actalk/novelix-studio/package.json; then
             echo "FATAL: canary studio package still contains workspace: protocol"
-            cat node_modules/@actalk/jiaos-studio/package.json | grep workspace
+            cat node_modules/@actalk/novelix-studio/package.json | grep workspace
             exit 1
           fi
 
-          if grep -q '"workspace:' node_modules/@actalk/jiaos-core/package.json; then
+          if grep -q '"workspace:' node_modules/@actalk/novelix-core/package.json; then
             echo "FATAL: canary core package still contains workspace: protocol"
-            cat node_modules/@actalk/jiaos-core/package.json | grep workspace
+            cat node_modules/@actalk/novelix-core/package.json | grep workspace
             exit 1
           fi
 
           npx jiaos --version
-          test -f node_modules/@actalk/jiaos-studio/dist/api/index.js
-          node -e "import('@actalk/jiaos-core').then(m => { if (!m.PipelineRunner) throw new Error('installed core import missing PipelineRunner'); console.log('installed core import OK') })"
-          test -f node_modules/@actalk/jiaos-core/dist/notify/telegram.js || test -f node_modules/@actalk/jiaos/node_modules/@actalk/jiaos-core/dist/notify/telegram.js
+          test -f node_modules/@actalk/novelix-studio/dist/api/index.js
+          node -e "import('@actalk/novelix-core').then(m => { if (!m.PipelineRunner) throw new Error('installed core import missing PipelineRunner'); console.log('installed core import OK') })"
+          test -f node_modules/@actalk/novelix-core/dist/notify/telegram.js || test -f node_modules/@actalk/novelix/node_modules/@actalk/novelix-core/dist/notify/telegram.js
           echo "Canary verification passed"
           rm -rf "$TMPDIR"
 
@@ -248,7 +248,7 @@ jobs:
 
           ACTUAL_LATEST=""
           for _ in 1 2 3 4 5 6; do
-            ACTUAL_LATEST=$(npm view @actalk/jiaos@latest version 2>/dev/null || true)
+            ACTUAL_LATEST=$(npm view @actalk/novelix@latest version 2>/dev/null || true)
             if [ "$ACTUAL_LATEST" = "$EXPECTED_RELEASE" ]; then
               break
             fi
@@ -263,30 +263,30 @@ jobs:
           TMPDIR=$(mktemp -d)
           cd "$TMPDIR"
           npm init -y
-          npm install "@actalk/jiaos@$EXPECTED_RELEASE"
+          npm install "@actalk/novelix@$EXPECTED_RELEASE"
 
-          if grep -q '"workspace:' node_modules/@actalk/jiaos/package.json; then
+          if grep -q '"workspace:' node_modules/@actalk/novelix/package.json; then
             echo "FATAL: released CLI package still contains workspace: protocol"
-            cat node_modules/@actalk/jiaos/package.json | grep workspace
+            cat node_modules/@actalk/novelix/package.json | grep workspace
             exit 1
           fi
 
-          if grep -q '"workspace:' node_modules/@actalk/jiaos-studio/package.json; then
+          if grep -q '"workspace:' node_modules/@actalk/novelix-studio/package.json; then
             echo "FATAL: released studio package still contains workspace: protocol"
-            cat node_modules/@actalk/jiaos-studio/package.json | grep workspace
+            cat node_modules/@actalk/novelix-studio/package.json | grep workspace
             exit 1
           fi
 
-          if grep -q '"workspace:' node_modules/@actalk/jiaos-core/package.json; then
+          if grep -q '"workspace:' node_modules/@actalk/novelix-core/package.json; then
             echo "FATAL: released core package still contains workspace: protocol"
-            cat node_modules/@actalk/jiaos-core/package.json | grep workspace
+            cat node_modules/@actalk/novelix-core/package.json | grep workspace
             exit 1
           fi
 
           npx jiaos --version
-          test -f node_modules/@actalk/jiaos-studio/dist/api/index.js
-          node -e "import('@actalk/jiaos-core').then(m => { if (!m.PipelineRunner) throw new Error('installed core import missing PipelineRunner'); console.log('installed core import OK') })"
-          test -f node_modules/@actalk/jiaos-core/dist/notify/telegram.js || test -f node_modules/@actalk/jiaos/node_modules/@actalk/jiaos-core/dist/notify/telegram.js
+          test -f node_modules/@actalk/novelix-studio/dist/api/index.js
+          node -e "import('@actalk/novelix-core').then(m => { if (!m.PipelineRunner) throw new Error('installed core import missing PipelineRunner'); console.log('installed core import OK') })"
+          test -f node_modules/@actalk/novelix-core/dist/notify/telegram.js || test -f node_modules/@actalk/novelix/node_modules/@actalk/novelix-core/dist/notify/telegram.js
           echo "Release verification passed"
           rm -rf "$TMPDIR"
 

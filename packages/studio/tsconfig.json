@@ -15,8 +15,8 @@
     "types": ["node", "vitest/globals"],
     "paths": {
       "@/*": ["./src/*"],
-      "@actalk/jiaos-core": ["../core/src/index.ts"],
-      "@actalk/jiaos-core/*": ["../core/src/*"]
+      "@actalk/novelix-core": ["../core/src/index.ts"],
+      "@actalk/novelix-core/*": ["../core/src/*"]
     },
     "baseUrl": "."
   },

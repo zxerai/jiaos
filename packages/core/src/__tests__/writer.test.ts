@@ -157,7 +157,7 @@ describe("WriterAgent", () => {
 
     expect(prompt).toContain("BEGIN-STORY");
     expect(prompt).toContain("LATEST-STORY");
-    expect(prompt).toContain("JiaOS context budget");
+    expect(prompt).toContain("Novelix context budget");
     expect(prompt).toContain("story_bible");
     expect(prompt).not.toContain("MIDDLE-MARKER");
   });

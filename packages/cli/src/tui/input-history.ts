@@ -1,4 +1,4 @@
-import type { InteractionMessage } from "@actalk/jiaos-core";
+import type { InteractionMessage } from "@actalk/novelix-core";
 
 export interface InputHistoryState {
   readonly cursor: number | null;

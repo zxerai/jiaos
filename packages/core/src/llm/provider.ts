@@ -32,7 +32,7 @@ export interface StreamProgress {
 
 export type OnStreamProgress = (progress: StreamProgress) => void;
 
-const JIAOS_USER_AGENT = "JiaOS/1.3.5";
+const JIAOS_USER_AGENT = "Novelix/1.3.5";
 const UNKNOWN_MODEL_FALLBACK_MAX_TOKENS = 8192 * 3;
 const TRANSIENT_LLM_RETRIES = 2;
 
@@ -265,7 +265,7 @@ function resolveProviderCompat(
 }
 
 function parseEnvHeaders(): Record<string, string> | undefined {
-  const raw = process.env.JIAOS_LLM_HEADERS;
+  const raw = process.env.NOVELIX_LLM_HEADERS;
   if (!raw) return undefined;
   try {
     const parsed: unknown = JSON.parse(raw);
@@ -383,7 +383,7 @@ function wrapLLMError(error: unknown, context?: { readonly baseUrl?: string; rea
   }
   if (msg.includes("401")) {
     return new Error(
-      `API 返回 401 (未授权)。请检查 .env 中的 JIAOS_LLM_API_KEY 是否正确。${ctxLine}`,
+      `API 返回 401 (未授权)。请检查 .env 中的 NOVELIX_LLM_API_KEY 是否正确。${ctxLine}`,
     );
   }
   if (msg.includes("429")) {
@@ -407,7 +407,7 @@ function wrapLLMError(error: unknown, context?: { readonly baseUrl?: string; rea
       `  1. baseUrl 地址不正确（当前：${context?.baseUrl ?? "未知"}）\n` +
       `  2. 网络不通或被防火墙拦截\n` +
       `  3. API 服务暂时不可用\n` +
-      `  建议：检查 JIAOS_LLM_BASE_URL 是否包含完整路径（如 /v1）`,
+      `  建议：检查 NOVELIX_LLM_BASE_URL 是否包含完整路径（如 /v1）`,
     );
   }
   // R4 Bug 2: 5xx "status code (no body)" — 尝试从 OpenAI SDK APIError 里抽 body 给用户看具体原因

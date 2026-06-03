@@ -1,7 +1,7 @@
 {
-  "name": "@actalk/jiaos-core",
+  "name": "@actalk/novelix-core",
   "version": "1.4.1",
-  "description": "JiaOS core engine — multi-agent novel writing pipeline with 33-dimension continuity audit, style cloning, and de-AI-ification",
+  "description": "Novelix core engine — multi-agent novel writing pipeline with 33-dimension continuity audit, style cloning, and de-AI-ification",
   "keywords": [
     "ai-novel-writing",
     "ai-writing-agent",

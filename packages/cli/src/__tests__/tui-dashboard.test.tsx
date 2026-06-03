@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "ink-testing-library";
 import { describe, expect, it } from "vitest";
-import type { InteractionSession } from "@actalk/jiaos-core";
+import type { InteractionSession } from "@actalk/novelix-core";
 
 function createSession(): InteractionSession {
   return {

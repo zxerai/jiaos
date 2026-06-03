@@ -1,4 +1,4 @@
-import type { InteractionIntentType } from "@actalk/jiaos-core";
+import type { InteractionIntentType } from "@actalk/novelix-core";
 import type { TuiCopy } from "./i18n.js";
 
 export interface ActivityState {

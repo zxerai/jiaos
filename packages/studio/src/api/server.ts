@@ -46,7 +46,7 @@ import {
   type ProjectConfig,
   type LogSink,
   type LogEntry,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import {
   access,
   appendFile,
@@ -395,8 +395,8 @@ function resolveExternalChatEditPath(
     );
   }
   if (
-    rel.includes("/.jiaos/") ||
-    rel.endsWith("/.jiaos") ||
+    rel.includes("/.novelix/") ||
+    rel.endsWith("/.novelix") ||
     rel.includes("/secrets") ||
     rel.endsWith(".env")
   ) {
@@ -991,7 +991,7 @@ function syncTopLevelLlmMirror(llm: Record<string, unknown>): void {
 }
 
 async function loadRawConfig(root: string): Promise<Record<string, unknown>> {
-  const configPath = join(root, "jiaos.json");
+  const configPath = join(root, "novelix.json");
   const raw = await readFile(configPath, "utf-8");
   return JSON.parse(raw) as Record<string, unknown>;
 }
@@ -1001,7 +1001,7 @@ async function saveRawConfig(
   config: Record<string, unknown>,
 ): Promise<void> {
   await writeFile(
-    join(root, "jiaos.json"),
+    join(root, "novelix.json"),
     JSON.stringify(config, null, 2),
     "utf-8",
   );
@@ -1021,10 +1021,10 @@ async function readEnvConfigSummary(path: string): Promise<EnvConfigSummary> {
       values.set(key, value.trim());
     }
 
-    const provider = values.get("JIAOS_LLM_PROVIDER") ?? null;
-    const baseUrl = values.get("JIAOS_LLM_BASE_URL") ?? null;
-    const model = values.get("JIAOS_LLM_MODEL") ?? null;
-    const apiKey = values.get("JIAOS_LLM_API_KEY") ?? "";
+    const provider = values.get("NOVELIX_LLM_PROVIDER") ?? null;
+    const baseUrl = values.get("NOVELIX_LLM_BASE_URL") ?? null;
+    const model = values.get("NOVELIX_LLM_MODEL") ?? null;
+    const apiKey = values.get("NOVELIX_LLM_API_KEY") ?? "";
     const detected = Boolean(provider || baseUrl || model || apiKey);
 
     return {
@@ -1611,7 +1611,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     const message = error instanceof Error ? error.message : String(error);
     if (
       message.includes("LLM API key not set") ||
-      message.includes("JIAOS_LLM_API_KEY not set")
+      message.includes("NOVELIX_LLM_API_KEY not set")
     ) {
       return c.json({ error: { code: "LLM_CONFIG_ERROR", message } }, 400);
     }
@@ -1669,8 +1669,8 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     },
   };
 
-  // Logger sink that writes to jiaos.log (for LogViewer page)
-  const logPath = join(root, "jiaos.log");
+  // Logger sink that writes to novelix.log (for LogViewer page)
+  const logPath = join(root, "novelix.log");
   const fileSink: LogSink = {
     write(entry: LogEntry): void {
       const line =
@@ -1774,7 +1774,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
 
   app.get("/api/v1/genres", async (c) => {
     const { listAvailableGenres, readGenreProfile } =
-      await import("@actalk/jiaos-core");
+      await import("@actalk/novelix-core");
     const rawGenres = await listAvailableGenres(root);
     const genres = await Promise.all(
       rawGenres.map(async (g) => {
@@ -2496,7 +2496,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     // can warn users their edits won't reach the runtime.
     // Hotfix: only tag as legacy when the book actually HAS the new layout.
     // Pre-Phase-5 books use story_bible/book_rules as the authoritative source.
-    const { isNewLayoutBook } = await import("@actalk/jiaos-core");
+    const { isNewLayoutBook } = await import("@actalk/novelix-core");
     const legacy =
       LEGACY_SHIM_FILES.has(file) && (await isNewLayoutBook(bookDir));
 
@@ -2697,7 +2697,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
       }))
       .sort(compareServiceListItems);
 
-    // Add custom services from jiaos.json
+    // Add custom services from novelix.json
     try {
       const config = await loadRawConfig(root);
       for (const svc of normalizeServiceConfig(
@@ -3111,8 +3111,8 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     const currentConfig = await loadCurrentProjectConfig({
       requireApiKey: false,
     });
-    // Check if language was explicitly set in jiaos.json (not just the schema default)
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    // Check if language was explicitly set in novelix.json (not just the schema default)
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     const languageExplicit = "language" in raw && raw.language !== "";
 
     return c.json({
@@ -3147,7 +3147,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
 
   app.put("/api/v1/project", async (c) => {
     const updates = await c.req.json<Record<string, unknown>>();
-    const configPath = join(root, "jiaos.json");
+    const configPath = join(root, "novelix.json");
     try {
       const raw = await readFile(configPath, "utf-8");
       const existing = JSON.parse(raw);
@@ -3185,7 +3185,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     }
 
     // Hotfix: only tag shim files as legacy when the book has the new layout.
-    const { isNewLayoutBook } = await import("@actalk/jiaos-core");
+    const { isNewLayoutBook } = await import("@actalk/novelix-core");
     const newLayout = await isNewLayoutBook(bookDir);
 
     async function describe(relPath: string): Promise<{
@@ -3327,7 +3327,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
   // --- Logs ---
 
   app.get("/api/v1/logs", async (c) => {
-    const logPath = join(root, "jiaos.log");
+    const logPath = join(root, "novelix.log");
     try {
       const content = await readFile(logPath, "utf-8");
       const lines = content.trim().split("\n").slice(-100);
@@ -4229,7 +4229,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
 
   app.post("/api/v1/project/language", async (c) => {
     const { language } = await c.req.json<{ language: "zh" | "en" }>();
-    const configPath = join(root, "jiaos.json");
+    const configPath = join(root, "novelix.json");
     try {
       const raw = await readFile(configPath, "utf-8");
       const existing = JSON.parse(raw);
@@ -4261,7 +4261,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
 
       const content = await readFile(join(chaptersDir, match), "utf-8");
       const currentConfig = await loadCurrentProjectConfig();
-      const { ContinuityAuditor } = await import("@actalk/jiaos-core");
+      const { ContinuityAuditor } = await import("@actalk/novelix-core");
       const auditor = new ContinuityAuditor({
         client: createLLMClient(currentConfig.llm),
         model: currentConfig.llm.model,
@@ -4403,7 +4403,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
   app.get("/api/v1/genres/:id", async (c) => {
     const genreId = c.req.param("id");
     try {
-      const { readGenreProfile } = await import("@actalk/jiaos-core");
+      const { readGenreProfile } = await import("@actalk/novelix-core");
       const { profile, body } = await readGenreProfile(root, genreId);
       return c.json({ profile, body });
     } catch (e) {
@@ -4421,7 +4421,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
       );
     }
     try {
-      const { getBuiltinGenresDir } = await import("@actalk/jiaos-core");
+      const { getBuiltinGenresDir } = await import("@actalk/novelix-core");
 
       const builtinDir = getBuiltinGenresDir();
       const projectGenresDir = join(root, "genres");
@@ -4439,7 +4439,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
   // --- Model overrides ---
 
   app.get("/api/v1/project/model-overrides", async (c) => {
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     return c.json({ overrides: raw.modelOverrides ?? {} });
   });
 
@@ -4447,7 +4447,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     const { overrides } = await c.req.json<{
       overrides: Record<string, unknown>;
     }>();
-    const configPath = join(root, "jiaos.json");
+    const configPath = join(root, "novelix.json");
     const raw = JSON.parse(await readFile(configPath, "utf-8"));
     raw.modelOverrides = overrides;
     await writeFile(configPath, JSON.stringify(raw, null, 2), "utf-8");
@@ -4457,13 +4457,13 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
   // --- Notify channels ---
 
   app.get("/api/v1/project/notify", async (c) => {
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     return c.json({ channels: raw.notify ?? [] });
   });
 
   app.put("/api/v1/project/notify", async (c) => {
     const { channels } = await c.req.json<{ channels: unknown[] }>();
-    const configPath = join(root, "jiaos.json");
+    const configPath = join(root, "novelix.json");
     const raw = JSON.parse(await readFile(configPath, "utf-8"));
     raw.notify = channels;
     await writeFile(configPath, JSON.stringify(raw, null, 2), "utf-8");
@@ -4487,7 +4487,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
       if (!match) return c.json({ error: "Chapter not found" }, 404);
 
       const content = await readFile(join(chaptersDir, match), "utf-8");
-      const { analyzeAITells } = await import("@actalk/jiaos-core");
+      const { analyzeAITells } = await import("@actalk/novelix-core");
       const result = analyzeAITells(content);
       return c.json({ chapterNumber: chapterNum, ...result });
     } catch (e) {
@@ -4509,7 +4509,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     // story_bible.md or book_rules.md does nothing at runtime (the pipeline
     // reads outline/ instead). For pre-Phase-5 books these ARE authoritative.
     if (LEGACY_SHIM_FILES.has(file)) {
-      const { isNewLayoutBook } = await import("@actalk/jiaos-core");
+      const { isNewLayoutBook } = await import("@actalk/novelix-core");
       if (await isNewLayoutBook(bookDir)) {
         return c.json(
           { error: "Legacy compat shim; edit outline/story_frame.md instead" },
@@ -4654,7 +4654,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
       const mdFiles = files
         .filter((f) => f.endsWith(".md") && /^\d{4}/.test(f))
         .sort();
-      const { analyzeAITells } = await import("@actalk/jiaos-core");
+      const { analyzeAITells } = await import("@actalk/novelix-core");
 
       const results = await Promise.all(
         mdFiles.map(async (f) => {
@@ -4676,7 +4676,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     const id = c.req.param("id");
     try {
       const { loadDetectionHistory, analyzeDetectionInsights } =
-        await import("@actalk/jiaos-core");
+        await import("@actalk/novelix-core");
       const bookDir = state.bookDir(id);
       const history = await loadDetectionHistory(bookDir);
       const insights = analyzeDetectionInsights(history);
@@ -4813,7 +4813,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     if (!text?.trim()) return c.json({ error: "text is required" }, 400);
 
     try {
-      const { analyzeStyle } = await import("@actalk/jiaos-core");
+      const { analyzeStyle } = await import("@actalk/novelix-core");
       const profile = analyzeStyle(text, sourceName ?? "unknown");
       return c.json(profile);
     } catch (e) {
@@ -4859,7 +4859,7 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
 
     broadcast("import:start", { bookId: id, type: "chapters" });
     try {
-      const { splitChapters } = await import("@actalk/jiaos-core");
+      const { splitChapters } = await import("@actalk/novelix-core");
       const chapters = [...splitChapters(text, splitRegex)];
 
       const pipeline = new PipelineRunner(await buildPipelineConfig());
@@ -5024,10 +5024,10 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
   // --- Doctor (environment health check) ---
 
   app.get("/api/v1/doctor", async (c) => {
-    const { GLOBAL_ENV_PATH } = await import("@actalk/jiaos-core");
+    const { GLOBAL_ENV_PATH } = await import("@actalk/novelix-core");
 
     const checks = {
-      jiaosJson: existsSync(join(root, "jiaos.json")),
+      jiaosJson: existsSync(join(root, "novelix.json")),
       projectEnv: existsSync(join(root, ".env")),
       globalEnv: existsSync(GLOBAL_ENV_PATH),
       booksDir: existsSync(join(root, "books")),
@@ -5135,6 +5135,6 @@ export async function startStudioServer(
     }
   }
 
-  console.log(`JiaOS Studio running on http://localhost:${port}`);
+  console.log(`Novelix Studio running on http://localhost:${port}`);
   serve({ fetch: app.fetch, port });
 }

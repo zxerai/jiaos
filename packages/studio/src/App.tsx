@@ -130,7 +130,7 @@ export function App() {
                <House size={14} />
                <span>首页</span>
                <span className="text-muted-foreground/70">/</span>
-               <span className="font-serif">JiaOS Studio</span>
+               <span className="font-serif">Novelix Studio</span>
              </button>
           </div>
 

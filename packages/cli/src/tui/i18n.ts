@@ -83,8 +83,8 @@ const ZH_CN: TuiCopy = {
     manual: "手动",
   },
   composer: {
-    placeholder: "告诉 JiaOS 要写什么、修改什么，或解释什么…",
-    emptyConversation: "先告诉 JiaOS 你要做什么。",
+    placeholder: "告诉 Novelix 要写什么、修改什么，或解释什么…",
+    emptyConversation: "先告诉 Novelix 你要做什么。",
     helper: "回车发送 • /new 输入你的想法 • /write • /rewrite • /truth • /export • /depth • /help",
     submitting: "处理中…",
     failed: "上次请求失败",
@@ -101,7 +101,7 @@ const ZH_CN: TuiCopy = {
   },
   roles: {
     user: "你",
-    assistant: "JiaOS",
+    assistant: "Novelix",
     system: "系统",
   },
   activity: {
@@ -152,8 +152,8 @@ const EN: TuiCopy = {
     manual: "manual",
   },
   composer: {
-    placeholder: "Ask JiaOS to write, revise, or explain…",
-    emptyConversation: "Start by asking JiaOS what to do.",
+    placeholder: "Ask Novelix to write, revise, or explain…",
+    emptyConversation: "Start by asking Novelix what to do.",
     helper: "Enter to send • /new describe your idea • /write • /rewrite • /truth • /export • /depth • /help",
     submitting: "Submitting…",
     failed: "Last request failed",
@@ -170,7 +170,7 @@ const EN: TuiCopy = {
   },
   roles: {
     user: "You",
-    assistant: "JiaOS",
+    assistant: "Novelix",
     system: "System",
   },
   activity: {

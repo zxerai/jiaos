@@ -1,7 +1,7 @@
 import {
   appendInteractionMessage,
   type InteractionSession,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 
 export function createOptimisticUserMessageSession(
   session: InteractionSession,

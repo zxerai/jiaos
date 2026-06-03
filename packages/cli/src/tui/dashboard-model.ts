@@ -3,7 +3,7 @@ import type {
   InteractionEvent,
   InteractionMessage,
   InteractionSession,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import { formatModeLabel, normalizeStageLabel, type TuiCopy } from "./i18n.js";
 
 export interface DashboardMessageRow {

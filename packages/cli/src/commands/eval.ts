@@ -3,7 +3,7 @@ import {
   StateManager,
   analyzeAITells,
   computeAnalytics,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { findProjectRoot, resolveBookId, log, logError } from "../utils.js";

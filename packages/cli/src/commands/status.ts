@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { StateManager, formatLengthCount, readGenreProfile, resolveLengthCountingMode } from "@actalk/jiaos-core";
+import { StateManager, formatLengthCount, readGenreProfile, resolveLengthCountingMode } from "@actalk/novelix-core";
 import { findProjectRoot, getLegacyMigrationHint, log, logError } from "../utils.js";
 
 export const statusCommand = new Command("status")
@@ -24,7 +24,7 @@ export const statusCommand = new Command("status")
       const booksData = [];
 
       if (!opts.json) {
-        log(`JiaOS Project: ${root}`);
+        log(`Novelix Project: ${root}`);
         log(`Books: ${allBookIds.length}`);
         log("");
       }

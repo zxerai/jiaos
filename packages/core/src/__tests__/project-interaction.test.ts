@@ -186,7 +186,7 @@ describe("project interaction control", () => {
 
   it("persists a creation draft across freeform ideation turns", async () => {
     const ideationRoot = await mkdtemp(join(tmpdir(), "jiaos-project-ideation-"));
-    await writeFile(join(ideationRoot, "jiaos.json"), JSON.stringify({ language: "zh" }), "utf-8");
+    await writeFile(join(ideationRoot, "novelix.json"), JSON.stringify({ language: "zh" }), "utf-8");
     await persistProjectSession(ideationRoot, createProjectSession(ideationRoot));
 
     const tools = {

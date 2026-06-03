@@ -14,7 +14,7 @@ describe("resolveEffectiveLLMConfig", () => {
 
   async function writeProject(llm: Record<string, unknown>) {
     root = await mkdtemp(join(tmpdir(), "jiaos-effective-llm-"));
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "effective-project",
       version: "0.1.0",
       language: "zh",
@@ -57,7 +57,7 @@ describe("resolveEffectiveLLMConfig", () => {
     expect(result.diagnostics.warnings.join("\n")).toContain("旧顶层");
   });
 
-  it("CLI consumer 允许 JIAOS_LLM_SERVICE 切换服务，并从 provider bank 推导 baseUrl", async () => {
+  it("CLI consumer 允许 NOVELIX_LLM_SERVICE 切换服务，并从 provider bank 推导 baseUrl", async () => {
     await writeProject({
       configSource: "studio",
       service: "google",
@@ -75,8 +75,8 @@ describe("resolveEffectiveLLMConfig", () => {
       envLayers: {
         global: {},
         project: {
-          JIAOS_LLM_SERVICE: "moonshot",
-          JIAOS_LLM_MODEL: "kimi-k2.5",
+          NOVELIX_LLM_SERVICE: "moonshot",
+          NOVELIX_LLM_MODEL: "kimi-k2.5",
         },
         process: {},
       },
@@ -90,7 +90,7 @@ describe("resolveEffectiveLLMConfig", () => {
     expect(result.diagnostics.modelSource).toBe("env");
   });
 
-  it("CLI consumer 兼容旧 env：没有 JIAOS_LLM_SERVICE 时从 baseUrl 反推 service", async () => {
+  it("CLI consumer 兼容旧 env：没有 NOVELIX_LLM_SERVICE 时从 baseUrl 反推 service", async () => {
     await writeProject({
       configSource: "studio",
       service: "google",
@@ -104,10 +104,10 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {
-          JIAOS_LLM_PROVIDER: "custom",
-          JIAOS_LLM_BASE_URL: "https://api.moonshot.cn/v1",
-          JIAOS_LLM_MODEL: "kimi-k2.5",
-          JIAOS_LLM_API_KEY: "sk-env-moon",
+          NOVELIX_LLM_PROVIDER: "custom",
+          NOVELIX_LLM_BASE_URL: "https://api.moonshot.cn/v1",
+          NOVELIX_LLM_MODEL: "kimi-k2.5",
+          NOVELIX_LLM_API_KEY: "sk-env-moon",
         },
         project: {},
         process: {},
@@ -135,19 +135,19 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {
-          JIAOS_LLM_SERVICE: "moonshot",
-          JIAOS_LLM_MODEL: "kimi-k2.5",
-          JIAOS_LLM_API_KEY: "sk-global-moon",
+          NOVELIX_LLM_SERVICE: "moonshot",
+          NOVELIX_LLM_MODEL: "kimi-k2.5",
+          NOVELIX_LLM_API_KEY: "sk-global-moon",
         },
         project: {
-          JIAOS_LLM_SERVICE: "deepseek",
-          JIAOS_LLM_MODEL: "deepseek-chat",
-          JIAOS_LLM_API_KEY: "sk-project-deepseek",
+          NOVELIX_LLM_SERVICE: "deepseek",
+          NOVELIX_LLM_MODEL: "deepseek-chat",
+          NOVELIX_LLM_API_KEY: "sk-project-deepseek",
         },
         process: {
-          JIAOS_LLM_SERVICE: "zhipu",
-          JIAOS_LLM_MODEL: "glm-4-flash",
-          JIAOS_LLM_API_KEY: "sk-process-zhipu",
+          NOVELIX_LLM_SERVICE: "zhipu",
+          NOVELIX_LLM_MODEL: "glm-4-flash",
+          NOVELIX_LLM_API_KEY: "sk-process-zhipu",
         },
       },
       requireApiKey: true,
@@ -175,10 +175,10 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {
-          JIAOS_LLM_PROVIDER: "custom",
-          JIAOS_LLM_BASE_URL: "https://api.example.com/v1",
-          JIAOS_LLM_MODEL: "legacy-model",
-          JIAOS_LLM_API_KEY: "sk-env",
+          NOVELIX_LLM_PROVIDER: "custom",
+          NOVELIX_LLM_BASE_URL: "https://api.example.com/v1",
+          NOVELIX_LLM_MODEL: "legacy-model",
+          NOVELIX_LLM_API_KEY: "sk-env",
         },
         project: {},
         process: {},
@@ -206,10 +206,10 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {
-          JIAOS_LLM_PROVIDER: "custom",
-          JIAOS_LLM_BASE_URL: "https://api.moonshot.cn/v1",
-          JIAOS_LLM_MODEL: "kimi-k2.5",
-          JIAOS_LLM_API_KEY: "sk-moon",
+          NOVELIX_LLM_PROVIDER: "custom",
+          NOVELIX_LLM_BASE_URL: "https://api.moonshot.cn/v1",
+          NOVELIX_LLM_MODEL: "kimi-k2.5",
+          NOVELIX_LLM_API_KEY: "sk-moon",
         },
         project: {},
         process: {
@@ -245,12 +245,12 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {
-          JIAOS_LLM_PROVIDER: "openai",
-          JIAOS_LLM_BASE_URL: "https://api.example.com/v1",
-          JIAOS_LLM_MODEL: "legacy-model",
-          JIAOS_LLM_API_KEY: "sk-env",
-          JIAOS_LLM_API_FORMAT: "chat",
-          JIAOS_LLM_STREAM: "true",
+          NOVELIX_LLM_PROVIDER: "openai",
+          NOVELIX_LLM_BASE_URL: "https://api.example.com/v1",
+          NOVELIX_LLM_MODEL: "legacy-model",
+          NOVELIX_LLM_API_KEY: "sk-env",
+          NOVELIX_LLM_API_FORMAT: "chat",
+          NOVELIX_LLM_STREAM: "true",
         },
         project: {},
         process: {},
@@ -266,7 +266,7 @@ describe("resolveEffectiveLLMConfig", () => {
     expect(result.llm.stream).toBe(false);
   });
 
-  it("保留旧 JIAOS_LLM_EXTRA_* 和 JIAOS_DEFAULT_LANGUAGE 行为", async () => {
+  it("保留旧 NOVELIX_LLM_EXTRA_* 和 NOVELIX_DEFAULT_LANGUAGE 行为", async () => {
     await writeProject({
       configSource: "env",
       provider: "openai",
@@ -280,9 +280,9 @@ describe("resolveEffectiveLLMConfig", () => {
       envLayers: {
         global: {},
         project: {
-          JIAOS_LLM_API_KEY: "sk-env",
-          JIAOS_LLM_EXTRA_top_p: "0.9",
-          JIAOS_DEFAULT_LANGUAGE: "en",
+          NOVELIX_LLM_API_KEY: "sk-env",
+          NOVELIX_LLM_EXTRA_top_p: "0.9",
+          NOVELIX_DEFAULT_LANGUAGE: "en",
         },
         process: {},
       },
@@ -306,7 +306,7 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {},
-        project: { JIAOS_LLM_SERVICE: "google", JIAOS_LLM_MODEL: "gemini-2.5-pro" },
+        project: { NOVELIX_LLM_SERVICE: "google", NOVELIX_LLM_MODEL: "gemini-2.5-pro" },
         process: {},
       },
       cli: { service: "zhipu", model: "glm-4-flash" },
@@ -333,10 +333,10 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {
-          JIAOS_LLM_PROVIDER: "custom",
-          JIAOS_LLM_BASE_URL: "https://api.moonshot.cn/v1",
-          JIAOS_LLM_MODEL: "kimi-k2.5",
-          JIAOS_LLM_API_KEY: "sk-env-moon",
+          NOVELIX_LLM_PROVIDER: "custom",
+          NOVELIX_LLM_BASE_URL: "https://api.moonshot.cn/v1",
+          NOVELIX_LLM_MODEL: "kimi-k2.5",
+          NOVELIX_LLM_API_KEY: "sk-env-moon",
         },
         project: {},
         process: {},
@@ -368,7 +368,7 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {},
-        project: { JIAOS_LLM_MODEL: "kimi-k2.5" },
+        project: { NOVELIX_LLM_MODEL: "kimi-k2.5" },
         process: {},
       },
     })).rejects.toThrow(/模型.*kimi-k2\.5.*不属于.*google/);
@@ -387,10 +387,10 @@ describe("resolveEffectiveLLMConfig", () => {
       projectRoot: root,
       envLayers: {
         global: {
-          JIAOS_LLM_SERVICE: "ollama",
-          JIAOS_LLM_PROVIDER: "openai",
-          JIAOS_LLM_BASE_URL: "http://127.0.0.1:11434/v1",
-          JIAOS_LLM_MODEL: "qwen3.6:35b-a3b",
+          NOVELIX_LLM_SERVICE: "ollama",
+          NOVELIX_LLM_PROVIDER: "openai",
+          NOVELIX_LLM_BASE_URL: "http://127.0.0.1:11434/v1",
+          NOVELIX_LLM_MODEL: "qwen3.6:35b-a3b",
         },
         project: {},
         process: {},

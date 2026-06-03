@@ -19,8 +19,8 @@ const logger = {
   error: vi.fn(),
 };
 
-vi.mock("@actalk/jiaos-core", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@actalk/jiaos-core")>();
+vi.mock("@actalk/novelix-core", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@actalk/novelix-core")>();
 
   class MockStateManager {
     constructor(private readonly root: string) {}
@@ -77,7 +77,7 @@ vi.mock("@actalk/jiaos-core", async (importOriginal) => {
     isSafeBookId: actual.isSafeBookId,
     chatCompletion: chatCompletionMock,
     loadProjectConfig: loadProjectConfigMock,
-    GLOBAL_ENV_PATH: join(tmpdir(), "jiaos-global.env"),
+    GLOBAL_ENV_PATH: join(tmpdir(), "novelix-global.env"),
   };
 });
 
@@ -117,7 +117,7 @@ describe("Phase 5 hotfix 1 — Studio truth file endpoints", () => {
 
   beforeEach(async () => {
     root = await mkdtemp(join(tmpdir(), "studio-hotfix-"));
-    await writeFile(join(root, "jiaos.json"), JSON.stringify(projectConfig, null, 2), "utf-8");
+    await writeFile(join(root, "novelix.json"), JSON.stringify(projectConfig, null, 2), "utf-8");
     bookDir = join(root, "books", "hotfix-book");
     storyDir = join(bookDir, "story");
     await mkdir(join(storyDir, "outline"), { recursive: true });

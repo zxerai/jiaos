@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { localizeKnownRuntimeMessage } from "../lib/error-copy";
 
 const BASE = "/api/v1";
-const API_INVALIDATE_EVENT = "jiaos:api-invalidate";
+const API_INVALIDATE_EVENT = "novelix:api-invalidate";
 
 interface ApiInvalidateDetail {
   readonly paths: ReadonlyArray<string>;

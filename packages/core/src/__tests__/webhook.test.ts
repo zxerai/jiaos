@@ -43,7 +43,7 @@ describe("sendWebhook", () => {
     const expectedSig = createHmac("sha256", secret)
       .update(opts.body)
       .digest("hex");
-    expect(opts.headers["X-JiaOS-Signature"]).toBe(`sha256=${expectedSig}`);
+    expect(opts.headers["X-Novelix-Signature"]).toBe(`sha256=${expectedSig}`);
   });
 
   it("skips event when not in subscribed events list", async () => {

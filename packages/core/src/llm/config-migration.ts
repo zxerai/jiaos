@@ -8,7 +8,7 @@ export interface MigrationResult {
 }
 
 export async function migrateConfig(projectRoot: string): Promise<MigrationResult> {
-  const configPath = join(projectRoot, "jiaos.json");
+  const configPath = join(projectRoot, "novelix.json");
   let raw: string;
   try {
     raw = await readFile(configPath, "utf-8");

@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { DEFAULT_REVISE_MODE, PipelineRunner, type ReviseMode } from "@actalk/jiaos-core";
+import { DEFAULT_REVISE_MODE, PipelineRunner, type ReviseMode } from "@actalk/novelix-core";
 import { loadConfig, buildPipelineConfig, findProjectRoot, resolveBookId, log, logError } from "../utils.js";
 
 export const reviseCommand = new Command("revise")

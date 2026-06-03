@@ -1,5 +1,5 @@
 import type { RouterContext } from "./context.js";
-import type { StateManager } from "@actalk/jiaos-core";
+import type { StateManager } from "@actalk/novelix-core";
 
 // ---- 书籍概要辅助函数 ----
 
@@ -172,7 +172,7 @@ export function registerBookRoutes(ctx: RouterContext): void {
     broadcast("write:start", { bookId: id });
 
     // Fire and forget — progress/completion/errors pushed via SSE
-    const { PipelineRunner } = await import("@actalk/jiaos-core");
+    const { PipelineRunner } = await import("@actalk/novelix-core");
     const pipeline = new PipelineRunner(await buildPipelineConfig());
     pipeline.writeNextChapter(id, body.wordCount).then(
       (result) => {
@@ -218,7 +218,7 @@ export function registerBookRoutes(ctx: RouterContext): void {
 
     (async () => {
       try {
-        const { PipelineRunner } = await import("@actalk/jiaos-core");
+        const { PipelineRunner } = await import("@actalk/novelix-core");
         const pipeline = new PipelineRunner(await buildPipelineConfig());
         const result = await pipeline.writeDraft(
           id,

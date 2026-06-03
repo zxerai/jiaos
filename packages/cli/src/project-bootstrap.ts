@@ -10,7 +10,7 @@ export interface ProjectBootstrapOptions {
 async function hasGlobalConfig(): Promise<boolean> {
   try {
     const content = await readFile(GLOBAL_ENV_PATH, "utf-8");
-    return content.includes("JIAOS_LLM_API_KEY=") && !content.includes("your-api-key-here");
+    return content.includes("NOVELIX_LLM_API_KEY=") && !content.includes("your-api-key-here");
   } catch {
     return false;
   }
@@ -89,13 +89,13 @@ function buildProjectEnvTemplate(globalConfigured: boolean): string {
   if (globalConfigured) {
     return [
       "# Project-level LLM overrides (optional)",
-      "# Global config at ~/.jiaos/.env will be used by default.",
+      "# Global config at ~/.novelix/.env will be used by default.",
       "# Switch Studio to '使用 Studio 配置' if you want per-project service settings.",
       "# Uncomment below to override for this project only:",
-      "# JIAOS_LLM_PROVIDER=openai",
-      "# JIAOS_LLM_BASE_URL=",
-      "# JIAOS_LLM_API_KEY=",
-      "# JIAOS_LLM_MODEL=",
+      "# NOVELIX_LLM_PROVIDER=openai",
+      "# NOVELIX_LLM_BASE_URL=",
+      "# NOVELIX_LLM_API_KEY=",
+      "# NOVELIX_LLM_MODEL=",
       "",
       "# Web search (optional):",
       "# TAVILY_API_KEY=tvly-xxxxx",
@@ -107,12 +107,12 @@ function buildProjectEnvTemplate(globalConfigured: boolean): string {
     "# Optional project-level LLM overrides",
     "# Studio can manage provider / model / key without editing this file.",
     "# Uncomment only if you want this directory to force env-based config:",
-    "# JIAOS_LLM_PROVIDER=openai",
-    "# JIAOS_LLM_BASE_URL=",
-    "# JIAOS_LLM_API_KEY=",
-    "# JIAOS_LLM_MODEL=",
-    "# JIAOS_LLM_API_FORMAT=chat",
-    "# JIAOS_LLM_STREAM=true",
+    "# NOVELIX_LLM_PROVIDER=openai",
+    "# NOVELIX_LLM_BASE_URL=",
+    "# NOVELIX_LLM_API_KEY=",
+    "# NOVELIX_LLM_MODEL=",
+    "# NOVELIX_LLM_API_FORMAT=chat",
+    "# NOVELIX_LLM_STREAM=true",
     "",
     "# Web search (optional):",
     "# TAVILY_API_KEY=tvly-xxxxx",
@@ -126,10 +126,10 @@ export async function initializeProjectDirectory(
 ): Promise<void> {
   const language = options.language ?? "zh";
   const overwriteSupportFiles = options.overwriteSupportFiles ?? true;
-  const configPath = join(projectDir, "jiaos.json");
+  const configPath = join(projectDir, "novelix.json");
 
   if (await exists(configPath)) {
-    throw new Error(`jiaos.json already exists in ${projectDir}. Use a different directory or delete the existing project.`);
+    throw new Error(`novelix.json already exists in ${projectDir}. Use a different directory or delete the existing project.`);
   }
 
   await mkdir(projectDir, { recursive: true });
@@ -156,7 +156,7 @@ export async function ensureProjectDirectoryInitialized(
   projectDir: string,
   options: Omit<ProjectBootstrapOptions, "overwriteSupportFiles"> = {},
 ): Promise<boolean> {
-  const configPath = join(projectDir, "jiaos.json");
+  const configPath = join(projectDir, "novelix.json");
   if (await exists(configPath)) {
     return false;
   }

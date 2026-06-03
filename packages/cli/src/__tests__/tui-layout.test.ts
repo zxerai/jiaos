@@ -23,7 +23,7 @@ describe("tui layout", () => {
     expect(frame).not.toContain("Conversation");
     expect(frame).not.toContain("Status");
     expect(frame).not.toContain("Composer");
-    expect(frame).toContain("告诉 JiaOS");
+    expect(frame).toContain("告诉 Novelix");
   });
 
   it("keeps the two-line status strip above the composer preview", () => {
@@ -41,8 +41,8 @@ describe("tui layout", () => {
     expect(frame).toContain("writing");
     expect(frame).toContain("user: continue");
     expect(frame).toContain("task.completed: Completed write_next for harbor.");
-    expect(frame.indexOf("task.completed: Completed write_next for harbor.")).toBeLessThan(frame.indexOf("Ask JiaOS"));
-    expect(frame.indexOf("Mode auto")).toBeLessThan(frame.indexOf("Ask JiaOS"));
+    expect(frame.indexOf("task.completed: Completed write_next for harbor.")).toBeLessThan(frame.indexOf("Ask Novelix"));
+    expect(frame.indexOf("Mode auto")).toBeLessThan(frame.indexOf("Ask Novelix"));
   });
 
   it("does not add blank lines before the readline prompt", () => {

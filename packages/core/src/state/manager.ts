@@ -173,13 +173,13 @@ export class StateManager {
   }
 
   async loadProjectConfig(): Promise<Record<string, unknown>> {
-    const configPath = join(this.projectRoot, "jiaos.json");
+    const configPath = join(this.projectRoot, "novelix.json");
     const raw = await readFile(configPath, "utf-8");
     return JSON.parse(raw);
   }
 
   async saveProjectConfig(config: Record<string, unknown>): Promise<void> {
-    const configPath = join(this.projectRoot, "jiaos.json");
+    const configPath = join(this.projectRoot, "novelix.json");
     await writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
   }
 

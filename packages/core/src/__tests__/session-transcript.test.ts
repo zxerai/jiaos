@@ -88,7 +88,7 @@ describe("session transcript codec", () => {
   });
 
   it("跳过坏行并保留合法 event", async () => {
-    const dir = join(projectRoot, ".jiaos", "sessions");
+    const dir = join(projectRoot, ".novelix", "sessions");
     await mkdir(dir, { recursive: true });
     await writeFile(
       join(dir, "s1.jsonl"),

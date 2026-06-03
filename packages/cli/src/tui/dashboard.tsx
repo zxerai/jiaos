@@ -4,7 +4,7 @@ import {
   routeNaturalLanguageIntent,
   type InteractionIntentType,
   type InteractionSession,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import { Box, Text, useApp, useInput } from "ink";
 import { processTuiAgentInput } from "./agent-input.js";
 import { describeActivityState } from "./activity-state.js";

@@ -14,10 +14,10 @@ importers:
 
   packages/cli:
     dependencies:
-      '@actalk/jiaos-core':
+      '@actalk/novelix-core':
         specifier: workspace:*
         version: link:../core
-      '@actalk/jiaos-studio':
+      '@actalk/novelix-studio':
         specifier: workspace:*
         version: link:../studio
       commander:
@@ -103,7 +103,7 @@ importers:
 
   packages/studio:
     dependencies:
-      '@actalk/jiaos-core':
+      '@actalk/novelix-core':
         specifier: workspace:*
         version: link:../core
       '@base-ui/react':

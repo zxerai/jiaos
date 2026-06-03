@@ -135,7 +135,7 @@ describe("public short-fiction chain", () => {
   it("resolves cover generation from project cover config and stored cover secret", async () => {
     const root = await mkdtemp(join(tmpdir(), "jiaos-short-cover-"));
     try {
-      await writeFile(join(root, "jiaos.json"), JSON.stringify({
+      await writeFile(join(root, "novelix.json"), JSON.stringify({
         name: "cover-test",
         version: "0.1.0",
         language: "zh",

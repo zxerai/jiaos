@@ -14,8 +14,8 @@ const {
   buildPipelineConfigMock: vi.fn(),
 }));
 
-vi.mock("@actalk/jiaos-core", async () => {
-  const actual = await vi.importActual<typeof import("@actalk/jiaos-core")>("@actalk/jiaos-core");
+vi.mock("@actalk/novelix-core", async () => {
+  const actual = await vi.importActual<typeof import("@actalk/novelix-core")>("@actalk/novelix-core");
   class PipelineRunnerMock {
     constructor(_config: unknown) {}
     async initBook(_book: unknown, _options?: unknown) {}
@@ -158,7 +158,7 @@ describe("tui agent session bridge", () => {
 
   it("routes explicit create-book instructions directly to shared book creation", async () => {
     const initBookSpy = vi.spyOn(
-      (await import("@actalk/jiaos-core")).PipelineRunner.prototype as any,
+      (await import("@actalk/novelix-core")).PipelineRunner.prototype as any,
       "initBook",
     );
     const { processTuiAgentInput } = await import("../tui/agent-input.js");

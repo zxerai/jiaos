@@ -151,7 +151,7 @@ function toModelInfo(jiaosModel: { id: string; maxOutput: number; contextWindowT
  * listModelsForService（R4 精修）：
  * - 先试 live /models probe（如果 baseUrl + apiKey 具备）
  * - probe 失败或无 apiKey：fallback 到 provider.models（jiaos bank）
- * - 不再做 JIAOS_LLM_MODEL env 补丁（会污染跨 service 菜单；bank 已足够全）
+ * - 不再做 NOVELIX_LLM_MODEL env 补丁（会污染跨 service 菜单；bank 已足够全）
  *
  * custom / newapi / higress 等 baseUrl 空的 gateway provider：
  *   必须传 liveBaseUrl 才能做 probe；否则只依赖 bank。

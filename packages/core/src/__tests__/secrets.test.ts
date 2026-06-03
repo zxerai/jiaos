@@ -16,7 +16,7 @@ describe("secrets", () => {
   });
 
   describe("loadSecrets", () => {
-    it("returns empty when .jiaos/secrets.json does not exist", async () => {
+    it("returns empty when .novelix/secrets.json does not exist", async () => {
       const secrets = await loadSecrets(root);
       expect(secrets).toEqual({ services: {} });
     });

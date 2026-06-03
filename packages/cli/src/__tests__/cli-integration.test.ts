@@ -4,7 +4,7 @@ import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { StateManager } from "@actalk/jiaos-core";
+import { StateManager } from "@actalk/novelix-core";
 
 const testDir = dirname(fileURLToPath(import.meta.url));
 const cliDir = resolve(testDir, "..", "..");
@@ -57,10 +57,10 @@ function runStderr(args: string[], options?: { env?: Record<string, string> }): 
 }
 
 const failingLlmEnv = {
-  JIAOS_LLM_PROVIDER: "openai",
-  JIAOS_LLM_BASE_URL: "http://127.0.0.1:9/v1",
-  JIAOS_LLM_MODEL: "test-model",
-  JIAOS_LLM_API_KEY: "test-key",
+  NOVELIX_LLM_PROVIDER: "openai",
+  NOVELIX_LLM_BASE_URL: "http://127.0.0.1:9/v1",
+  NOVELIX_LLM_MODEL: "test-model",
+  NOVELIX_LLM_API_KEY: "test-key",
 };
 
 describe("CLI integration", () => {
@@ -82,7 +82,7 @@ describe("CLI integration", () => {
   describe("jiaos --help", () => {
     it("prints help with command list", () => {
       const output = run(["--help"]);
-      expect(output).toContain("jiaos");
+      expect(output).toContain("novelix");
       expect(output).toContain("init");
       expect(output).toContain("book");
       expect(output).toContain("write");
@@ -95,8 +95,8 @@ describe("CLI integration", () => {
       expect(output).toContain("Project initialized");
     });
 
-    it("creates jiaos.json with correct structure", async () => {
-      const raw = await readFile(join(projectDir, "jiaos.json"), "utf-8");
+    it("creates novelix.json with correct structure", async () => {
+      const raw = await readFile(join(projectDir, "novelix.json"), "utf-8");
       const config = JSON.parse(raw);
       expect(config.llm).toBeDefined();
       expect(config.llm.provider).toBeDefined();
@@ -107,7 +107,7 @@ describe("CLI integration", () => {
 
     it("creates .env file", async () => {
       const envContent = await readFile(join(projectDir, ".env"), "utf-8");
-      expect(envContent).toContain("JIAOS_LLM_API_KEY");
+      expect(envContent).toContain("NOVELIX_LLM_API_KEY");
     });
 
     it("creates .gitignore", async () => {
@@ -134,8 +134,8 @@ describe("CLI integration", () => {
       expect(output).toContain("Project initialized");
     });
 
-    it("creates jiaos.json in subdirectory", async () => {
-      const raw = await readFile(join(projectDir, "subproject", "jiaos.json"), "utf-8");
+    it("creates novelix.json in subdirectory", async () => {
+      const raw = await readFile(join(projectDir, "subproject", "novelix.json"), "utf-8");
       const config = JSON.parse(raw);
       expect(config.name).toBe("subproject");
     });
@@ -147,7 +147,7 @@ describe("CLI integration", () => {
         const output = run(["init", absoluteDir]);
         expect(output).toContain(`Project initialized at ${absoluteDir}`);
 
-        const raw = await readFile(join(absoluteDir, "jiaos.json"), "utf-8");
+        const raw = await readFile(join(absoluteDir, "novelix.json"), "utf-8");
         const config = JSON.parse(raw);
         expect(config.name).toBe(basename(absoluteDir));
       } finally {
@@ -177,7 +177,7 @@ describe("CLI integration", () => {
 
     it("sets a nested config value", async () => {
       run(["config", "set", "llm.model", "gpt-5"]);
-      const raw = await readFile(join(projectDir, "jiaos.json"), "utf-8");
+      const raw = await readFile(join(projectDir, "novelix.json"), "utf-8");
       const config = JSON.parse(raw);
       expect(config.llm.model).toBe("gpt-5");
     });
@@ -192,7 +192,7 @@ describe("CLI integration", () => {
       const output = run(["config", "set", "inputGovernanceMode", "v2"]);
       expect(output).toContain("Set inputGovernanceMode = v2");
 
-      const raw = await readFile(join(projectDir, "jiaos.json"), "utf-8");
+      const raw = await readFile(join(projectDir, "novelix.json"), "utf-8");
       const config = JSON.parse(raw);
       expect(config.inputGovernanceMode).toBe("v2");
     });
@@ -201,7 +201,7 @@ describe("CLI integration", () => {
       const output = run(["config", "set", "writing.reviewRetries", "3"]);
       expect(output).toContain("Set writing.reviewRetries = 3");
 
-      const raw = await readFile(join(projectDir, "jiaos.json"), "utf-8");
+      const raw = await readFile(join(projectDir, "novelix.json"), "utf-8");
       const config = JSON.parse(raw);
       expect(config.writing.reviewRetries).toBe(3);
     });
@@ -217,7 +217,7 @@ describe("CLI integration", () => {
 
   describe("jiaos interact", () => {
     it("returns structured JSON for shared interaction mode switches", async () => {
-      const initialized = await stat(join(projectDir, "jiaos.json")).then(() => true).catch(() => false);
+      const initialized = await stat(join(projectDir, "novelix.json")).then(() => true).catch(() => false);
       if (!initialized) run(["init"]);
       const envPath = join(projectDir, ".env");
       const originalEnv = await readFile(envPath, "utf-8");
@@ -239,7 +239,7 @@ describe("CLI integration", () => {
     });
 
     it("binds the requested book when interact is called with --book", async () => {
-      const initialized = await stat(join(projectDir, "jiaos.json")).then(() => true).catch(() => false);
+      const initialized = await stat(join(projectDir, "novelix.json")).then(() => true).catch(() => false);
       if (!initialized) run(["init"]);
       const envPath = join(projectDir, ".env");
       const originalEnv = await readFile(envPath, "utf-8");
@@ -292,7 +292,7 @@ describe("CLI integration", () => {
       expect(exitCode).not.toBe(0);
       expect(stderr).toContain("--api-key-env expects an environment variable name");
 
-      const raw = await readFile(join(projectDir, "jiaos.json"), "utf-8");
+      const raw = await readFile(join(projectDir, "novelix.json"), "utf-8");
       const config = JSON.parse(raw);
       expect(config.modelOverrides).toBeUndefined();
     });
@@ -314,7 +314,7 @@ describe("CLI integration", () => {
   describe("jiaos book create", () => {
     it("removes stale incomplete book directories before retrying create", async () => {
       try {
-        await stat(join(projectDir, "jiaos.json"));
+        await stat(join(projectDir, "novelix.json"));
       } catch {
         run(["init"]);
       }
@@ -549,14 +549,14 @@ describe("CLI integration", () => {
   describe("jiaos doctor", () => {
     it("checks environment health", () => {
       const { stdout } = runStderr(["doctor"]);
-      expect(stdout).toContain("JiaOS Doctor");
+      expect(stdout).toContain("Novelix Doctor");
       expect(stdout).toContain("Node.js >= 20");
       expect(stdout).toContain("SQLite memory index");
-      expect(stdout).toContain("jiaos.json");
+      expect(stdout).toContain("novelix.json");
     });
 
     it("repairs missing node runtime pin files for old projects", async () => {
-      await stat(join(projectDir, "jiaos.json")).catch(() => {
+      await stat(join(projectDir, "novelix.json")).catch(() => {
         run(["init"]);
       });
 
@@ -578,10 +578,10 @@ describe("CLI integration", () => {
     });
 
     it("treats localhost OpenAI-compatible endpoints as API-key optional", async () => {
-      await stat(join(projectDir, "jiaos.json")).catch(() => {
+      await stat(join(projectDir, "novelix.json")).catch(() => {
         run(["init"]);
       });
-      const configPath = join(projectDir, "jiaos.json");
+      const configPath = join(projectDir, "novelix.json");
       const envPath = join(projectDir, ".env");
       const originalConfig = await readFile(configPath, "utf-8");
       const originalEnv = await readFile(envPath, "utf-8");
@@ -593,14 +593,14 @@ describe("CLI integration", () => {
         config.llm.model = "gpt-oss:20b";
         await writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
         await writeFile(envPath, [
-          "JIAOS_LLM_PROVIDER=openai",
-          "JIAOS_LLM_BASE_URL=http://127.0.0.1:11434/v1",
-          "JIAOS_LLM_MODEL=gpt-oss:20b",
+          "NOVELIX_LLM_PROVIDER=openai",
+          "NOVELIX_LLM_BASE_URL=http://127.0.0.1:11434/v1",
+          "NOVELIX_LLM_MODEL=gpt-oss:20b",
           "",
         ].join("\n"), "utf-8");
 
         const { stdout } = runStderr(["doctor"], {
-          env: { JIAOS_LLM_API_KEY: "" },
+          env: { NOVELIX_LLM_API_KEY: "" },
         });
         expect(stdout).toContain("LLM API Key");
         expect(stdout).toContain("Optional for local/self-hosted endpoint");
@@ -790,7 +790,7 @@ describe("CLI integration", () => {
 
   describe("jiaos review", () => {
     it("preserves the original chapter snapshot when approving review", async () => {
-      const configPath = join(projectDir, "jiaos.json");
+      const configPath = join(projectDir, "novelix.json");
       const initialized = await stat(configPath).then(() => true).catch(() => false);
       if (!initialized) run(["init"]);
 
@@ -859,7 +859,7 @@ describe("CLI integration", () => {
 
   describe("jiaos plan/compose", () => {
     beforeAll(async () => {
-      const configPath = join(projectDir, "jiaos.json");
+      const configPath = join(projectDir, "novelix.json");
       const initialized = await stat(configPath).then(() => true).catch(() => false);
       if (!initialized) run(["init"]);
 
@@ -974,7 +974,7 @@ describe("CLI integration", () => {
 
   describe("jiaos export", () => {
     beforeAll(async () => {
-      const configPath = join(projectDir, "jiaos.json");
+      const configPath = join(projectDir, "novelix.json");
       const initialized = await stat(configPath).then(() => true).catch(() => false);
       if (!initialized) run(["init"]);
 

@@ -2,7 +2,7 @@ import { Command } from "commander";
 import {
   processProjectInteractionInput,
   type InteractionRuntimeTools,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import { createInteractionTools } from "../interaction/tools.js";
 
 export interface InteractCommandHooks {

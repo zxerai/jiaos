@@ -141,10 +141,10 @@ describe("waitForBookReady", () => {
       fetchBook: async () => {
         throw new Error("Book not found");
       },
-      fetchStatus: async () => ({ status: "error", error: "JIAOS_LLM_API_KEY not set" }),
+      fetchStatus: async () => ({ status: "error", error: "NOVELIX_LLM_API_KEY not set" }),
       delayMs: 0,
       waitImpl: async () => undefined,
-    })).rejects.toThrow("JIAOS_LLM_API_KEY not set");
+    })).rejects.toThrow("NOVELIX_LLM_API_KEY not set");
   });
 });
 

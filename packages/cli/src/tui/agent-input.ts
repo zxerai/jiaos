@@ -4,7 +4,7 @@ import {
   createLLMClient,
   runAgentSession,
   type InteractionSession,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import { persistProjectSession } from "./session-store.js";
 import { buildPipelineConfig, loadConfig } from "../utils.js";
 
@@ -17,7 +17,7 @@ export async function processTuiAgentInput(params: {
 }) {
   const config = await loadConfig({ requireApiKey: false, projectRoot: params.projectRoot });
   const client = createLLMClient(config.llm);
-  const pipeline = new (await import("@actalk/jiaos-core")).PipelineRunner(
+  const pipeline = new (await import("@actalk/novelix-core")).PipelineRunner(
     buildPipelineConfig(config, params.projectRoot, { quiet: true }),
   );
   const userTimestamp = Date.now();

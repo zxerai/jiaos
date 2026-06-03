@@ -528,7 +528,7 @@ describe("session transcript restore", () => {
         role: "assistant",
         content: [{ type: "text", text: "I have processed the tool results." }],
         api: "openai-completions",
-        provider: "jiaos",
+        provider: "novelix",
         model: "synthetic-tool-result-bridge",
         usage,
         stopReason: "stop",

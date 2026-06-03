@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { PipelineRunner } from "@actalk/jiaos-core";
+import { PipelineRunner } from "@actalk/novelix-core";
 import { buildPipelineConfig, findProjectRoot, loadConfig, log, logError, resolveBookId, resolveContext } from "../utils.js";
 
 export const composeCommand = new Command("compose")

@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { PipelineRunner } from "@actalk/jiaos-core";
+import { PipelineRunner } from "@actalk/novelix-core";
 import { loadConfig, buildPipelineConfig, findProjectRoot, resolveContext, resolveBookId, log, logError } from "../utils.js";
 
 export const draftCommand = new Command("draft")

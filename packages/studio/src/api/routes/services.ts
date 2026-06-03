@@ -9,7 +9,7 @@ import {
   COVER_PROVIDER_PRESETS,
   coverSecretKey,
   GLOBAL_ENV_PATH,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -39,10 +39,10 @@ function isHeaderSafeApiKey(v: string): boolean {
 }
 
 async function loadRawConfig(root: string): Promise<Record<string, unknown>> {
-  return JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8")) as Record<string, unknown>;
+  return JSON.parse(await readFile(join(root, "novelix.json"), "utf-8")) as Record<string, unknown>;
 }
 async function saveRawConfig(root: string, config: Record<string, unknown>): Promise<void> {
-  await writeFile(join(root, "jiaos.json"), JSON.stringify(config, null, 2), "utf-8");
+  await writeFile(join(root, "novelix.json"), JSON.stringify(config, null, 2), "utf-8");
 }
 
 // ---- 路由注册 ----

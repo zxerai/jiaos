@@ -26,7 +26,7 @@ export function capContextBlock(content: string, options: ContextCapOptions): st
   if (content.length <= maxChars) return content;
 
   const omitted = content.length - maxChars;
-  const note = `\n\n[JiaOS context budget: omitted about ${omitted} chars from ${options.label}; kept beginning and latest tail.]\n\n`;
+  const note = `\n\n[Novelix context budget: omitted about ${omitted} chars from ${options.label}; kept beginning and latest tail.]\n\n`;
   if (maxChars <= note.length + 2) {
     return content.slice(0, maxChars);
   }

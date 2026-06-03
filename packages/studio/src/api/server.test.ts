@@ -121,8 +121,8 @@ const logger = {
   error: vi.fn(),
 };
 
-vi.mock("@actalk/jiaos-core", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@actalk/jiaos-core")>();
+vi.mock("@actalk/novelix-core", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@actalk/novelix-core")>();
 
   class MockSessionAlreadyMigratedError extends Error {
     constructor(message = "Session already migrated") {
@@ -244,7 +244,7 @@ vi.mock("@actalk/jiaos-core", async (importOriginal) => {
     getAllEndpoints: getAllEndpointsMock,
     probeModelsFromUpstream: probeModelsFromUpstreamMock,
     fetchWithProxy: vi.fn((input: Parameters<typeof fetch>[0], init?: RequestInit) => fetch(input, init)),
-    GLOBAL_ENV_PATH: join(tmpdir(), "jiaos-global.env"),
+    GLOBAL_ENV_PATH: join(tmpdir(), "novelix-global.env"),
   };
 });
 
@@ -285,7 +285,7 @@ describe("createStudioServer daemon lifecycle", () => {
 
   beforeEach(async () => {
     root = await mkdtemp(join(tmpdir(), "jiaos-studio-server-"));
-    await writeFile(join(root, "jiaos.json"), JSON.stringify(projectConfig, null, 2), "utf-8");
+    await writeFile(join(root, "novelix.json"), JSON.stringify(projectConfig, null, 2), "utf-8");
     schedulerStartMock.mockReset();
     initBookMock.mockReset();
     runRadarMock.mockReset();
@@ -363,7 +363,7 @@ describe("createStudioServer daemon lifecycle", () => {
     });
     resolveSessionActiveBookMock.mockResolvedValue(undefined);
     loadProjectConfigMock.mockImplementation(async () => {
-      const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8")) as Record<string, unknown>;
+      const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8")) as Record<string, unknown>;
       return {
         ...cloneProjectConfig(),
         ...raw,
@@ -448,11 +448,11 @@ describe("createStudioServer daemon lifecycle", () => {
 
   afterEach(async () => {
     await rm(root, { recursive: true, force: true });
-    await rm(join(tmpdir(), "jiaos-global.env"), { force: true });
+    await rm(join(tmpdir(), "novelix-global.env"), { force: true });
   });
 
   it("uses the real core bookId validator in the Studio safety mock", async () => {
-    const { isSafeBookId } = await import("@actalk/jiaos-core");
+    const { isSafeBookId } = await import("@actalk/novelix-core");
 
     expect(vi.isMockFunction(isSafeBookId)).toBe(false);
     expect(isSafeBookId("demo-book")).toBe(true);
@@ -774,7 +774,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("returns all bank services with group fields and custom services", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -858,7 +858,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("returns custom model groups through the slow probe path", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -986,7 +986,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("merges service config patches instead of overwriting existing services", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1016,7 +1016,7 @@ describe("createStudioServer daemon lifecycle", () => {
 
     expect(save.status).toBe(200);
 
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     expect(raw.llm.services).toEqual([
       { service: "moonshot", temperature: 0.5, apiFormat: "responses", stream: false },
       { service: "custom", name: "内网GPT", baseUrl: "https://llm.internal.corp/v1", temperature: 0.9, apiFormat: "responses", stream: false },
@@ -1024,7 +1024,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("refreshes top-level llm mirror when switching from custom baseUrl to a preset service", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         provider: "openai",
@@ -1058,7 +1058,7 @@ describe("createStudioServer daemon lifecycle", () => {
 
     expect(save.status).toBe(200);
 
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     expect(raw.llm.service).toBe("kkaiapi");
     expect(raw.llm.defaultModel).toBe("deepseek-v4-flash");
     expect(raw.llm.model).toBe("deepseek-v4-flash");
@@ -1067,7 +1067,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("deletes a custom service config and stored secret", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         service: "custom:内网GPT",
@@ -1093,7 +1093,7 @@ describe("createStudioServer daemon lifecycle", () => {
     });
 
     expect(response.status).toBe(200);
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     expect(raw.llm.services).toEqual([
       { service: "moonshot", temperature: 1, apiFormat: "chat", stream: true },
     ]);
@@ -1108,18 +1108,18 @@ describe("createStudioServer daemon lifecycle", () => {
 
   it("reports config source and detected env overrides for Studio switching", async () => {
     await writeFile(join(root, ".env"), [
-      "JIAOS_LLM_PROVIDER=openai",
-      "JIAOS_LLM_BASE_URL=https://project.example.com/v1",
-      "JIAOS_LLM_MODEL=gpt-5.4",
-      "JIAOS_LLM_API_KEY=sk-project",
+      "NOVELIX_LLM_PROVIDER=openai",
+      "NOVELIX_LLM_BASE_URL=https://project.example.com/v1",
+      "NOVELIX_LLM_MODEL=gpt-5.4",
+      "NOVELIX_LLM_API_KEY=sk-project",
     ].join("\n"), "utf-8");
-    await writeFile(join(tmpdir(), "jiaos-global.env"), [
-      "JIAOS_LLM_PROVIDER=openai",
-      "JIAOS_LLM_BASE_URL=https://global.example.com/v1",
-      "JIAOS_LLM_MODEL=gpt-4o",
-      "JIAOS_LLM_API_KEY=sk-global",
+    await writeFile(join(tmpdir(), "novelix-global.env"), [
+      "NOVELIX_LLM_PROVIDER=openai",
+      "NOVELIX_LLM_BASE_URL=https://global.example.com/v1",
+      "NOVELIX_LLM_MODEL=gpt-4o",
+      "NOVELIX_LLM_API_KEY=sk-global",
     ].join("\n"), "utf-8");
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         ...projectConfig.llm,
@@ -1155,7 +1155,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("allows switching config source without overwriting services", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1177,7 +1177,7 @@ describe("createStudioServer daemon lifecycle", () => {
 
     expect(save.status).toBe(200);
 
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     expect(raw.llm.configSource).toBe("studio");
     expect(raw.llm.services).toEqual([
       { service: "moonshot", temperature: 1 },
@@ -1186,7 +1186,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("returns the saved default service and model for Studio chat selection", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1226,7 +1226,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("tests and lists models for custom services using baseUrl and stored config", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1275,7 +1275,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("does not probe stale global fallback models for custom services when /models is unavailable", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         configSource: "env",
@@ -1285,9 +1285,9 @@ describe("createStudioServer daemon lifecycle", () => {
       },
     }, null, 2), "utf-8");
     await writeFile(join(root, ".env"), [
-      "JIAOS_LLM_MODEL=MiniMax-M2.7",
-      "JIAOS_LLM_BASE_URL=https://api.minimax.com/v1",
-      "JIAOS_LLM_API_KEY=sk-minimax",
+      "NOVELIX_LLM_MODEL=MiniMax-M2.7",
+      "NOVELIX_LLM_BASE_URL=https://api.minimax.com/v1",
+      "NOVELIX_LLM_API_KEY=sk-minimax",
     ].join("\n"), "utf-8");
 
     createLLMClientMock.mockImplementation(((cfg: unknown) => cfg) as any);
@@ -1331,7 +1331,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("falls back to the detected/default model when custom /models is unavailable", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         defaultModel: "MiniMax-M2.7",
@@ -1396,7 +1396,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("uses the MiniMax OpenAI-compatible preset during service probe", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1449,7 +1449,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("uses the bank endpoint check model before the global default during service probe", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1623,7 +1623,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("uses discovered Ollama models without requiring an API key or the built-in check model", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1663,7 +1663,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("does not fall back to the global default model when a bank endpoint probe fails", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1706,7 +1706,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("returns a Google-specific diagnostic when Gemini probe returns 400", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1750,7 +1750,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("does not return OpenAI-compatible Bailian models from the Anthropic channel connection test", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1824,7 +1824,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("keys cached model lists by baseUrl so custom endpoints do not leak stale results", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1865,7 +1865,7 @@ describe("createStudioServer daemon lifecycle", () => {
       models: [{ id: "model-a", name: "model-a" }],
     });
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         services: [
@@ -1933,7 +1933,7 @@ describe("createStudioServer daemon lifecycle", () => {
     });
     expect(saveConfig.status).toBe(200);
 
-    const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8"));
+    const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8"));
     expect(raw.llm.cover).toEqual({
       service: "kkaiapi",
       model: "gpt-image-2",
@@ -1973,7 +1973,7 @@ describe("createStudioServer daemon lifecycle", () => {
     const unsupportedRoot = await app.request("http://localhost/api/v1/project/files/books/demo/cover.png");
     expect(unsupportedRoot.status).toBe(400);
 
-    const traversal = await app.request("http://localhost/api/v1/project/files/../jiaos.json");
+    const traversal = await app.request("http://localhost/api/v1/project/files/../novelix.json");
     expect([400, 404]).toContain(traversal.status);
   });
 
@@ -2005,7 +2005,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("reports async create failures through the create-status endpoint", async () => {
-    processProjectInteractionRequestMock.mockRejectedValueOnce(new Error("JIAOS_LLM_API_KEY not set"));
+    processProjectInteractionRequestMock.mockRejectedValueOnce(new Error("NOVELIX_LLM_API_KEY not set"));
 
     const { createStudioServer } = await import("./server.js");
     const app = createStudioServer(cloneProjectConfig() as never, root);
@@ -2028,7 +2028,7 @@ describe("createStudioServer daemon lifecycle", () => {
     expect(status.status).toBe(200);
     await expect(status.json()).resolves.toMatchObject({
       status: "error",
-      error: "JIAOS_LLM_API_KEY not set",
+      error: "NOVELIX_LLM_API_KEY not set",
     });
   });
 
@@ -2139,7 +2139,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("creates books with Studio Ollama config without requiring an API key", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         configSource: "studio",
@@ -2389,7 +2389,7 @@ describe("createStudioServer daemon lifecycle", () => {
 
   it("passes configured long-form writing review retries into Studio write-next", async () => {
     await writeFile(
-      join(root, "jiaos.json"),
+      join(root, "novelix.json"),
       JSON.stringify({
         ...cloneProjectConfig(),
         writing: { reviewRetries: 3 },
@@ -2412,7 +2412,7 @@ describe("createStudioServer daemon lifecycle", () => {
     }));
   });
 
-  it("handles explicit chat chapter edits outside the JiaOS writing agent", async () => {
+  it("handles explicit chat chapter edits outside the Novelix writing agent", async () => {
     loadChapterIndexMock.mockResolvedValueOnce([{
       number: 3,
       title: "Demo",
@@ -2700,7 +2700,7 @@ describe("createStudioServer daemon lifecycle", () => {
   });
 
   it("allows /api/agent to use explicit service+model when Studio config has no defaultModel", async () => {
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         configSource: "studio",
@@ -2710,7 +2710,7 @@ describe("createStudioServer daemon lifecycle", () => {
       },
     }, null, 2), "utf-8");
     loadProjectConfigMock.mockImplementation(async () => {
-      const raw = JSON.parse(await readFile(join(root, "jiaos.json"), "utf-8")) as Record<string, unknown>;
+      const raw = JSON.parse(await readFile(join(root, "novelix.json"), "utf-8")) as Record<string, unknown>;
       return {
         ...cloneProjectConfig(),
         ...raw,
@@ -2771,7 +2771,7 @@ describe("createStudioServer daemon lifecycle", () => {
       contextWindow: 0,
       maxTokens: 16384,
     };
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       ...projectConfig,
       llm: {
         configSource: "studio",

@@ -5,7 +5,7 @@ import type {
   ProjectConfig,
   LogSink,
   LogEntry,
-} from "@actalk/jiaos-core";
+} from "@actalk/novelix-core";
 
 export interface RouterContext {
   readonly app: Hono;

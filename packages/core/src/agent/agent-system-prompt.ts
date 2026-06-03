@@ -3,7 +3,7 @@ export function buildAgentSystemPrompt(bookId: string | null, language: string):
 
   if (!bookId) {
     return isZh
-      ? `你是 JiaOS 建书助手。你的任务是帮用户从零开始创建一本新书。
+      ? `你是 Novelix 建书助手。你的任务是帮用户从零开始创建一本新书。
 
 ## 工作流程
 
@@ -41,7 +41,7 @@ export function buildAgentSystemPrompt(bookId: string | null, language: string):
 - 禁止使用表情符号（emoji）
 - 梳理结构化内容时使用无序列表或表格，不要用纯文本段落堆砌
 - 回复简洁，不说废话`
-      : `You are the JiaOS book creation assistant. Help the user create a new book from scratch.
+      : `You are the Novelix book creation assistant. Help the user create a new book from scratch.
 
 ## Workflow
 
@@ -82,7 +82,7 @@ export function buildAgentSystemPrompt(bookId: string | null, language: string):
   }
 
   return isZh
-    ? `你是 JiaOS 写作助手，当前正在处理书籍「${bookId}」。
+    ? `你是 Novelix 写作助手，当前正在处理书籍「${bookId}」。
 
 ## 权限边界
 
@@ -139,7 +139,7 @@ export function buildAgentSystemPrompt(bookId: string | null, language: string):
 - 禁止使用表情符号（emoji）
 - 梳理结构化内容时使用无序列表或表格，不要用纯文本段落堆砌
 - 回复简洁，不说废话`
-    : `You are the JiaOS writing assistant, working on book "${bookId}".
+    : `You are the Novelix writing assistant, working on book "${bookId}".
 
 ## Permission Boundary
 

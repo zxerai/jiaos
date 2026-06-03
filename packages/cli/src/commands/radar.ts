@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { PipelineRunner } from "@actalk/jiaos-core";
+import { PipelineRunner } from "@actalk/novelix-core";
 import { loadConfig, buildPipelineConfig, findProjectRoot, log, logError } from "../utils.js";
 import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";

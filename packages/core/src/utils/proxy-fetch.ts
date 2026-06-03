@@ -6,7 +6,7 @@ type FetchInitWithDispatcher = RequestInit & { dispatcher?: unknown };
 export function resolveProxyUrl(explicitProxyUrl?: string, env: ProxyEnv = process.env): string | undefined {
   const candidate = [
     explicitProxyUrl,
-    env.JIAOS_LLM_PROXY_URL,
+    env.NOVELIX_LLM_PROXY_URL,
     env.HTTPS_PROXY,
     env.https_proxy,
     env.HTTP_PROXY,

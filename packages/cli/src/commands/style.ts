@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { StateManager, analyzeStyle, PipelineRunner } from "@actalk/jiaos-core";
+import { StateManager, analyzeStyle, PipelineRunner } from "@actalk/novelix-core";
 import { loadConfig, buildPipelineConfig, findProjectRoot, resolveBookId, log, logError } from "../utils.js";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join, resolve } from "node:path";

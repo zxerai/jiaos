@@ -14,7 +14,7 @@ export default defineConfig({
     port: 4567,
     proxy: {
       "/api/v1/events": {
-        target: `http://localhost:${process.env.JIAOS_STUDIO_PORT ?? "4569"}`,
+        target: `http://localhost:${process.env.NOVELIX_STUDIO_PORT ?? "4569"}`,
         changeOrigin: true,
         // SSE needs unbuffered streaming — bypass http-proxy response handling
         selfHandleResponse: true,
@@ -26,7 +26,7 @@ export default defineConfig({
         },
       },
       "/api": {
-        target: `http://localhost:${process.env.JIAOS_STUDIO_PORT ?? "4569"}`,
+        target: `http://localhost:${process.env.NOVELIX_STUDIO_PORT ?? "4569"}`,
         changeOrigin: true,
       },
     },

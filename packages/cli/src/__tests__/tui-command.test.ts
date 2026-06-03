@@ -38,7 +38,7 @@ describe("tui command", () => {
 
     await program.parseAsync([], { from: "user" });
 
-    const config = JSON.parse(await readFile(join(tempDir, "jiaos.json"), "utf-8"));
+    const config = JSON.parse(await readFile(join(tempDir, "novelix.json"), "utf-8"));
     expect(config.name).toMatch(/^jiaos-default-studio-/);
     expect(config.llm.configSource).toBe("studio");
     expect(config.llm.model).toBe("");
@@ -76,7 +76,7 @@ describe("tui command", () => {
 
     await program.parseAsync(["studio"], { from: "user" });
 
-    const config = JSON.parse(await readFile(join(tempDir, "jiaos.json"), "utf-8"));
+    const config = JSON.parse(await readFile(join(tempDir, "novelix.json"), "utf-8"));
     expect(config.llm.configSource).toBe("studio");
     expect(launchStudio).toHaveBeenCalledTimes(1);
     const [calledRoot, calledPort] = launchStudio.mock.calls[0] as unknown as [string, string];

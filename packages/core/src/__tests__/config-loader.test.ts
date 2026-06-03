@@ -5,17 +5,17 @@ import { afterEach, describe, expect, it } from "vitest";
 import { loadProjectConfig } from "../utils/config-loader.js";
 
 const ENV_KEYS = [
-  "JIAOS_LLM_SERVICE",
-  "JIAOS_LLM_PROVIDER",
-  "JIAOS_LLM_BASE_URL",
-  "JIAOS_LLM_MODEL",
-  "JIAOS_LLM_API_KEY",
-  "JIAOS_LLM_TEMPERATURE",
-  "JIAOS_LLM_THINKING_BUDGET",
-  "JIAOS_LLM_API_FORMAT",
-  "JIAOS_LLM_STREAM",
-  "JIAOS_LLM_EXTRA_top_p",
-  "JIAOS_DEFAULT_LANGUAGE",
+  "NOVELIX_LLM_SERVICE",
+  "NOVELIX_LLM_PROVIDER",
+  "NOVELIX_LLM_BASE_URL",
+  "NOVELIX_LLM_MODEL",
+  "NOVELIX_LLM_API_KEY",
+  "NOVELIX_LLM_TEMPERATURE",
+  "NOVELIX_LLM_THINKING_BUDGET",
+  "NOVELIX_LLM_API_FORMAT",
+  "NOVELIX_LLM_STREAM",
+  "NOVELIX_LLM_EXTRA_top_p",
+  "NOVELIX_DEFAULT_LANGUAGE",
 ] as const;
 
 describe("loadProjectConfig local provider auth", () => {
@@ -43,7 +43,7 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "local-project",
       version: "0.1.0",
       llm: {
@@ -68,7 +68,7 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "remote-project",
       version: "0.1.0",
       llm: {
@@ -78,7 +78,7 @@ describe("loadProjectConfig local provider auth", () => {
       },
     }, null, 2), "utf-8");
     await writeFile(join(root, ".env"), "", "utf-8");
-    await expect(loadProjectConfig(root)).rejects.toThrow(/JIAOS_LLM_API_KEY not set/i);
+    await expect(loadProjectConfig(root)).rejects.toThrow(/NOVELIX_LLM_API_KEY not set/i);
   });
 
   it("loads service-based config using defaultModel and project secrets", async () => {
@@ -88,7 +88,7 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "service-project",
       version: "0.1.0",
       language: "zh",
@@ -124,7 +124,7 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "minimax-project",
       version: "0.1.0",
       language: "zh",
@@ -159,7 +159,7 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "custom-project",
       version: "0.1.0",
       language: "zh",
@@ -197,7 +197,7 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "studio-source-project",
       version: "0.1.0",
       language: "zh",
@@ -211,10 +211,10 @@ describe("loadProjectConfig local provider auth", () => {
       notify: [],
     }, null, 2), "utf-8");
     await writeFile(join(root, ".env"), [
-      "JIAOS_LLM_PROVIDER=openai",
-      "JIAOS_LLM_BASE_URL=https://api-vip.codex-for.me/v1",
-      "JIAOS_LLM_MODEL=gpt-5.4",
-      "JIAOS_LLM_API_KEY=sk-env",
+      "NOVELIX_LLM_PROVIDER=openai",
+      "NOVELIX_LLM_BASE_URL=https://api-vip.codex-for.me/v1",
+      "NOVELIX_LLM_MODEL=gpt-5.4",
+      "NOVELIX_LLM_API_KEY=sk-env",
     ].join("\n"), "utf-8");
     await mkdir(join(root, ".jiaos"), { recursive: true });
     await writeFile(
@@ -239,7 +239,7 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "studio-stale-project",
       version: "0.1.0",
       language: "zh",
@@ -258,10 +258,10 @@ describe("loadProjectConfig local provider auth", () => {
       notify: [],
     }, null, 2), "utf-8");
     await writeFile(join(root, ".env"), [
-      "JIAOS_LLM_PROVIDER=custom",
-      "JIAOS_LLM_BASE_URL=https://api.moonshot.cn/v1",
-      "JIAOS_LLM_MODEL=kimi-k2.5",
-      "JIAOS_LLM_API_KEY=sk-env-moon",
+      "NOVELIX_LLM_PROVIDER=custom",
+      "NOVELIX_LLM_BASE_URL=https://api.moonshot.cn/v1",
+      "NOVELIX_LLM_MODEL=kimi-k2.5",
+      "NOVELIX_LLM_API_KEY=sk-env-moon",
     ].join("\n"), "utf-8");
     await mkdir(join(root, ".jiaos"), { recursive: true });
     await writeFile(
@@ -292,12 +292,12 @@ describe("loadProjectConfig local provider auth", () => {
       process.env[key] = "";
     }
 
-    process.env.JIAOS_LLM_PROVIDER = "openai";
-    process.env.JIAOS_LLM_BASE_URL = "https://api-vip.codex-for.me/v1";
-    process.env.JIAOS_LLM_MODEL = "gpt-5.4";
-    process.env.JIAOS_LLM_API_KEY = "sk-env";
+    process.env.NOVELIX_LLM_PROVIDER = "openai";
+    process.env.NOVELIX_LLM_BASE_URL = "https://api-vip.codex-for.me/v1";
+    process.env.NOVELIX_LLM_MODEL = "gpt-5.4";
+    process.env.NOVELIX_LLM_API_KEY = "sk-env";
 
-    await writeFile(join(root, "jiaos.json"), JSON.stringify({
+    await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "studio-bootstrap-project",
       version: "0.1.0",
       language: "zh",

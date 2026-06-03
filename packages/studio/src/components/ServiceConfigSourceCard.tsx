@@ -80,7 +80,7 @@ export function ServiceConfigSourceCard({ onChange }: { onChange?: () => void })
   const { configSource, envConfig } = data;
   const storedConfigSource = data.storedConfigSource ?? configSource;
   const activeEnvSummary = envConfig.effectiveSource === "project" ? envConfig.project : envConfig.global;
-  const envLabel = envConfig.effectiveSource === "project" ? "项目 .env" : envConfig.effectiveSource === "global" ? "全局 ~/.jiaos/.env" : null;
+  const envLabel = envConfig.effectiveSource === "project" ? "项目 .env" : envConfig.effectiveSource === "global" ? "全局 ~/.novelix/.env" : null;
   const envDetected = envConfig.project.detected || envConfig.global.detected;
 
   return (

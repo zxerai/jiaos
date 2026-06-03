@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { ConsolidatorAgent } from "@actalk/jiaos-core";
+import { ConsolidatorAgent } from "@actalk/novelix-core";
 import { loadConfig, buildPipelineConfig, findProjectRoot, resolveBookId, log, logError } from "../utils.js";
 
 export const consolidateCommand = new Command("consolidate")
@@ -19,7 +19,7 @@ export const consolidateCommand = new Command("consolidate")
         projectRoot: root,
       });
 
-      const { StateManager } = await import("@actalk/jiaos-core");
+      const { StateManager } = await import("@actalk/novelix-core");
       const state = new StateManager(root);
       const bookDir = state.bookDir(bookId);
 

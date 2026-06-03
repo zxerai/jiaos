@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export type Theme = "light" | "dark";
 
-const THEME_STORAGE_KEY = "jiaos:studio:theme";
+const THEME_STORAGE_KEY = "novelix:studio:theme";
 
 interface ThemeStorageLike {
   getItem(key: string): string | null;

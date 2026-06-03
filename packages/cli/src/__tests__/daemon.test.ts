@@ -21,7 +21,7 @@ vi.mock("node:fs", () => ({
   createWriteStream: createWriteStreamMock,
 }));
 
-vi.mock("@actalk/jiaos-core", () => ({
+vi.mock("@actalk/novelix-core", () => ({
   Scheduler: class {
     start = schedulerStartMock;
     stop = schedulerStopMock;

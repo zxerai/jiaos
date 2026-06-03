@@ -248,7 +248,7 @@ describe("chatCompletion via pi-ai", () => {
     await chatCompletion(client, "test-model", [{ role: "user", content: "hi" }]);
 
     const opts = mockStreamSimple.mock.calls[0]?.[2] as { headers?: Record<string, string> };
-    expect(opts.headers).toMatchObject({ "User-Agent": "JiaOS/1.3.5", "X-Valid": "ok" });
+    expect(opts.headers).toMatchObject({ "User-Agent": "Novelix/1.3.5", "X-Valid": "ok" });
     expect(opts.headers).not.toHaveProperty("X-Bad");
   });
 

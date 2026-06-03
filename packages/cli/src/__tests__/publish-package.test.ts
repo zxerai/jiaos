@@ -70,20 +70,20 @@ describe.sequential("publish packaging", () => {
 
       await writeFile(
         join(tempRoot, "package.json"),
-        `${JSON.stringify({ name: "jiaos", version: "0.4.6" }, null, 2)}\n`,
+        `${JSON.stringify({ name: "novelix", version: "0.4.6" }, null, 2)}\n`,
       );
       await writeFile(
         join(tempCoreDir, "package.json"),
-        `${JSON.stringify({ name: "@actalk/jiaos-core", version: "0.4.6" }, null, 2)}\n`,
+        `${JSON.stringify({ name: "@actalk/novelix-core", version: "0.4.6" }, null, 2)}\n`,
       );
       await writeFile(
         join(tempCliDir, "package.json"),
         `${JSON.stringify(
           {
-            name: "@actalk/jiaos",
+            name: "@actalk/novelix",
             version: "0.4.6",
             dependencies: {
-              "@actalk/jiaos-core": "workspace:*",
+              "@actalk/novelix-core": "workspace:*",
               commander: "^13.0.0",
             },
           },
@@ -109,7 +109,7 @@ describe.sequential("publish packaging", () => {
       expect(rootPackageJson.version).toBe("0.4.8-canary.7");
       expect(corePackageJson.version).toBe("0.4.8-canary.7");
       expect(cliPackageJson.version).toBe("0.4.8-canary.7");
-      expect(cliPackageJson.dependencies["@actalk/jiaos-core"]).toBe("0.4.8-canary.7");
+      expect(cliPackageJson.dependencies["@actalk/novelix-core"]).toBe("0.4.8-canary.7");
     } finally {
       await rm(tempRoot, { recursive: true, force: true });
     }
@@ -118,8 +118,8 @@ describe.sequential("publish packaging", () => {
   it("keeps source CLI dependencies linked through the workspace protocol", async () => {
     const cliPackageJson = await sourceCliPackageJsonPromise;
 
-    expect(cliPackageJson.dependencies["@actalk/jiaos-core"]).toBe("workspace:*");
-    expect(cliPackageJson.dependencies["@actalk/jiaos-studio"]).toBe("workspace:*");
+    expect(cliPackageJson.dependencies["@actalk/novelix-core"]).toBe("workspace:*");
+    expect(cliPackageJson.dependencies["@actalk/novelix-studio"]).toBe("workspace:*");
   });
 
   it("verifies publishable manifests before npm publish runs", async () => {
@@ -148,20 +148,20 @@ describe.sequential("publish packaging", () => {
 
       await writeFile(
         join(tempRoot, "package.json"),
-        `${JSON.stringify({ name: "jiaos", version: "0.5.1" }, null, 2)}\n`,
+        `${JSON.stringify({ name: "novelix", version: "0.5.1" }, null, 2)}\n`,
       );
       await writeFile(
         join(tempCoreDir, "package.json"),
-        `${JSON.stringify({ name: "@actalk/jiaos-core", version: "0.5.1" }, null, 2)}\n`,
+        `${JSON.stringify({ name: "@actalk/novelix-core", version: "0.5.1" }, null, 2)}\n`,
       );
       await writeFile(
         join(tempCliDir, "package.json"),
         `${JSON.stringify(
           {
-            name: "@actalk/jiaos",
+            name: "@actalk/novelix",
             version: "0.5.1",
             dependencies: {
-              "@actalk/jiaos-core": "workspace:*",
+              "@actalk/novelix-core": "workspace:*",
               commander: "^13.0.0",
             },
           },
@@ -198,20 +198,20 @@ describe.sequential("publish packaging", () => {
 
       await writeFile(
         join(tempRoot, "package.json"),
-        `${JSON.stringify({ name: "jiaos", version: "0.5.1" }, null, 2)}\n`,
+        `${JSON.stringify({ name: "novelix", version: "0.5.1" }, null, 2)}\n`,
       );
       await writeFile(
         join(tempCoreDir, "package.json"),
-        `${JSON.stringify({ name: "@actalk/jiaos-core", version: "0.5.1" }, null, 2)}\n`,
+        `${JSON.stringify({ name: "@actalk/novelix-core", version: "0.5.1" }, null, 2)}\n`,
       );
       await writeFile(
         join(tempCliDir, "package.json"),
         `${JSON.stringify(
           {
-            name: "@actalk/jiaos",
+            name: "@actalk/novelix",
             version: "0.5.1",
             dependencies: {
-              "@actalk/jiaos-core": "workspace:0.5.0",
+              "@actalk/novelix-core": "workspace:0.5.0",
             },
           },
           null,
@@ -245,8 +245,8 @@ describe.sequential("publish packaging", () => {
       );
       const studioPackageJson = await sourceStudioPackageJsonPromise;
 
-      expect(packedPackageJson.dependencies["@actalk/jiaos-core"]).toBe(corePackageJson.version);
-      expect(packedPackageJson.dependencies["@actalk/jiaos-studio"]).toBe(studioPackageJson.version);
+      expect(packedPackageJson.dependencies["@actalk/novelix-core"]).toBe(corePackageJson.version);
+      expect(packedPackageJson.dependencies["@actalk/novelix-studio"]).toBe(studioPackageJson.version);
     } finally {
       await rm(packDir, { recursive: true, force: true });
     }

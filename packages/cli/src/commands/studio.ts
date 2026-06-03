@@ -124,19 +124,19 @@ export async function launchStudioWorkbench(root: string, port: string): Promise
 
   if (!launch) {
     logError(
-      "JiaOS Studio not found. If you cloned the repo, run:\n" +
+      "Novelix Studio not found. If you cloned the repo, run:\n" +
       "  cd packages/studio && pnpm install && pnpm build\n" +
       "Then run 'jiaos studio' from the project root.",
     );
     process.exit(1);
   }
 
-  log(`Starting JiaOS Studio on ${url}`);
+  log(`Starting Novelix Studio on ${url}`);
 
   const child = spawn(launch.command, launch.args, {
     cwd: root,
     stdio: "inherit",
-    env: { ...process.env, JIAOS_STUDIO_PORT: port },
+    env: { ...process.env, NOVELIX_STUDIO_PORT: port },
   });
 
   child.on("error", (e) => {
@@ -169,7 +169,7 @@ export async function launchStudioEntry(
 ): Promise<void> {
   const prepared = await prepareStudioRoot(root);
   if (prepared.initialized) {
-    log(`No jiaos.json found in ${root}. Initialized a minimal JiaOS project for Studio.`);
+    log(`No novelix.json found in ${root}. Initialized a minimal Novelix project for Studio.`);
   }
 
   if (hooks.launchStudio) {
@@ -182,7 +182,7 @@ export async function launchStudioEntry(
 
 export function createStudioCommand(hooks: StudioCommandHooks = {}): Command {
   return new Command("studio")
-  .description("Start JiaOS Studio web workbench")
+  .description("Start Novelix Studio web workbench")
   .option("-p, --port <port>", "Server port", "4567")
   .action(async (opts) => {
     const root = findProjectRoot();

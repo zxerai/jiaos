@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { PipelineRunner, StateManager } from "@actalk/jiaos-core";
+import { PipelineRunner, StateManager } from "@actalk/novelix-core";
 import { readdir, stat, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { createInterface } from "node:readline";

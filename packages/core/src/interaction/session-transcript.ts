@@ -5,7 +5,7 @@ import type { AgentMessage } from "@mariozechner/pi-agent-core";
 import { TranscriptEventSchema, type TranscriptEvent } from "./session-transcript-schema.js";
 import type { TranscriptRole } from "./session-transcript-schema.js";
 
-const SESSIONS_DIR = ".jiaos/sessions";
+const SESSIONS_DIR = ".novelix/sessions";
 const appendQueues = new Map<string, Promise<void>>();
 
 export function sessionsDir(projectRoot: string): string {

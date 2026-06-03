@@ -63,7 +63,7 @@ export async function resolveServiceModel(
   const apiKey = await getServiceApiKey(projectRoot, service);
   if (!apiKey && !isApiKeyOptionalForEndpoint({ provider: preset?.providerFamily, baseUrl: effectiveBaseUrl })) {
     throw new Error(
-      `API key not found for service "${service}". Add it in .jiaos/secrets.json or set the environment variable.`,
+      `API key not found for service "${service}". Add it in .novelix/secrets.json or set the environment variable.`,
     );
   }
 

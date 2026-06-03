@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { StateManager, writeExportArtifact } from "@actalk/jiaos-core";
+import { StateManager, writeExportArtifact } from "@actalk/novelix-core";
 import { join } from "node:path";
 import { findProjectRoot, resolveBookId, log, logError } from "../utils.js";
 

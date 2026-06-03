@@ -5,7 +5,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
-      "@actalk/jiaos-core": resolve(__dirname, "../core/src/index.ts"),
+      "@actalk/novelix-core": resolve(__dirname, "../core/src/index.ts"),
     },
   },
   test: {

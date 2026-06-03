@@ -1,5 +1,5 @@
 {
-  "name": "@actalk/jiaos",
+  "name": "@actalk/novelix",
   "version": "1.4.1",
   "description": "Autonomous AI novel writing CLI agent — 10-agent pipeline that writes, audits, and revises novels with continuity tracking. Supports LitRPG, Progression Fantasy, Isekai, Romantasy, Sci-Fi and more.",
   "keywords": [
@@ -21,7 +21,7 @@
   ],
   "type": "module",
   "bin": {
-    "jiaos": "dist/index.js"
+    "novelix": "dist/index.js"
   },
   "files": [
     "dist",
@@ -34,7 +34,7 @@
     "directory": "packages/cli"
   },
   "scripts": {
-    "prepare:workspace-core": "pnpm --filter @actalk/jiaos-core build",
+    "prepare:workspace-core": "pnpm --filter @actalk/novelix-core build",
     "prepack": "node ../../scripts/prepare-package-for-publish.mjs",
     "postpack": "node ../../scripts/restore-package-json.mjs",
     "prepublishOnly": "node ../../scripts/verify-no-workspace-protocol.mjs .",
@@ -47,8 +47,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@actalk/jiaos-core": "workspace:*",
-    "@actalk/jiaos-studio": "workspace:*",
+    "@actalk/novelix-core": "workspace:*",
+    "@actalk/novelix-studio": "workspace:*",
     "commander": "^13.0.0",
     "dotenv": "^16.4.0",
     "epub-gen-memory": "^1.0.10",
