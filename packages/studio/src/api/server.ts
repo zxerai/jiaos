@@ -2588,40 +2588,38 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
       return c.json({ error: "Character matrix not available" }, 404);
     }
     try {
-      const raw = await readFile(matrixPath, "utf-8");
-      // New format: pointer file referencing roles/ directory
-      if (/^[-\s]*roles\//m.test(raw)) {
-        const roleDirs = [
-          "roles/主要角色",
-          "roles/次要角色",
-          "roles/major",
-          "roles/minor",
-        ];
-        const roleFiles: Array<{ name: string; content: string }> = [];
-        for (const dir of roleDirs) {
-          const dirPath = resolve(bookDir, "story", dir);
-          try {
-            const entries = await readdir(dirPath);
-            for (const entry of entries) {
-              if (!entry.endsWith(".md")) continue;
-              const filePath = resolve(dirPath, entry);
-              try {
-                const content = await readFile(filePath, "utf-8");
-                roleFiles.push({ name: `${dir}/${entry}`, content });
-              } catch {
-                // skip unreadable files
-              }
+      // Always try to load from roles/ directory first (new format)
+      const roleDirs = [
+        "roles/主要角色",
+        "roles/次要角色",
+        "roles/major",
+        "roles/minor",
+      ];
+      const roleFiles: Array<{ name: string; content: string }> = [];
+      for (const dir of roleDirs) {
+        const dirPath = resolve(bookDir, "story", dir);
+        try {
+          const entries = await readdir(dirPath);
+          for (const entry of entries) {
+            if (!entry.endsWith(".md")) continue;
+            const filePath = resolve(dirPath, entry);
+            try {
+              const content = await readFile(filePath, "utf-8");
+              roleFiles.push({ name: `${dir}/${entry}`, content });
+            } catch {
+              // skip unreadable files
             }
-          } catch {
-            // dir doesn't exist, skip
           }
-        }
-        if (roleFiles.length > 0) {
-          const { nodes, edges } = parseRoleFiles(roleFiles);
-          return c.json({ nodes, edges });
+        } catch {
+          // dir doesn't exist, skip
         }
       }
-      // Old inline format
+      if (roleFiles.length > 0) {
+        const { nodes, edges } = parseRoleFiles(roleFiles);
+        return c.json({ nodes, edges });
+      }
+      // Fallback to inline format from character_matrix.md
+      const raw = await readFile(matrixPath, "utf-8");
       const { nodes, edges } = parseCharacterGraph(raw);
       return c.json({ nodes, edges });
     } catch {
