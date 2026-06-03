@@ -113,7 +113,7 @@ describe("pipeline.reviseFoundation", () => {
     const { PipelineRunner } = await import("../pipeline/runner.js");
     const { StateManager } = await import("../state/manager.js");
 
-    const root = await mkdtemp(join(tmpdir(), "jiaos-revise-e2e-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-revise-e2e-"));
     const bookDir = join(root, "books", "legacy-book");
 
     try {
@@ -179,7 +179,7 @@ describe("pipeline.reviseFoundation", () => {
     const { PipelineRunner } = await import("../pipeline/runner.js");
     const { StateManager } = await import("../state/manager.js");
 
-    const root = await mkdtemp(join(tmpdir(), "jiaos-revise-runtime-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-revise-runtime-"));
     const bookDir = join(root, "books", "live-book");
 
     try {
@@ -253,7 +253,7 @@ describe("pipeline.reviseFoundation", () => {
     const { PipelineRunner } = await import("../pipeline/runner.js");
     const { StateManager } = await import("../state/manager.js");
 
-    const root = await mkdtemp(join(tmpdir(), "jiaos-revise-phase5-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-revise-phase5-"));
     const bookDir = join(root, "books", "phase5-book");
 
     try {
@@ -327,7 +327,7 @@ describe("pipeline.reviseFoundation", () => {
     const { PipelineRunner } = await import("../pipeline/runner.js");
     const { StateManager } = await import("../state/manager.js");
 
-    const root = await mkdtemp(join(tmpdir(), "jiaos-revise-ghost-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-revise-ghost-"));
     const bookDir = join(root, "books", "ghost-book");
 
     try {
@@ -394,7 +394,7 @@ describe("pipeline.reviseFoundation", () => {
     const { PipelineRunner } = await import("../pipeline/runner.js");
     const { StateManager } = await import("../state/manager.js");
 
-    const root = await mkdtemp(join(tmpdir(), "jiaos-revise-legacyfallback-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-revise-legacyfallback-"));
     const bookDir = join(root, "books", "safe-book");
 
     try {
@@ -463,7 +463,7 @@ describe("pipeline.reviseFoundation", () => {
     const { PipelineRunner } = await import("../pipeline/runner.js");
     const { StateManager } = await import("../state/manager.js");
 
-    const root = await mkdtemp(join(tmpdir(), "jiaos-revise-backup-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-revise-backup-"));
     const bookDir = join(root, "books", "p5");
 
     try {

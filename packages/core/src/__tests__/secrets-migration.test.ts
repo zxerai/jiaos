@@ -8,8 +8,8 @@ describe("loadSecrets legacy service id migration", () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-secrets-mig-"));
-    await mkdir(join(root, ".jiaos"), { recursive: true });
+    root = await mkdtemp(join(tmpdir(), "novelix-secrets-mig-"));
+    await mkdir(join(root, ".novelix"), { recursive: true });
   });
 
   afterEach(async () => {
@@ -17,11 +17,11 @@ describe("loadSecrets legacy service id migration", () => {
   });
 
   async function seedSecrets(data: unknown): Promise<void> {
-    await writeFile(join(root, ".jiaos", "secrets.json"), JSON.stringify(data, null, 2), "utf-8");
+    await writeFile(join(root, ".novelix", "secrets.json"), JSON.stringify(data, null, 2), "utf-8");
   }
 
   async function readSecretsRaw(): Promise<any> {
-    return JSON.parse(await readFile(join(root, ".jiaos", "secrets.json"), "utf-8"));
+    return JSON.parse(await readFile(join(root, ".novelix", "secrets.json"), "utf-8"));
   }
 
   it("siliconflow -> siliconcloud 重命名（目标 id 不存在）", async () => {
@@ -49,14 +49,14 @@ describe("loadSecrets legacy service id migration", () => {
 
   it("无迁移时不重写磁盘", async () => {
     await seedSecrets({ services: { openai: { apiKey: "sk-openai" } } });
-    const before = await readFile(join(root, ".jiaos", "secrets.json"), "utf-8");
+    const before = await readFile(join(root, ".novelix", "secrets.json"), "utf-8");
     await loadSecrets(root);
-    const after = await readFile(join(root, ".jiaos", "secrets.json"), "utf-8");
+    const after = await readFile(join(root, ".novelix", "secrets.json"), "utf-8");
     expect(after).toBe(before);
   });
 
   it("secrets 文件不存在时返回空 services,不报错", async () => {
-    await rm(join(root, ".jiaos", "secrets.json"), { force: true });
+    await rm(join(root, ".novelix", "secrets.json"), { force: true });
     const result = await loadSecrets(root);
     expect(result).toEqual({ services: {} });
   });

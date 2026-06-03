@@ -65,7 +65,7 @@ const failingLlmEnv = {
 
 describe("CLI integration", () => {
   beforeAll(async () => {
-    projectDir = await mkdtemp(join(tmpdir(), "jiaos-cli-test-"));
+    projectDir = await mkdtemp(join(tmpdir(), "novelix-cli-test-"));
   });
 
   afterAll(async () => {
@@ -141,7 +141,7 @@ describe("CLI integration", () => {
     });
 
     it("supports absolute project paths instead of nesting them under cwd", async () => {
-      const absoluteDir = await mkdtemp(join(tmpdir(), "jiaos-cli-abs-init-"));
+      const absoluteDir = await mkdtemp(join(tmpdir(), "novelix-cli-abs-init-"));
 
       try {
         const output = run(["init", absoluteDir]);
@@ -156,7 +156,7 @@ describe("CLI integration", () => {
     });
 
     it("prints English next steps when initialized with --lang en", async () => {
-      const englishDir = await mkdtemp(join(tmpdir(), "jiaos-cli-en-init-"));
+      const englishDir = await mkdtemp(join(tmpdir(), "novelix-cli-en-init-"));
 
       try {
         const output = run(["init", englishDir, "--lang", "en"]);
@@ -269,7 +269,7 @@ describe("CLI integration", () => {
       } finally {
         await writeFile(envPath, originalEnv, "utf-8");
         await rm(join(projectDir, "books", "harbor"), { recursive: true, force: true });
-        await rm(join(projectDir, ".jiaos-session.json"), { force: true }).catch(() => {});
+        await rm(join(projectDir, ".novelix-session.json"), { force: true }).catch(() => {});
       }
     });
   });

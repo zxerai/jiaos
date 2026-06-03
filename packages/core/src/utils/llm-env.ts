@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { parse } from "dotenv";
 
-export const GLOBAL_CONFIG_DIR = join(homedir(), ".jiaos");
+export const GLOBAL_CONFIG_DIR = join(homedir(), ".novelix");
 export const GLOBAL_ENV_PATH = join(GLOBAL_CONFIG_DIR, ".env");
 
 export type LLMEnvMap = Record<string, string | undefined>;

@@ -25,7 +25,7 @@ describe("ComposerAgent", () => {
   let plan: PlanChapterOutput;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-composer-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-composer-test-"));
     bookDir = join(root, "books", "composer-book");
     storyDir = join(bookDir, "story");
     await mkdir(join(storyDir, "runtime"), { recursive: true });

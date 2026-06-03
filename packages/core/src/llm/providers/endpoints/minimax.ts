@@ -6,7 +6,7 @@
  * - API 文档：https://platform.minimaxi.com/document/platform%20introduction
  * - 模型列表：https://platform.minimaxi.com/document/text
  *
- * jiaos 用 MiniMax 官方 OpenAI-compatible Chat 接入：
+ * novelix 用 MiniMax 官方 OpenAI-compatible Chat 接入：
  * https://api.minimaxi.com/v1/chat/completions
  * MiniMax 没有公开的 /models 端点，模型清单只能按官方文档手维护。
  */

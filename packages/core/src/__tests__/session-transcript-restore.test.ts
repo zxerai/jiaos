@@ -24,7 +24,7 @@ describe("session transcript restore", () => {
   let projectRoot: string;
 
   beforeEach(async () => {
-    projectRoot = await mkdtemp(join(tmpdir(), "jiaos-restore-"));
+    projectRoot = await mkdtemp(join(tmpdir(), "novelix-restore-"));
   });
 
   afterEach(async () => {

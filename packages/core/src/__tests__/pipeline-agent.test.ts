@@ -14,7 +14,7 @@ describe("agent pipeline tools", () => {
   let bookId: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-agent-tools-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-agent-tools-"));
     state = new StateManager(root);
     bookId = "agent-book";
 

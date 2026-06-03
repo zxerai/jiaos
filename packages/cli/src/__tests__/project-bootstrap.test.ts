@@ -8,7 +8,7 @@ describe("project bootstrap", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await mkdtemp(join(tmpdir(), "jiaos-bootstrap-"));
+    tempDir = await mkdtemp(join(tmpdir(), "novelix-bootstrap-"));
     process.env.HOME = tempDir;
   });
 
@@ -24,7 +24,7 @@ describe("project bootstrap", () => {
 
     expect(initialized).toBe(true);
     const config = JSON.parse(await readFile(join(tempDir, "novelix.json"), "utf-8"));
-    expect(config.name).toMatch(/^jiaos-bootstrap-/);
+    expect(config.name).toMatch(/^novelix-bootstrap-/);
     expect(config.version).toBe("0.1.0");
     expect(config.llm.configSource).toBe("studio");
     expect(config.llm.service).toBe("custom");

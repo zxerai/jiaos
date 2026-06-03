@@ -1,8 +1,8 @@
 /**
- * jiaos 自维护的 provider 定义。每个 provider 一个 .ts 文件，
+ * novelix 自维护的 provider 定义。每个 provider 一个 .ts 文件，
  * 里面一个 JiaosEndpoint 对象（provider 元数据 + models 数组）。
  *
- * 数据冷启动自 lobe-chat/packages/model-bank，之后由 jiaos 自管。
+ * 数据冷启动自 lobe-chat/packages/model-bank，之后由 novelix 自管。
  * 新模型发布 / 参数调整时手动加 card，不做持续 sync。
  */
 

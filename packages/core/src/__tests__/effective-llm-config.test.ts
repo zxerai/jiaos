@@ -13,7 +13,7 @@ describe("resolveEffectiveLLMConfig", () => {
   });
 
   async function writeProject(llm: Record<string, unknown>) {
-    root = await mkdtemp(join(tmpdir(), "jiaos-effective-llm-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-effective-llm-"));
     await writeFile(join(root, "novelix.json"), JSON.stringify({
       name: "effective-project",
       version: "0.1.0",
@@ -24,8 +24,8 @@ describe("resolveEffectiveLLMConfig", () => {
   }
 
   async function writeSecrets(services: Record<string, { apiKey: string }>) {
-    await mkdir(join(root, ".jiaos"), { recursive: true });
-    await writeFile(join(root, ".jiaos", "secrets.json"), JSON.stringify({ services }, null, 2), "utf-8");
+    await mkdir(join(root, ".novelix"), { recursive: true });
+    await writeFile(join(root, ".novelix", "secrets.json"), JSON.stringify({ services }, null, 2), "utf-8");
   }
 
   it("Studio consumer 使用 Studio/project 配置，并忽略旧顶层 model/baseUrl", async () => {

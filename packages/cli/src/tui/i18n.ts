@@ -93,7 +93,7 @@ const ZH_CN: TuiCopy = {
   notes: {
     help: "可用命令：/new（输入想法）、/write、/books、/rewrite、/focus、/truth、/rename、/replace、/export、/status、/clear、/depth、/quit。其他写作和项目操作直接用自然语言交给 agent。",
     status: (stage, mode) => `当前状态：${stage}（${mode}）。`,
-    config: "当前 Ink 仪表盘里还不支持交互式 /config。请使用 jiaos config set-global。",
+    config: "当前 Ink 仪表盘里还不支持交互式 /config。请使用 novelix config set-global。",
     depthSet: (depthLabel) => `思考深度已切换为 ${depthLabel}。`,
     newBookGuide: "开始构思新书。直接描述你的想法——题材、世界观、主角、核心冲突都可以。AI 会逐步引导，信息足够时会直接调用建书能力。",
     noLlmConfig: "未发现 LLM 配置。",
@@ -162,7 +162,7 @@ const EN: TuiCopy = {
   notes: {
     help: "Commands: /new (describe your idea), /write, /books, /rewrite, /focus, /truth, /rename, /replace, /export, /status, /clear, /depth, /quit. Other writing and project operations go through the agent as natural language.",
     status: (stage, mode) => `Status: ${stage} (${mode}).`,
-    config: "Interactive /config is not available inside the Ink dashboard yet. Use jiaos config set-global.",
+    config: "Interactive /config is not available inside the Ink dashboard yet. Use novelix config set-global.",
     depthSet: (depthLabel) => `Thinking depth set to ${depthLabel}.`,
     newBookGuide: "Starting a new book. Describe your idea — genre, world, protagonist, core conflict, anything. The AI will guide you and call the book-creation capability when enough information is available.",
     noLlmConfig: "No LLM configuration found.",

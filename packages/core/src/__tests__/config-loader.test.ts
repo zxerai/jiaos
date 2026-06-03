@@ -37,7 +37,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("allows missing API keys for localhost OpenAI-compatible endpoints", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-local-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-local-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";
@@ -62,7 +62,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("still requires API keys for remote hosted endpoints", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-remote-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-remote-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";
@@ -82,7 +82,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("loads service-based config using defaultModel and project secrets", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-services-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-services-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";
@@ -100,9 +100,9 @@ describe("loadProjectConfig local provider auth", () => {
       },
       notify: [],
     }, null, 2), "utf-8");
-    await mkdir(join(root, ".jiaos"), { recursive: true });
+    await mkdir(join(root, ".novelix"), { recursive: true });
     await writeFile(
-      join(root, ".jiaos", "secrets.json"),
+      join(root, ".novelix", "secrets.json"),
       JSON.stringify({ services: { moonshot: { apiKey: "sk-moon" } } }, null, 2),
       "utf-8",
     );
@@ -118,7 +118,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("derives provider/baseUrl from the MiniMax preset single source of truth", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-minimax-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-minimax-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";
@@ -136,9 +136,9 @@ describe("loadProjectConfig local provider auth", () => {
       },
       notify: [],
     }, null, 2), "utf-8");
-    await mkdir(join(root, ".jiaos"), { recursive: true });
+    await mkdir(join(root, ".novelix"), { recursive: true });
     await writeFile(
-      join(root, ".jiaos", "secrets.json"),
+      join(root, ".novelix", "secrets.json"),
       JSON.stringify({ services: { minimax: { apiKey: "sk-minimax" } } }, null, 2),
       "utf-8",
     );
@@ -153,7 +153,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("loads custom service config using custom secret key and entry baseUrl", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-custom-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-custom-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";
@@ -171,9 +171,9 @@ describe("loadProjectConfig local provider auth", () => {
       },
       notify: [],
     }, null, 2), "utf-8");
-    await mkdir(join(root, ".jiaos"), { recursive: true });
+    await mkdir(join(root, ".novelix"), { recursive: true });
     await writeFile(
-      join(root, ".jiaos", "secrets.json"),
+      join(root, ".novelix", "secrets.json"),
       JSON.stringify({ services: { "custom:内网GPT": { apiKey: "sk-corp" } } }, null, 2),
       "utf-8",
     );
@@ -191,7 +191,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("keeps Studio config active when llm.configSource is studio", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-studio-source-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-studio-source-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";
@@ -216,9 +216,9 @@ describe("loadProjectConfig local provider auth", () => {
       "NOVELIX_LLM_MODEL=gpt-5.4",
       "NOVELIX_LLM_API_KEY=sk-env",
     ].join("\n"), "utf-8");
-    await mkdir(join(root, ".jiaos"), { recursive: true });
+    await mkdir(join(root, ".novelix"), { recursive: true });
     await writeFile(
-      join(root, ".jiaos", "secrets.json"),
+      join(root, ".novelix", "secrets.json"),
       JSON.stringify({ services: { "custom:内网GPT": { apiKey: "sk-corp" } } }, null, 2),
       "utf-8",
     );
@@ -233,7 +233,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("does not mix stale top-level env-era model/baseUrl with selected Studio service", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-studio-stale-top-level-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-studio-stale-top-level-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";
@@ -263,9 +263,9 @@ describe("loadProjectConfig local provider auth", () => {
       "NOVELIX_LLM_MODEL=kimi-k2.5",
       "NOVELIX_LLM_API_KEY=sk-env-moon",
     ].join("\n"), "utf-8");
-    await mkdir(join(root, ".jiaos"), { recursive: true });
+    await mkdir(join(root, ".novelix"), { recursive: true });
     await writeFile(
-      join(root, ".jiaos", "secrets.json"),
+      join(root, ".novelix", "secrets.json"),
       JSON.stringify({
         services: {
           google: { apiKey: "sk-google" },
@@ -286,7 +286,7 @@ describe("loadProjectConfig local provider auth", () => {
   });
 
   it("falls back to env when Studio config is still the empty bootstrap state", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-config-loader-studio-bootstrap-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-config-loader-studio-bootstrap-"));
     for (const key of ENV_KEYS) {
       previousEnv.set(key, process.env[key]);
       process.env[key] = "";

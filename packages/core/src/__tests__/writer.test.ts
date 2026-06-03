@@ -51,7 +51,7 @@ describe("WriterAgent", () => {
         },
       },
       model: "test-model",
-      projectRoot: "/tmp/jiaos-writer-context-test",
+      projectRoot: "/tmp/novelix-writer-context-test",
     });
 
     const prompt = (agent as unknown as {
@@ -115,7 +115,7 @@ describe("WriterAgent", () => {
         },
       },
       model: "test-model",
-      projectRoot: "/tmp/jiaos-writer-context-budget-test",
+      projectRoot: "/tmp/novelix-writer-context-budget-test",
     });
     const oversizedStoryBible = [
       "BEGIN-STORY",
@@ -163,7 +163,7 @@ describe("WriterAgent", () => {
   });
 
   it("uses compact summary context plus selected long-range evidence during governed settlement", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -367,7 +367,7 @@ describe("WriterAgent", () => {
   });
 
   it("builds structured runtime-state artifacts when settler returns a delta", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-runtime-state-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-runtime-state-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const chaptersDir = join(bookDir, "chapters");
@@ -516,7 +516,7 @@ describe("WriterAgent", () => {
   });
 
   it("overrides hallucinated chapter numbers across both delta and summary row", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-runtime-state-hallucinated-chapter-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-runtime-state-hallucinated-chapter-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const chaptersDir = join(bookDir, "chapters");
@@ -666,7 +666,7 @@ describe("WriterAgent", () => {
   });
 
   it("returns the arbiter-resolved delta instead of raw new-hook candidates", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-arbiter-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-arbiter-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const chaptersDir = join(bookDir, "chapters");
@@ -811,7 +811,7 @@ describe("WriterAgent", () => {
   });
 
   it("logs localized phase messages for Chinese books", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const { logger, infos } = createCaptureLogger();
@@ -921,7 +921,7 @@ describe("WriterAgent", () => {
   });
 
   it("injects an English variance brief into governed creative prompts", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-variance-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-variance-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const chaptersDir = join(bookDir, "chapters");
@@ -1066,7 +1066,7 @@ describe("WriterAgent", () => {
   });
 
   it("renders explicit title history, mood trail, and canon blocks in governed creative prompts", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-governed-evidence-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-governed-evidence-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -1215,7 +1215,7 @@ describe("WriterAgent", () => {
   });
 
   it("sanitizes governed control inputs so raw hook ids and control headings do not enter the creative prompt", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-writer-hook-agenda-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-writer-hook-agenda-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });

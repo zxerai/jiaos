@@ -138,19 +138,19 @@ export interface ModelInfo {
   readonly maxOutput?: number;
 }
 
-function toModelInfo(jiaosModel: { id: string; maxOutput: number; contextWindowTokens: number }): ModelInfo {
+function toModelInfo(novelixModel: { id: string; maxOutput: number; contextWindowTokens: number }): ModelInfo {
   return {
-    id: jiaosModel.id,
-    name: jiaosModel.id,
-    contextWindow: jiaosModel.contextWindowTokens,
-    maxOutput: jiaosModel.maxOutput,
+    id: novelixModel.id,
+    name: novelixModel.id,
+    contextWindow: novelixModel.contextWindowTokens,
+    maxOutput: novelixModel.maxOutput,
   };
 }
 
 /**
  * listModelsForService（R4 精修）：
  * - 先试 live /models probe（如果 baseUrl + apiKey 具备）
- * - probe 失败或无 apiKey：fallback 到 provider.models（jiaos bank）
+ * - probe 失败或无 apiKey：fallback 到 provider.models（novelix bank）
  * - 不再做 NOVELIX_LLM_MODEL env 补丁（会污染跨 service 菜单；bank 已足够全）
  *
  * custom / newapi / higress 等 baseUrl 空的 gateway provider：

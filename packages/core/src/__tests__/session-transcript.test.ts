@@ -21,7 +21,7 @@ describe("session transcript codec", () => {
   let projectRoot: string;
 
   beforeEach(async () => {
-    projectRoot = await mkdtemp(join(tmpdir(), "jiaos-transcript-"));
+    projectRoot = await mkdtemp(join(tmpdir(), "novelix-transcript-"));
   });
 
   afterEach(async () => {

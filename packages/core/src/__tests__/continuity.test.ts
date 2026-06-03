@@ -16,7 +16,7 @@ describe("ContinuityAuditor", () => {
   });
 
   it("prefers book language override when building audit prompts", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-auditor-lang-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-auditor-lang-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -88,7 +88,7 @@ describe("ContinuityAuditor", () => {
   });
 
   it("localizes English audit prompts instead of mixing Chinese control text", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-auditor-en-prompt-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-auditor-en-prompt-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -178,7 +178,7 @@ describe("ContinuityAuditor", () => {
   });
 
   it("uses selected summary and hook evidence instead of full long-history markdown in governed mode", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-auditor-test-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-auditor-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -292,7 +292,7 @@ describe("ContinuityAuditor", () => {
   });
 
   it("injects the chapter memo into the audit prompt for memo-drift checking", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-auditor-memo-drift-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-auditor-memo-drift-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });

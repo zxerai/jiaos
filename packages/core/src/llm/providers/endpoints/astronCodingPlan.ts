@@ -9,7 +9,7 @@
  *
  * 讯飞星辰 MaaS 针对编程场景的订阅套餐。订阅包里的底层模型由用户在控制台切换，
  * 对外统一 id 是 astron-code-latest（无需根据底层模型改配置）。
- * jiaos 走 Anthropic 协议接入（和 Claude Code 一致），agent 场景工具调用更稳。
+ * novelix 走 Anthropic 协议接入（和 Claude Code 一致），agent 场景工具调用更稳。
  */
 import type { JiaosEndpoint } from "../types.js";
 

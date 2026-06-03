@@ -2,7 +2,7 @@
  * NewAPI (自建网关)
  *
  * - New API (one-api fork)：https://github.com/Calcium-Ion/new-api
- * - 自建 OpenAI 兼容网关，模型清单由部署方自定义，jiaos 只提供协议对接。
+ * - 自建 OpenAI 兼容网关，模型清单由部署方自定义，novelix 只提供协议对接。
  */
 import type { JiaosEndpoint } from "../types.js";
 

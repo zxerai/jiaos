@@ -5,7 +5,7 @@ import { createWriteStream, type WriteStream } from "node:fs";
 import { writeFile, readFile, unlink } from "node:fs/promises";
 import { join } from "node:path";
 
-const PID_FILE = "jiaos.pid";
+const PID_FILE = "novelix.pid";
 
 export const upCommand = new Command("up")
   .description("Start the Novelix daemon (autonomous mode)")

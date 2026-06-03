@@ -9,7 +9,7 @@ describe("config migration", () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-migrate-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-migrate-"));
   });
 
   afterEach(async () => {

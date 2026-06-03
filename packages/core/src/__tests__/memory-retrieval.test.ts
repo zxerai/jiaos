@@ -31,7 +31,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("indexes current state facts into sqlite-backed memory selection", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -118,7 +118,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("prefers the mentor-debt recap chapter over nearby guild-noise chapters in English retrieval", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-en-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-en-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -175,7 +175,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("prefers the explicit 师债回响 chapter over nearby 商会噪音 chapters in Chinese retrieval", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-zh-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-zh-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -232,7 +232,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("keeps the mentor-debt recap chapter in markdown fallback mode for English books", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-en-fallback-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-en-fallback-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -301,7 +301,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("keeps the 师债回响 chapter in markdown fallback mode for Chinese books", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-zh-fallback-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-zh-fallback-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -370,7 +370,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   sqliteIt("uses existing sqlite summaries and hooks without requiring markdown truth files", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-db-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-db-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
@@ -425,7 +425,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   sqliteIt("backfills sqlite memory from structured state instead of stale markdown truth files", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-db-structured-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-db-structured-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");
@@ -550,7 +550,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("bootstraps structured runtime state from legacy markdown truth files during retrieval", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-bootstrap-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-bootstrap-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");
@@ -610,7 +610,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("prefers structured state files over legacy markdown truth files when both exist", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-structured-preferred-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-structured-preferred-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");
@@ -719,7 +719,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("recalls stale open hooks alongside recent governed memory selections", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-stale-hook-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-stale-hook-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");
@@ -792,7 +792,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("surfaces one stale unresolved hook beyond the primary quota while excluding stale resolved hooks", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-stale-quota-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-stale-quota-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");
@@ -897,7 +897,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("surfaces multiple stale hook families when debt pressure clusters instead of only one stale extra", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-stale-cluster-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-stale-cluster-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");
@@ -999,7 +999,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("does not surface far-future unstarted hooks in early chapter retrieval", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-future-hook-gate-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-future-hook-gate-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");
@@ -1101,7 +1101,7 @@ describe("retrieveMemorySelection", () => {
   });
 
   it("does not resurface a resolved hook just because mustKeep shares an artifact term", async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-memory-retrieval-resolved-artifact-test-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-memory-retrieval-resolved-artifact-test-"));
     const bookDir = join(root, "book");
     const storyDir = join(bookDir, "story");
     const stateDir = join(storyDir, "state");

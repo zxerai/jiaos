@@ -13,7 +13,7 @@ let projectRoot: string;
 
 describe("tui session store", () => {
   beforeAll(async () => {
-    projectRoot = await mkdtemp(join(tmpdir(), "jiaos-tui-session-"));
+    projectRoot = await mkdtemp(join(tmpdir(), "novelix-tui-session-"));
     await mkdir(join(projectRoot, "books"), { recursive: true });
   });
 
@@ -60,7 +60,7 @@ describe("tui session store", () => {
     await mkdir(join(projectRoot, "books", "single-book"), { recursive: true });
     await writeFile(join(projectRoot, "books", "single-book", "book.json"), "{}", "utf-8");
 
-    const singleRoot = await mkdtemp(join(tmpdir(), "jiaos-tui-single-"));
+    const singleRoot = await mkdtemp(join(tmpdir(), "novelix-tui-single-"));
     await mkdir(join(singleRoot, "books", "single-book"), { recursive: true });
     await writeFile(join(singleRoot, "books", "single-book", "book.json"), "{}", "utf-8");
 
@@ -69,7 +69,7 @@ describe("tui session store", () => {
   });
 
   it("returns undefined when multiple books exist and no valid active binding is stored", async () => {
-    const multiRoot = await mkdtemp(join(tmpdir(), "jiaos-tui-multi-"));
+    const multiRoot = await mkdtemp(join(tmpdir(), "novelix-tui-multi-"));
     await mkdir(join(multiRoot, "books", "book-a"), { recursive: true });
     await mkdir(join(multiRoot, "books", "book-b"), { recursive: true });
     await writeFile(join(multiRoot, "books", "book-a", "book.json"), "{}", "utf-8");

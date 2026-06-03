@@ -16,7 +16,7 @@ import {
 let projectRoot: string;
 
 beforeAll(async () => {
-  projectRoot = await mkdtemp(join(tmpdir(), "jiaos-edit-controller-"));
+  projectRoot = await mkdtemp(join(tmpdir(), "novelix-edit-controller-"));
   await mkdir(join(projectRoot, "books", "harbor", "story", "runtime"), { recursive: true });
   await mkdir(join(projectRoot, "books", "harbor", "chapters"), { recursive: true });
 });

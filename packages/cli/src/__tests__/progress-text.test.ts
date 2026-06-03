@@ -68,7 +68,7 @@ describe("CLI progress text", () => {
       "  总长度：24000字",
       "  下一章编号：13",
       '',
-      '运行 "jiaos write next demo-book" 继续写作。',
+      '运行 "novelix write next demo-book" 继续写作。',
     ]);
   });
 
@@ -86,7 +86,7 @@ describe("CLI progress text", () => {
       "  Total length: 24000 words",
       "  Next chapter number: 13",
       '',
-      'Run "jiaos write next demo-book" to continue writing.',
+      'Run "novelix write next demo-book" to continue writing.',
     ]);
   });
 });

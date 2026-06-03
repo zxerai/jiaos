@@ -18,7 +18,7 @@ describe("ChapterAnalyzerAgent", () => {
   });
 
   it("counts English chapter content using words instead of characters", async () => {
-    const bookDir = await mkdtemp(join(tmpdir(), "jiaos-chapter-analyzer-"));
+    const bookDir = await mkdtemp(join(tmpdir(), "novelix-chapter-analyzer-"));
     const englishContent = "He looked at the sky and waited.";
     const agent = new ChapterAnalyzerAgent({
       client: {
@@ -103,7 +103,7 @@ describe("ChapterAnalyzerAgent", () => {
   });
 
   it("uses English prompts when analyzing imported English chapters", async () => {
-    const bookDir = await mkdtemp(join(tmpdir(), "jiaos-chapter-analyzer-en-"));
+    const bookDir = await mkdtemp(join(tmpdir(), "novelix-chapter-analyzer-en-"));
     const englishContent = "He looked at the sky and waited.";
     const agent = new ChapterAnalyzerAgent({
       client: {
@@ -193,7 +193,7 @@ describe("ChapterAnalyzerAgent", () => {
   });
 
   it("uses a retrieved summary snapshot instead of full long-history chapter summaries", async () => {
-    const bookDir = await mkdtemp(join(tmpdir(), "jiaos-chapter-analyzer-memory-"));
+    const bookDir = await mkdtemp(join(tmpdir(), "novelix-chapter-analyzer-memory-"));
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
 
@@ -315,7 +315,7 @@ describe("ChapterAnalyzerAgent", () => {
   });
 
   it("preserves the supplied chapter content when the model omits CHAPTER_CONTENT", async () => {
-    const bookDir = await mkdtemp(join(tmpdir(), "jiaos-chapter-analyzer-fallback-"));
+    const bookDir = await mkdtemp(join(tmpdir(), "novelix-chapter-analyzer-fallback-"));
     const chapterContent = "Lin Yue stepped into the archive and kept the real ledger hidden inside his sleeve.";
     const agent = new ChapterAnalyzerAgent({
       client: {
@@ -398,7 +398,7 @@ describe("ChapterAnalyzerAgent", () => {
   });
 
   it("uses governed control inputs instead of old broad truth-file blocks when provided", async () => {
-    const bookDir = await mkdtemp(join(tmpdir(), "jiaos-chapter-analyzer-governed-"));
+    const bookDir = await mkdtemp(join(tmpdir(), "novelix-chapter-analyzer-governed-"));
     const storyDir = join(bookDir, "story");
     await mkdir(storyDir, { recursive: true });
 

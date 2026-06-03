@@ -188,26 +188,26 @@ export function createLLMClient(config: LLMConfig): LLMClient {
   // --- Build pi-ai Model object ---
   const serviceName = config.service ?? "custom";
   const preset = resolveServicePreset(serviceName);
-  const jiaosProvider = getEndpoint(serviceName);
+  const novelixProvider = getEndpoint(serviceName);
   const modelCard = lookupModel(serviceName, config.model);
 
-  const piApi = resolvePiApi(serviceName, config.apiFormat, (jiaosProvider?.api ?? preset?.api) as PiApi) as PiApi;
-  const baseUrl = config.baseUrl || jiaosProvider?.baseUrl || preset?.baseUrl || "";
+  const piApi = resolvePiApi(serviceName, config.apiFormat, (novelixProvider?.api ?? preset?.api) as PiApi) as PiApi;
+  const baseUrl = config.baseUrl || novelixProvider?.baseUrl || preset?.baseUrl || "";
   const extraHeaders = sanitizeHttpHeaders(config.headers ?? parseEnvHeaders());
   const compat = piApi === "openai-completions"
-    ? resolveProviderCompat(jiaosProvider, baseUrl)
+    ? resolveProviderCompat(novelixProvider, baseUrl)
     : undefined;
 
   const provider = config.provider === "anthropic" ? "anthropic" : "openai";
   // pi-ai provider 字段：大多数情况 pi-ai 会按 baseUrl 自动嗅探（openrouter.ai / api.z.ai /
   // api.x.ai / deepseek.com / anthropic.com 等）。这里只列 pi-ai 嗅探不到、需要显式指定的少数情况。
   let piProvider: string;
-  if (jiaosProvider?.id === "google") piProvider = "google";
-  else if (jiaosProvider?.id === "zhipu") piProvider = "zai";
-  else if (jiaosProvider?.id === "openrouter") piProvider = "openrouter";
-  else if (jiaosProvider?.id === "githubCopilot") piProvider = "githubCopilot";
-  else if (jiaosProvider?.id === "ollama") piProvider = "ollama";
-  else if (jiaosProvider?.api === "anthropic-messages") piProvider = "anthropic";
+  if (novelixProvider?.id === "google") piProvider = "google";
+  else if (novelixProvider?.id === "zhipu") piProvider = "zai";
+  else if (novelixProvider?.id === "openrouter") piProvider = "openrouter";
+  else if (novelixProvider?.id === "githubCopilot") piProvider = "githubCopilot";
+  else if (novelixProvider?.id === "ollama") piProvider = "ollama";
+  else if (novelixProvider?.api === "anthropic-messages") piProvider = "anthropic";
   else piProvider = provider;
 
   const piModel: PiModel<PiApi> = {
@@ -313,7 +313,7 @@ function stripReservedKeys(extra: Record<string, unknown>): Record<string, unkno
 // 硬要求 temperature === 1，其他值会被直接 400 拒绝（Moonshot 返回
 // `invalid temperature: only 1 is allowed for this model`）。
 //
-// jiaos 让 writer/validator/architect 各自带 per-call 温度（0.1~1.5），
+// novelix 让 writer/validator/architect 各自带 per-call 温度（0.1~1.5），
 // 所以 provider 层统一夹制：如果 bank 里模型卡标了 temperature 字段，
 // 就把 per-call 温度 clamp 到那个值，并对每个模型名打一次 warning。
 //
@@ -333,7 +333,7 @@ function clampTemperatureForModel(
   if (!warnedFixedTemperatureModels.has(model)) {
     warnedFixedTemperatureModels.add(model);
     console.warn(
-      `[jiaos] 模型 "${model}" API 要求 temperature=${locked}，已 clamp（原值 ${requested}）`,
+      `[novelix] 模型 "${model}" API 要求 temperature=${locked}，已 clamp（原值 ${requested}）`,
     );
   }
   return locked;
@@ -378,7 +378,7 @@ function wrapLLMError(error: unknown, context?: { readonly baseUrl?: string; rea
       `  1. API Key 无效或过期\n` +
       `  2. API 提供方的内容审查拦截了请求（公益/免费 API 常见）\n` +
       `  3. 账户余额不足\n` +
-      `  建议：用 jiaos doctor 测试 API 连通性，或换一个不限制内容的 API 提供方${ctxLine}`,
+      `  建议：用 novelix doctor 测试 API 连通性，或换一个不限制内容的 API 提供方${ctxLine}`,
     );
   }
   if (msg.includes("401")) {
@@ -1090,7 +1090,7 @@ function resolvePiModel(client: LLMClient, model: string): PiModel<PiApi> {
   return { ...base, id: model, name: model };
 }
 
-/** Convert jiaos LLMMessage[] to pi-ai Context. */
+/** Convert novelix LLMMessage[] to pi-ai Context. */
 function toPiContext(messages: ReadonlyArray<LLMMessage>): PiContext {
   const systemParts = messages.filter((m) => m.role === "system").map((m) => m.content);
   const systemPrompt = systemParts.length > 0 ? systemParts.join("\n\n") : undefined;
@@ -1115,7 +1115,7 @@ function toPiContext(messages: ReadonlyArray<LLMMessage>): PiContext {
   return { systemPrompt, messages: piMessages };
 }
 
-/** Convert jiaos AgentMessage[] to pi-ai Context (with tool calls/results). */
+/** Convert novelix AgentMessage[] to pi-ai Context (with tool calls/results). */
 function agentMessagesToPiContext(messages: ReadonlyArray<AgentMessage>): PiContext {
   const systemParts = messages.filter((m) => m.role === "system").map((m) => (m as { content: string }).content);
   const systemPrompt = systemParts.length > 0 ? systemParts.join("\n\n") : undefined;
@@ -1166,7 +1166,7 @@ function agentMessagesToPiContext(messages: ReadonlyArray<AgentMessage>): PiCont
   return { systemPrompt, messages: piMessages };
 }
 
-/** Convert jiaos ToolDefinition[] to pi-ai Tool[]. */
+/** Convert novelix ToolDefinition[] to pi-ai Tool[]. */
 function toPiTools(tools: ReadonlyArray<ToolDefinition>): PiTool[] {
   return tools.map((t) => ({
     name: t.name,
@@ -1203,7 +1203,7 @@ async function chatCompletionViaPiAi(
       .join("");
     if (!content) {
       const diag = `usage=${response.usage.input}+${response.usage.output}`;
-      console.warn(`[jiaos] LLM 非流式响应无文本内容 (${diag})`);
+      console.warn(`[novelix] LLM 非流式响应无文本内容 (${diag})`);
       throw new Error(`LLM returned empty response (${diag})`);
     }
     return {
@@ -1257,7 +1257,7 @@ async function chatCompletionViaPiAi(
   const content = chunks.join("");
   if (!content) {
     const diag = `usage=${inputTokens}+${outputTokens}`;
-    console.warn(`[jiaos] LLM 流式响应无文本内容 (${diag})`);
+    console.warn(`[novelix] LLM 流式响应无文本内容 (${diag})`);
     throw new Error(`LLM returned empty response from stream (${diag})`);
   }
 

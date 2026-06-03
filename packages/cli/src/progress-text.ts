@@ -79,7 +79,7 @@ export function formatImportCompletionLines(
       : `  下一章编号：${result.nextChapter}`,
     "",
     language === "en"
-      ? `Run "jiaos write next ${result.bookId}" to continue writing.`
-      : `运行 "jiaos write next ${result.bookId}" 继续写作。`,
+      ? `Run "novelix write next ${result.bookId}" to continue writing.`
+      : `运行 "novelix write next ${result.bookId}" 继续写作。`,
   ];
 }

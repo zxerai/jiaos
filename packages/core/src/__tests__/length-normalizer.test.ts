@@ -23,7 +23,7 @@ const AGENT_CONTEXT = {
     },
   } as const,
   model: "test-model",
-  projectRoot: "/tmp/jiaos-length-normalizer-test",
+  projectRoot: "/tmp/novelix-length-normalizer-test",
 };
 
 function createAgent(): LengthNormalizerAgent {

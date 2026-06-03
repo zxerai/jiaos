@@ -14,7 +14,7 @@ let tempRoot: string;
 
 describe("runtime requirements", () => {
   beforeEach(async () => {
-    tempRoot = await mkdtemp(join(tmpdir(), "jiaos-runtime-requirements-"));
+    tempRoot = await mkdtemp(join(tmpdir(), "novelix-runtime-requirements-"));
   });
 
   afterEach(async () => {

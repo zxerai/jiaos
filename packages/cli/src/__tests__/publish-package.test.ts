@@ -59,7 +59,7 @@ async function extractPackedPackageJson(packageDir: string, packDir: string) {
 
 describe.sequential("publish packaging", () => {
   it("rewrites workspace package versions for canary publishing", async () => {
-    const tempRoot = await mkdtemp(join(tmpdir(), "jiaos-version-script-"));
+    const tempRoot = await mkdtemp(join(tmpdir(), "novelix-version-script-"));
     const tempPackagesDir = join(tempRoot, "packages");
     const tempCoreDir = join(tempPackagesDir, "core");
     const tempCliDir = join(tempPackagesDir, "cli");
@@ -137,7 +137,7 @@ describe.sequential("publish packaging", () => {
   });
 
   it("allows source workspace protocol manifests when they normalize cleanly for publish", async () => {
-    const tempRoot = await mkdtemp(join(tmpdir(), "jiaos-publish-verify-pass-"));
+    const tempRoot = await mkdtemp(join(tmpdir(), "novelix-publish-verify-pass-"));
     const tempPackagesDir = join(tempRoot, "packages");
     const tempCoreDir = join(tempPackagesDir, "core");
     const tempCliDir = join(tempPackagesDir, "cli");
@@ -187,7 +187,7 @@ describe.sequential("publish packaging", () => {
   });
 
   it("rejects workspace protocol manifests that normalize to the wrong internal version", async () => {
-    const tempRoot = await mkdtemp(join(tmpdir(), "jiaos-publish-verify-fail-"));
+    const tempRoot = await mkdtemp(join(tmpdir(), "novelix-publish-verify-fail-"));
     const tempPackagesDir = join(tempRoot, "packages");
     const tempCoreDir = join(tempPackagesDir, "core");
     const tempCliDir = join(tempPackagesDir, "cli");
@@ -236,7 +236,7 @@ describe.sequential("publish packaging", () => {
   });
 
   it("replaces workspace dependencies before npm pack", { timeout: CLI_PACK_TEST_TIMEOUT_MS }, async () => {
-    const packDir = await mkdtemp(join(tmpdir(), "jiaos-cli-pack-"));
+    const packDir = await mkdtemp(join(tmpdir(), "novelix-cli-pack-"));
 
     try {
       const packedPackageJson = JSON.parse(await extractPackedPackageJson(cliDir, packDir));
@@ -253,7 +253,7 @@ describe.sequential("publish packaging", () => {
   });
 
   it("packs the studio runtime entry alongside the built frontend", { timeout: STUDIO_PACK_TEST_TIMEOUT_MS }, async () => {
-    const packDir = await mkdtemp(join(tmpdir(), "jiaos-studio-pack-"));
+    const packDir = await mkdtemp(join(tmpdir(), "novelix-studio-pack-"));
 
     try {
       const tarballPath = await packPackage(studioDir, packDir);

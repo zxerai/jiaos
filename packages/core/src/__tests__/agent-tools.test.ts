@@ -19,7 +19,7 @@ describe("agent deterministic writing tools", () => {
   let state: StateManager;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-agent-tools-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-agent-tools-"));
     state = new StateManager(root);
 
     await state.saveBookConfig("harbor", {

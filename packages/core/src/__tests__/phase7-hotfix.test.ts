@@ -256,7 +256,7 @@ describe("Phase 7 hotfix 2 — consolidator re-promotes advancedCount>=2", () =>
   let bookDir: string;
 
   beforeEach(async () => {
-    bookDir = await mkdtemp(join(tmpdir(), "jiaos-phase7-hf-consolid-"));
+    bookDir = await mkdtemp(join(tmpdir(), "novelix-phase7-hf-consolid-"));
     await mkdir(join(bookDir, "story"), { recursive: true });
   });
 
@@ -370,7 +370,7 @@ describe("Phase 7 hotfix 2 — reviewer gates critical severity on promoted", ()
     // continuity.test.ts style so we're exercising the actual prompt builder
     // rather than a decoupled unit.
     const { ContinuityAuditor } = await import("../agents/continuity.js");
-    const root = await mkdtemp(join(tmpdir(), "jiaos-hf-reviewer-zh-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-hf-reviewer-zh-"));
     const bookDirLocal = join(root, "book");
     const storyDir = join(bookDirLocal, "story");
     await mkdir(storyDir, { recursive: true });
@@ -448,7 +448,7 @@ describe("Phase 7 hotfix 2 — reviewer gates critical severity on promoted", ()
 
   it("en reviewer prompt gates on promoted=true and references 'blocked N chapters'", async () => {
     const { ContinuityAuditor } = await import("../agents/continuity.js");
-    const root = await mkdtemp(join(tmpdir(), "jiaos-hf-reviewer-en-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-hf-reviewer-en-"));
     const bookDirLocal = join(root, "book");
     const storyDir = join(bookDirLocal, "story");
     await mkdir(storyDir, { recursive: true });

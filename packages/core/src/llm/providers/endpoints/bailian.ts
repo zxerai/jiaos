@@ -6,7 +6,7 @@
  * - 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
  * - Anthropic 兼容接入：https://help.aliyun.com/zh/model-studio/developer-reference/use-anthropic-sdk
  *
- * jiaos 用 /apps/anthropic 接入（agent 场景工具调用更稳）。
+ * novelix 用 /apps/anthropic 接入（agent 场景工具调用更稳）。
  *
  * **重要**：百炼有两条通道，模型清单**不完全对等**：
  *   - OpenAI 兼容（/compatible-mode/v1）：全量 236+ 模型（qwen3.6、kimi-k2.6、deepseek-v3.2 等）

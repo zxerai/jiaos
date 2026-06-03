@@ -69,8 +69,8 @@ export function formatBookCreateFoundationReady(language: CliLanguage): string {
 
 export function formatBookCreateNextStep(language: CliLanguage, bookId: string): string {
   return localize(language, {
-    zh: `下一步：jiaos write next ${bookId}`,
-    en: `Next: jiaos write next ${bookId}`,
+    zh: `下一步：novelix write next ${bookId}`,
+    en: `Next: novelix write next ${bookId}`,
   });
 }
 
@@ -184,8 +184,8 @@ export function formatImportChaptersComplete(
     }),
     "",
     localize(language, {
-      zh: `运行 "jiaos write next ${result.continueBookId}" 继续写作。`,
-      en: `Run "jiaos write next ${result.continueBookId}" to continue writing.`,
+      zh: `运行 "novelix write next ${result.continueBookId}" 继续写作。`,
+      en: `Run "novelix write next ${result.continueBookId}" to continue writing.`,
     }),
   ];
 }

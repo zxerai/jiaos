@@ -133,7 +133,7 @@ describe("public short-fiction chain", () => {
   });
 
   it("resolves cover generation from project cover config and stored cover secret", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-short-cover-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-short-cover-"));
     try {
       await writeFile(join(root, "novelix.json"), JSON.stringify({
         name: "cover-test",
@@ -198,7 +198,7 @@ describe("public short-fiction chain", () => {
   });
 
   it("generates a standalone cover artifact without running the short fiction pipeline", async () => {
-    const root = await mkdtemp(join(tmpdir(), "jiaos-cover-tool-"));
+    const root = await mkdtemp(join(tmpdir(), "novelix-cover-tool-"));
     const originalFetch = globalThis.fetch;
     process.env.JIAOS_TEST_COVER_KEY = "sk-cover";
     try {

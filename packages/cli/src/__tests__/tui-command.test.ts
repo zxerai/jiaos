@@ -11,7 +11,7 @@ describe("tui command", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await mkdtemp(join(tmpdir(), "jiaos-default-studio-"));
+    tempDir = await mkdtemp(join(tmpdir(), "novelix-default-studio-"));
     process.chdir(tempDir);
   });
 
@@ -39,7 +39,7 @@ describe("tui command", () => {
     await program.parseAsync([], { from: "user" });
 
     const config = JSON.parse(await readFile(join(tempDir, "novelix.json"), "utf-8"));
-    expect(config.name).toMatch(/^jiaos-default-studio-/);
+    expect(config.name).toMatch(/^novelix-default-studio-/);
     expect(config.llm.configSource).toBe("studio");
     expect(config.llm.model).toBe("");
     expect(config.llm.baseUrl).toBe("");

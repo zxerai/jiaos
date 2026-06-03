@@ -32,10 +32,10 @@ describe("resolveServiceModel regression — preset baseUrl override", () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-resolver-reg-"));
-    await mkdir(join(root, ".jiaos"), { recursive: true });
+    root = await mkdtemp(join(tmpdir(), "novelix-resolver-reg-"));
+    await mkdir(join(root, ".novelix"), { recursive: true });
     await writeFile(
-      join(root, ".jiaos", "secrets.json"),
+      join(root, ".novelix", "secrets.json"),
       JSON.stringify({ services: { minimax: { apiKey: "sk-minimax-test" } } }),
     );
   });

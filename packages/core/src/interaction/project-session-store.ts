@@ -2,7 +2,7 @@ import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { InteractionSessionSchema, type InteractionSession, GlobalSessionSchema, type GlobalSession } from "./session.js";
 
-const SESSION_DIR = ".jiaos";
+const SESSION_DIR = ".novelix";
 const SESSION_FILE = "session.json";
 
 export function resolveProjectSessionPath(projectRoot: string): string {

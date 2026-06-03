@@ -11,7 +11,7 @@ describe("StateManager", () => {
   let manager: StateManager;
 
   beforeEach(async () => {
-    tempDir = await mkdtemp(join(tmpdir(), "jiaos-test-"));
+    tempDir = await mkdtemp(join(tmpdir(), "novelix-test-"));
     manager = new StateManager(tempDir);
   });
 

@@ -31,7 +31,7 @@
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zxerai/jiaos.git",
+    "url": "https://github.com/zxerai/novelix.git",
     "directory": "packages/core"
   },
   "scripts": {

@@ -190,7 +190,7 @@ export async function resolveBookId(
 
   if (books.length === 0) {
     throw new Error(
-      "No books found. Create one first:\n  jiaos book create --title '...' --genre xuanhuan",
+      "No books found. Create one first:\n  novelix book create --title '...' --genre xuanhuan",
     );
   }
   if (books.length === 1) {

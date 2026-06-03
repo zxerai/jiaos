@@ -59,7 +59,7 @@ describe("studio command", () => {
       "/project",
       "node_modules",
       "@actalk",
-      "jiaos-studio",
+      "novelix-studio",
       "dist",
       "api",
       "index.js",

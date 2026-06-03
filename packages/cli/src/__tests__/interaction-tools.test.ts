@@ -29,7 +29,7 @@ let projectRoot: string;
 
 describe("interaction tools adapter", () => {
   beforeAll(async () => {
-    projectRoot = await mkdtemp(join(tmpdir(), "jiaos-interaction-tools-"));
+    projectRoot = await mkdtemp(join(tmpdir(), "novelix-interaction-tools-"));
     await mkdir(join(projectRoot, "books", "harbor", "story"), { recursive: true });
   });
 

@@ -26,7 +26,7 @@ async function writeChapter(bookDir: string, chapter: number, title: string, bod
 
 describe("analyzeLongSpanFatigue", () => {
   it("warns when the last three chapter types are identical", async () => {
-    const bookDir = await createBookDir("jiaos-long-span-type-test-");
+    const bookDir = await createBookDir("novelix-long-span-type-test-");
 
     await Promise.all([
       writeChapter(bookDir, 1, "铺陈", "城门口下着雨。林越压低斗笠，慢慢走进旧巷。风从墙缝里钻出来。"),
@@ -61,7 +61,7 @@ describe("analyzeLongSpanFatigue", () => {
   });
 
   it("warns in English when recent chapter endings are highly similar", async () => {
-    const bookDir = await createBookDir("jiaos-long-span-ending-test-");
+    const bookDir = await createBookDir("novelix-long-span-ending-test-");
 
     await Promise.all([
       writeChapter(bookDir, 1, "Debt", "The rain had finally stopped. The harbor lights thinned behind him. He knew the debt had only grown heavier."),
@@ -84,7 +84,7 @@ describe("analyzeLongSpanFatigue", () => {
   });
 
   it("builds an English variance brief with phrase, opening, ending, and scene guidance", async () => {
-    const bookDir = await createBookDir("jiaos-variance-brief-test-");
+    const bookDir = await createBookDir("novelix-variance-brief-test-");
 
     await Promise.all([
       writeChapter(bookDir, 1, "Ledger", "Mara kept the ledger close to her chest. The corridor stayed quiet after the bell. There it was again."),
@@ -123,7 +123,7 @@ describe("analyzeLongSpanFatigue", () => {
   });
 
   it("warns when title focus collapses and high-tension mood never releases", async () => {
-    const bookDir = await createBookDir("jiaos-long-span-cadence-test-");
+    const bookDir = await createBookDir("novelix-long-span-cadence-test-");
 
     await Promise.all([
       writeChapter(bookDir, 1, "名单之前", "风贴着走廊吹。周谨川没有停，手指一直压着那份发潮的薄册。"),

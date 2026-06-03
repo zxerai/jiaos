@@ -103,7 +103,7 @@ export async function resolveEffectiveLLMConfig(
     throw new Error(
       configMode === "studio-project"
         ? "Studio LLM API key not set. Open Studio services and save an API key for the selected service."
-        : "NOVELIX_LLM_API_KEY not set. Run 'jiaos config set-global' or add it to project .env file.",
+        : "NOVELIX_LLM_API_KEY not set. Run 'novelix config set-global' or add it to project .env file.",
     );
   }
 
@@ -124,7 +124,7 @@ async function readProjectConfig(root: string): Promise<Record<string, unknown>>
     await access(configPath);
   } catch {
     throw new Error(
-      `novelix.json not found in ${root}.\nMake sure you are inside an Novelix project directory (cd into the project created by 'jiaos init').`,
+      `novelix.json not found in ${root}.\nMake sure you are inside an Novelix project directory (cd into the project created by 'novelix init').`,
     );
   }
 

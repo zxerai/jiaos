@@ -144,7 +144,7 @@ describe("PipelineRunner structured-state memory sync", () => {
     const { ContinuityAuditor } = await import("../agents/continuity.js");
     const { StateValidatorAgent } = await import("../agents/state-validator.js");
 
-    root = await mkdtemp(join(tmpdir(), "jiaos-runner-memory-sync-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-runner-memory-sync-"));
     const state = new StateManager(root);
     const bookId = "memory-sync-book";
     const now = "2026-03-25T00:00:00.000Z";

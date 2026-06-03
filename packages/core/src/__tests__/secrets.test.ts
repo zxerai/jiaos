@@ -8,7 +8,7 @@ describe("secrets", () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), "jiaos-secrets-"));
+    root = await mkdtemp(join(tmpdir(), "novelix-secrets-"));
   });
 
   afterEach(async () => {
@@ -22,9 +22,9 @@ describe("secrets", () => {
     });
 
     it("reads existing secrets file", async () => {
-      await mkdir(join(root, ".jiaos"), { recursive: true });
+      await mkdir(join(root, ".novelix"), { recursive: true });
       await writeFile(
-        join(root, ".jiaos", "secrets.json"),
+        join(root, ".novelix", "secrets.json"),
         JSON.stringify({ services: { moonshot: { apiKey: "sk-test" } } }),
       );
       const secrets = await loadSecrets(root);
@@ -33,19 +33,19 @@ describe("secrets", () => {
   });
 
   describe("saveSecrets", () => {
-    it("creates .jiaos dir and writes secrets file", async () => {
+    it("creates .novelix dir and writes secrets file", async () => {
       await saveSecrets(root, {
         services: { deepseek: { apiKey: "sk-deep" } },
       });
-      const raw = await readFile(join(root, ".jiaos", "secrets.json"), "utf-8");
+      const raw = await readFile(join(root, ".novelix", "secrets.json"), "utf-8");
       const parsed = JSON.parse(raw);
       expect(parsed.services.deepseek.apiKey).toBe("sk-deep");
     });
 
     it("overwrites existing secrets file", async () => {
-      await mkdir(join(root, ".jiaos"), { recursive: true });
+      await mkdir(join(root, ".novelix"), { recursive: true });
       await writeFile(
-        join(root, ".jiaos", "secrets.json"),
+        join(root, ".novelix", "secrets.json"),
         JSON.stringify({ services: { old: { apiKey: "old-key" } } }),
       );
       await saveSecrets(root, {
@@ -59,9 +59,9 @@ describe("secrets", () => {
 
   describe("getServiceApiKey", () => {
     it("returns key from secrets.json first", async () => {
-      await mkdir(join(root, ".jiaos"), { recursive: true });
+      await mkdir(join(root, ".novelix"), { recursive: true });
       await writeFile(
-        join(root, ".jiaos", "secrets.json"),
+        join(root, ".novelix", "secrets.json"),
         JSON.stringify({ services: { moonshot: { apiKey: "sk-from-file" } } }),
       );
       const key = await getServiceApiKey(root, "moonshot");
@@ -81,9 +81,9 @@ describe("secrets", () => {
     });
 
     it("handles custom service with colon key format", async () => {
-      await mkdir(join(root, ".jiaos"), { recursive: true });
+      await mkdir(join(root, ".novelix"), { recursive: true });
       await writeFile(
-        join(root, ".jiaos", "secrets.json"),
+        join(root, ".novelix", "secrets.json"),
         JSON.stringify({
           services: { "custom:内网GPT": { apiKey: "sk-custom" } },
         }),

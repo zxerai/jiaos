@@ -5,7 +5,7 @@
  * - 模型广场：https://ollama.com/library
  * - API 文档：https://github.com/ollama/ollama/blob/main/docs/api.md
  *
- * - 默认 baseUrl 指向本地 11434，jiaos 通过 OpenAI 兼容模式 (/v1) 接入。
+ * - 默认 baseUrl 指向本地 11434，novelix 通过 OpenAI 兼容模式 (/v1) 接入。
  */
 import type { JiaosEndpoint } from "../types.js";
 

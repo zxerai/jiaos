@@ -26,7 +26,7 @@ describe("book-session-store", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await mkdtemp(join(tmpdir(), "jiaos-test-"));
+    tempDir = await mkdtemp(join(tmpdir(), "novelix-test-"));
   });
 
   afterEach(async () => {

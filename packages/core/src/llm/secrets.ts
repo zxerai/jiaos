@@ -5,7 +5,7 @@ export interface SecretsFile {
   services: Record<string, { apiKey: string }>;
 }
 
-const SECRETS_DIR = ".jiaos";
+const SECRETS_DIR = ".novelix";
 const SECRETS_FILE = "secrets.json";
 
 const LEGACY_SERVICE_ID_REMAP: Record<string, string> = {
