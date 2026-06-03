@@ -2584,6 +2584,50 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
     }
   });
 
+  // --- Plot Timeline ---
+
+  app.get("/api/v1/books/:id/timeline", async (c) => {
+    const id = c.req.param("id");
+    const bookDir = state.bookDir(id);
+    const summaryPath = join(bookDir, "story", "chapter_summaries.md");
+    try {
+      const content = await readFile(summaryPath, "utf-8");
+      const rows = content
+        .split("\n")
+        .filter((l) => l.startsWith("|") && l.includes("|"));
+      const chapters: Array<{
+        number: number;
+        title: string;
+        characters: string;
+        events: string;
+        states: string;
+        hooks: string;
+        mood: string;
+        type: string;
+      }> = [];
+      for (const row of rows.slice(2)) {
+        // Skip separator rows
+        if (row.includes("---")) continue;
+        const cols = row.split("|").map((c) => c.trim());
+        const num = parseInt(cols[1], 10);
+        if (isNaN(num)) continue;
+        chapters.push({
+          number: num,
+          title: cols[2] ?? "",
+          characters: cols[3] ?? "",
+          events: (cols[4] ?? "").slice(0, 200),
+          states: (cols[5] ?? "").slice(0, 150),
+          hooks: (cols[6] ?? "").slice(0, 150),
+          mood: cols[7] ?? "",
+          type: cols[8] ?? "",
+        });
+      }
+      return c.json({ chapters });
+    } catch {
+      return c.json({ chapters: [] });
+    }
+  });
+
   // --- Plot Mind Map ---
 
   app.get("/api/v1/books/:id/plot-mindmap", async (c) => {
