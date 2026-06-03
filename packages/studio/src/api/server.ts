@@ -2507,11 +2507,32 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
         }
       }
 
+      // Extract detail fields from role file
+      const detail: Record<string, string> = {};
+      const detailSections = file.content.match(
+        /## ([^#\n]+)\n([\s\S]*?)(?=\n##|\n*$)/g,
+      );
+      if (detailSections) {
+        for (const section of detailSections) {
+          const headerMatch = section.match(/## ([^#\n]+)/);
+          if (!headerMatch) continue;
+          const key = headerMatch[1].trim();
+          const value = section
+            .replace(/## [^#\n]+\n/, "")
+            .trim()
+            .slice(0, 200);
+          if (key && value && !key.includes("关系网络")) {
+            detail[key] = value;
+          }
+        }
+      }
+
       nodes.push({
         id: charName,
         name: charName,
         role,
         color: ROLE_COLORS[role] || ROLE_COLORS.minor,
+        ...(Object.keys(detail).length > 0 ? { detail } : {}),
       });
     }
 
