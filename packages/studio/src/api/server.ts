@@ -2614,14 +2614,54 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
           // dir doesn't exist, skip
         }
       }
+      // Merge characters from BOTH roles/ directory and character_matrix.md inline
+      const allNodesMap = new Map<string, GraphNode>();
+      const allEdges: GraphEdge[] = [];
+      const seenEdges = new Set<string>();
+
+      // 1. Load from roles/ directory
       if (roleFiles.length > 0) {
         const { nodes, edges } = parseRoleFiles(roleFiles);
-        return c.json({ nodes, edges });
+        for (const n of nodes) allNodesMap.set(n.id, n);
+        for (const e of edges) {
+          const key = `${e.source}:${e.target}:${e.type}`;
+          if (!seenEdges.has(key)) {
+            seenEdges.add(key);
+            allEdges.push(e);
+          }
+        }
       }
-      // Fallback to inline format from character_matrix.md
+
+      // 2. Also parse inline character_matrix.md for additional characters
       const raw = await readFile(matrixPath, "utf-8");
-      const { nodes, edges } = parseCharacterGraph(raw);
-      return c.json({ nodes, edges });
+      const { nodes: inlineNodes, edges: inlineEdges } =
+        parseCharacterGraph(raw);
+      for (const n of inlineNodes) {
+        if (!allNodesMap.has(n.id)) allNodesMap.set(n.id, n);
+      }
+      for (const e of inlineEdges) {
+        const key = `${e.source}:${e.target}:${e.type}`;
+        if (!seenEdges.has(key)) {
+          seenEdges.add(key);
+          allEdges.push(e);
+        }
+        // Add any character referenced in edges that isn't a node yet
+        for (const ref of [e.source, e.target]) {
+          if (!allNodesMap.has(ref)) {
+            allNodesMap.set(ref, {
+              id: ref,
+              name: ref,
+              role: "mentioned",
+              color: "#bdc3c7",
+            });
+          }
+        }
+      }
+
+      return c.json({
+        nodes: [...allNodesMap.values()],
+        edges: allEdges,
+      });
     } catch {
       return c.json({ nodes: [], edges: [] });
     }
