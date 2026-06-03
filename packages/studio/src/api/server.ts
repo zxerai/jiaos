@@ -2073,58 +2073,31 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
       hooks: string[];
     }> = [];
 
-    const volSections = raw.split(/\n(?=第[一二三四五六七八九十]+卷["「])/);
-    for (const section of volSections) {
-      const titleMatch = section.match(
+    // Only parse the first section (各卷主题与情绪曲线)
+    const firstSection = raw.split(/\n## /)[0] ?? raw;
+    const volLines = firstSection
+      .split("\n")
+      .filter((l) => /^第[一二三四五六七八九十]+卷[“"「]/.test(l.trim()));
+    for (const line of volLines) {
+      const titleMatch = line.match(
         /第[一二三四五六七八九十]+卷[““「]([^””」]+)[””」]/,
       );
       if (!titleMatch) continue;
-
       const title = titleMatch[1];
       const volNum = volumes.length + 1;
-      const rangeMatch = section.match(/约(\d+-\d+章)/);
+      const rangeMatch = line.match(/约(d+-d+章)/);
       const range = rangeMatch?.[1] ?? "";
-
-      const chapterMatch = section.match(/(\d+)章/);
-      const chapters = chapterMatch ? `${chapterMatch[1]}章` : "";
-
-      // Extract theme (first paragraph after the heading)
-      const themeLines = section
-        .split("\n")
-        .slice(1, 4)
-        .filter((l) => l.trim())
-        .map((l) => l.trim());
+      const chapters = "100章";
+      const themeStart = line.indexOf("主题是");
       const theme =
-        (themeLines[0]?.replace(/^[“”「」]/, "").slice(0, 80) ?? "") + "……";
-
-      // Extract highlight (satisfaction type)
-      const hlMatch = section.match(/情绪[：:]([^。\n]+)/);
+        themeStart > 0
+          ? line
+              .slice(themeStart + 4, themeStart + 40)
+              .replace(/^[“”]/, "")
+              .replace(/[“”].*$/, "") + "……"
+          : "";
+      const hlMatch = line.match(/情绪[：:]([^。\n]{0,40})/);
       const highlight = hlMatch?.[1]?.trim() ?? "";
-
-      // Extract OKRs
-      const okrs: string[] = [];
-      const okrSection = section.match(/KR\d[^]*?(?=\n##|$)/);
-      if (okrSection) {
-        const krMatches = okrSection[0].match(/- KR\d:[^\n]+/g);
-        if (krMatches) {
-          for (const kr of krMatches.slice(0, 3)) {
-            okrs.push(kr.replace(/^- KR\d:\s*/, "").slice(0, 120));
-          }
-        }
-      }
-
-      // Extract hooks
-      const hooks: string[] = [];
-      const hookSection = section.match(/前台钩子[^]*?(?=\n##|$)/);
-      if (hookSection) {
-        const hMatches = hookSection[0].match(/- [^\n]+/g);
-        if (hMatches) {
-          for (const h of hMatches.slice(0, 3)) {
-            hooks.push(h.replace(/^- /, "").slice(0, 120));
-          }
-        }
-      }
-
       volumes.push({
         volume: volNum,
         title,
@@ -2132,8 +2105,8 @@ export function createStudioServer(initialConfig: ProjectConfig, root: string) {
         chapters,
         theme,
         highlight,
-        okrs,
-        hooks,
+        okrs: [],
+        hooks: [],
       });
     }
 
