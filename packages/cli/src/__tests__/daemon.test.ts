@@ -71,10 +71,14 @@ describe("daemon command", () => {
     readFileMock.mockRejectedValueOnce(new Error("missing pid"));
     writeFileMock.mockResolvedValue(undefined);
     unlinkMock.mockResolvedValue(undefined);
-    schedulerStartMock.mockRejectedValueOnce(new Error("scheduler boot failed"));
+    schedulerStartMock.mockRejectedValueOnce(
+      new Error("scheduler boot failed"),
+    );
 
     const exitError = new Error("process.exit");
-    const exitSpy = vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
+    const exitSpy = vi.spyOn(process, "exit").mockImplementation(((
+      code?: number,
+    ) => {
       throw Object.assign(exitError, { code });
     }) as never);
 
@@ -84,8 +88,12 @@ describe("daemon command", () => {
       upCommand.parseAsync(["node", "up", "--quiet"]),
     ).rejects.toMatchObject({ code: 1 });
 
-    const pidPath = join("/project", "jiaos.pid");
-    expect(writeFileMock).toHaveBeenCalledWith(pidPath, expect.any(String), "utf-8");
+    const pidPath = join("/project", "novelix.pid");
+    expect(writeFileMock).toHaveBeenCalledWith(
+      pidPath,
+      expect.any(String),
+      "utf-8",
+    );
     expect(unlinkMock).toHaveBeenCalledWith(pidPath);
 
     exitSpy.mockRestore();

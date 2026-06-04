@@ -3,11 +3,24 @@ import { PipelineRunner, StateManager } from "@actalk/novelix-core";
 import { readdir, stat, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { createInterface } from "node:readline";
-import { loadConfig, buildPipelineConfig, findProjectRoot, getLegacyMigrationHint, resolveContext, resolveBookId, log, logError } from "../utils.js";
-import { formatWriteNextComplete, formatWriteNextProgress, formatWriteNextResultLines, resolveCliLanguage } from "../localization.js";
+import {
+  loadConfig,
+  buildPipelineConfig,
+  findProjectRoot,
+  getLegacyMigrationHint,
+  resolveContext,
+  resolveBookId,
+  log,
+  logError,
+} from "../utils.js";
+import {
+  formatWriteNextComplete,
+  formatWriteNextProgress,
+  formatWriteNextResultLines,
+  resolveCliLanguage,
+} from "../localization.js";
 
-export const writeCommand = new Command("write")
-  .description("Write chapters");
+export const writeCommand = new Command("write").description("Write chapters");
 
 writeCommand
   .command("next")
@@ -33,14 +46,20 @@ writeCommand
       }
       const config = await loadConfig();
 
-      const pipeline = new PipelineRunner(buildPipelineConfig(config, root, { externalContext: context, quiet: opts.quiet }));
+      const pipeline = new PipelineRunner(
+        buildPipelineConfig(config, root, {
+          externalContext: context,
+          quiet: opts.quiet,
+        }),
+      );
 
       const count = parseInt(opts.count, 10);
       const wordCount = opts.words ? parseInt(opts.words, 10) : undefined;
 
       const results = [];
       for (let i = 0; i < count; i++) {
-        if (!opts.json) log(formatWriteNextProgress(language, i + 1, count, bookId));
+        if (!opts.json)
+          log(formatWriteNextProgress(language, i + 1, count, bookId));
 
         const result = await pipeline.writeNextChapter(bookId, wordCount);
         results.push(result);
@@ -62,9 +81,11 @@ writeCommand
 
         if (result.status === "state-degraded") {
           if (!opts.json) {
-            log(language === "en"
-              ? "State repair required before continuing. Stopping batch."
-              : "需要先修复 state，已停止后续连写。");
+            log(
+              language === "en"
+                ? "State repair required before continuing. Stopping batch."
+                : "需要先修复 state，已停止后续连写。",
+            );
           }
           break;
         }
@@ -101,20 +122,28 @@ writeCommand
       let chapter: number;
       if (args.length === 1) {
         chapter = parseInt(args[0]!, 10);
-        if (isNaN(chapter)) throw new Error(`Expected chapter number, got "${args[0]}"`);
+        if (isNaN(chapter))
+          throw new Error(`Expected chapter number, got "${args[0]}"`);
         bookId = await resolveBookId(undefined, root);
       } else if (args.length === 2) {
         chapter = parseInt(args[1]!, 10);
-        if (isNaN(chapter)) throw new Error(`Expected chapter number, got "${args[1]}"`);
+        if (isNaN(chapter))
+          throw new Error(`Expected chapter number, got "${args[1]}"`);
         bookId = await resolveBookId(args[0], root);
       } else {
-        throw new Error("Usage: jiaos write rewrite [book-id] <chapter>");
+        throw new Error("Usage: novelix write rewrite [book-id] <chapter>");
       }
 
       if (!opts.force) {
-        const rl = createInterface({ input: process.stdin, output: process.stdout });
+        const rl = createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        });
         const answer = await new Promise<string>((resolve) => {
-          rl.question(`Rewrite chapter ${chapter} of "${bookId}"? This will delete chapter ${chapter} and all later chapters. (y/N) `, resolve);
+          rl.question(
+            `Rewrite chapter ${chapter} of "${bookId}"? This will delete chapter ${chapter} and all later chapters. (y/N) `,
+            resolve,
+          );
         });
         rl.close();
         if (answer.toLowerCase() !== "y") {
@@ -127,9 +156,16 @@ writeCommand
       const bookDir = state.bookDir(bookId);
       const chaptersDir = join(bookDir, "chapters");
       const restoreFrom = chapter - 1;
-      const restoreSnapshotDir = join(bookDir, "story", "snapshots", String(restoreFrom));
+      const restoreSnapshotDir = join(
+        bookDir,
+        "story",
+        "snapshots",
+        String(restoreFrom),
+      );
       await stat(restoreSnapshotDir).catch(() => {
-        throw new Error(`Cannot rewrite chapter ${chapter}: missing snapshot for chapter ${restoreFrom}`);
+        throw new Error(
+          `Cannot rewrite chapter ${chapter}: missing snapshot for chapter ${restoreFrom}`,
+        );
       });
       const migrationHint = await getLegacyMigrationHint(root, bookId);
       if (migrationHint && !opts.json) {
@@ -139,7 +175,9 @@ writeCommand
       // Remove existing chapter file
       const files = await readdir(chaptersDir);
       const paddedNum = String(chapter).padStart(4, "0");
-      const existing = files.filter((f) => f.startsWith(paddedNum) && f.endsWith(".md"));
+      const existing = files.filter(
+        (f) => f.startsWith(paddedNum) && f.endsWith(".md"),
+      );
       for (const f of existing) {
         await unlink(join(chaptersDir, f));
         if (!opts.json) log(`Removed: ${f}`);
@@ -163,13 +201,18 @@ writeCommand
       // Restore state to previous chapter's end-state (chapter 1 uses snapshot-0 from initBook)
       const restored = await state.restoreState(bookId, restoreFrom);
       if (!restored) {
-        throw new Error(`Cannot rewrite chapter ${chapter}: failed to restore snapshot for chapter ${restoreFrom}`);
+        throw new Error(
+          `Cannot rewrite chapter ${chapter}: failed to restore snapshot for chapter ${restoreFrom}`,
+        );
       }
-      if (!opts.json) log(`State restored from chapter ${restoreFrom} snapshot.`);
+      if (!opts.json)
+        log(`State restored from chapter ${restoreFrom} snapshot.`);
 
       const nextChapter = await state.getNextChapterNumber(bookId);
       if (nextChapter !== chapter) {
-        throw new Error(`Cannot rewrite chapter ${chapter}: expected next chapter to be ${chapter}, but resolved to ${nextChapter}`);
+        throw new Error(
+          `Cannot rewrite chapter ${chapter}: expected next chapter to be ${chapter}, but resolved to ${nextChapter}`,
+        );
       }
 
       if (!opts.json) log(`Regenerating chapter ${chapter}...`);
@@ -177,9 +220,11 @@ writeCommand
       const wordCount = opts.words ? parseInt(opts.words, 10) : undefined;
 
       const config = await loadConfig();
-      const pipeline = new PipelineRunner(buildPipelineConfig(config, root, {
-        externalContext: opts.brief,
-      }));
+      const pipeline = new PipelineRunner(
+        buildPipelineConfig(config, root, {
+          externalContext: opts.brief,
+        }),
+      );
 
       const result = await pipeline.writeNextChapter(bookId, wordCount);
       const book = await state.loadBookConfig(bookId);
@@ -212,9 +257,14 @@ writeCommand
 
 writeCommand
   .command("sync")
-  .description("Rebuild truth files and SQLite indexes from the latest edited chapter body")
+  .description(
+    "Rebuild truth files and SQLite indexes from the latest edited chapter body",
+  )
   .argument("<args...>", "Book ID (optional) and chapter number")
-  .option("--brief <text>", "One-off guidance for how to interpret the edited chapter while syncing")
+  .option(
+    "--brief <text>",
+    "One-off guidance for how to interpret the edited chapter while syncing",
+  )
   .option("--json", "Output JSON")
   .action(async (args: ReadonlyArray<string>, opts) => {
     try {
@@ -224,23 +274,27 @@ writeCommand
       let chapter: number;
       if (args.length === 1) {
         chapter = parseInt(args[0]!, 10);
-        if (isNaN(chapter)) throw new Error(`Expected chapter number, got "${args[0]}"`);
+        if (isNaN(chapter))
+          throw new Error(`Expected chapter number, got "${args[0]}"`);
         bookId = await resolveBookId(undefined, root);
       } else if (args.length === 2) {
         chapter = parseInt(args[1]!, 10);
-        if (isNaN(chapter)) throw new Error(`Expected chapter number, got "${args[1]}"`);
+        if (isNaN(chapter))
+          throw new Error(`Expected chapter number, got "${args[1]}"`);
         bookId = await resolveBookId(args[0], root);
       } else {
-        throw new Error("Usage: jiaos write sync [book-id] <chapter>");
+        throw new Error("Usage: novelix write sync [book-id] <chapter>");
       }
 
       const state = new StateManager(root);
       const book = await state.loadBookConfig(bookId);
       const language = resolveCliLanguage(book.language);
       const config = await loadConfig();
-      const pipeline = new PipelineRunner(buildPipelineConfig(config, root, {
-        externalContext: opts.brief,
-      }));
+      const pipeline = new PipelineRunner(
+        buildPipelineConfig(config, root, {
+          externalContext: opts.brief,
+        }),
+      );
       const result = await pipeline.resyncChapterArtifacts(bookId, chapter);
 
       if (opts.json) {
@@ -270,7 +324,9 @@ writeCommand
 
 writeCommand
   .command("repair-state")
-  .description("Rebuild truth files for a persisted state-degraded chapter without rewriting body text")
+  .description(
+    "Rebuild truth files for a persisted state-degraded chapter without rewriting body text",
+  )
   .argument("<args...>", "Book ID (optional) and chapter number")
   .option("--json", "Output JSON")
   .action(async (args: ReadonlyArray<string>, opts) => {
@@ -281,14 +337,18 @@ writeCommand
       let chapter: number;
       if (args.length === 1) {
         chapter = parseInt(args[0]!, 10);
-        if (isNaN(chapter)) throw new Error(`Expected chapter number, got "${args[0]}"`);
+        if (isNaN(chapter))
+          throw new Error(`Expected chapter number, got "${args[0]}"`);
         bookId = await resolveBookId(undefined, root);
       } else if (args.length === 2) {
         chapter = parseInt(args[1]!, 10);
-        if (isNaN(chapter)) throw new Error(`Expected chapter number, got "${args[1]}"`);
+        if (isNaN(chapter))
+          throw new Error(`Expected chapter number, got "${args[1]}"`);
         bookId = await resolveBookId(args[0], root);
       } else {
-        throw new Error("Usage: jiaos write repair-state [book-id] <chapter>");
+        throw new Error(
+          "Usage: novelix write repair-state [book-id] <chapter>",
+        );
       }
 
       const state = new StateManager(root);

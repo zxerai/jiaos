@@ -1,11 +1,18 @@
 import { Command } from "commander";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import { findProjectRoot, log, logError, GLOBAL_CONFIG_DIR, GLOBAL_ENV_PATH } from "../utils.js";
+import {
+  findProjectRoot,
+  log,
+  logError,
+  GLOBAL_CONFIG_DIR,
+  GLOBAL_ENV_PATH,
+} from "../utils.js";
 import { listModelsForService } from "@actalk/novelix-core";
 
-export const configCommand = new Command("config")
-  .description("Manage project configuration");
+export const configCommand = new Command("config").description(
+  "Manage project configuration",
+);
 
 configCommand
   .command("set")
@@ -23,14 +30,23 @@ configCommand
       const keys = key.split(".");
 
       const KNOWN_KEYS = new Set([
-        "llm.provider", "llm.baseUrl", "llm.model", "llm.temperature",
-        "llm.thinkingBudget", "llm.proxyUrl", "llm.apiFormat", "llm.stream",
+        "llm.provider",
+        "llm.baseUrl",
+        "llm.model",
+        "llm.temperature",
+        "llm.thinkingBudget",
+        "llm.proxyUrl",
+        "llm.apiFormat",
+        "llm.stream",
         "inputGovernanceMode",
         "foundation.reviewRetries",
         "writing.reviewRetries",
-        "daemon.schedule.radarCron", "daemon.schedule.writeCron",
-        "daemon.maxConcurrentBooks", "daemon.chaptersPerCycle",
-        "daemon.retryDelayMs", "daemon.cooldownAfterChapterMs",
+        "daemon.schedule.radarCron",
+        "daemon.schedule.writeCron",
+        "daemon.maxConcurrentBooks",
+        "daemon.chaptersPerCycle",
+        "daemon.retryDelayMs",
+        "daemon.cooldownAfterChapterMs",
         "daemon.maxChaptersPerDay",
       ]);
       // Allow any key under llm.extra.* (passthrough to API)
@@ -38,23 +54,38 @@ configCommand
         // Find closest match by edit distance on the last segment
         const candidates = [...KNOWN_KEYS];
         const inputParts = key.split(".");
-        const samePrefixCandidates = candidates.filter(k => {
+        const samePrefixCandidates = candidates.filter((k) => {
           const parts = k.split(".");
-          return parts.length === inputParts.length && parts.slice(0, -1).join(".") === inputParts.slice(0, -1).join(".");
+          return (
+            parts.length === inputParts.length &&
+            parts.slice(0, -1).join(".") === inputParts.slice(0, -1).join(".")
+          );
         });
         const editDist = (a: string, b: string): number => {
-          const m = a.length, n = b.length;
-          const dp = Array.from({ length: m + 1 }, (_, i) => Array.from({ length: n + 1 }, (_, j) => i === 0 ? j : j === 0 ? i : 0));
-          for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
-            dp[i]![j] = Math.min(dp[i-1]![j]! + 1, dp[i]![j-1]! + 1, dp[i-1]![j-1]! + (a[i-1] !== b[j-1] ? 1 : 0));
+          const m = a.length,
+            n = b.length;
+          const dp = Array.from({ length: m + 1 }, (_, i) =>
+            Array.from({ length: n + 1 }, (_, j) =>
+              i === 0 ? j : j === 0 ? i : 0,
+            ),
+          );
+          for (let i = 1; i <= m; i++)
+            for (let j = 1; j <= n; j++)
+              dp[i]![j] = Math.min(
+                dp[i - 1]![j]! + 1,
+                dp[i]![j - 1]! + 1,
+                dp[i - 1]![j - 1]! + (a[i - 1] !== b[j - 1] ? 1 : 0),
+              );
           return dp[m]![n]!;
         };
         const inputLast = inputParts[inputParts.length - 1]!;
         const suggestion = samePrefixCandidates
-          .map(k => ({ k, d: editDist(k.split(".").pop()!, inputLast) }))
+          .map((k) => ({ k, d: editDist(k.split(".").pop()!, inputLast) }))
           .sort((a, b) => a.d - b.d)
-          .find(x => x.d <= 3)?.k;
-        logError(`Unknown config key "${key}".${suggestion ? ` Did you mean "${suggestion}"?` : ""}`);
+          .find((x) => x.d <= 3)?.k;
+        logError(
+          `Unknown config key "${key}".${suggestion ? ` Did you mean "${suggestion}"?` : ""}`,
+        );
         log(`Known keys: ${candidates.join(", ")}`);
         process.exit(1);
       }
@@ -89,7 +120,9 @@ configCommand
 
 configCommand
   .command("set-global")
-  .description("Set global LLM config (~/.novelix/.env), shared by all projects")
+  .description(
+    "Set global LLM config (~/.novelix/.env), shared by all projects",
+  )
   .requiredOption("--provider <provider>", "LLM provider (openai / anthropic)")
   .requiredOption("--base-url <url>", "API base URL")
   .requiredOption("--api-key <key>", "API key")
@@ -98,7 +131,10 @@ configCommand
   .option("--max-tokens <n>", "Max output tokens")
   .option("--thinking-budget <n>", "Anthropic thinking budget")
   .option("--api-format <format>", "API format (chat / responses)")
-  .option("--lang <language>", "Default writing language: zh (Chinese) or en (English)")
+  .option(
+    "--lang <language>",
+    "Default writing language: zh (Chinese) or en (English)",
+  )
   .action(async (opts) => {
     try {
       await mkdir(GLOBAL_CONFIG_DIR, { recursive: true });
@@ -110,14 +146,19 @@ configCommand
         `NOVELIX_LLM_API_KEY=${opts.apiKey}`,
         `NOVELIX_LLM_MODEL=${opts.model}`,
       ];
-      if (opts.temperature) lines.push(`NOVELIX_LLM_TEMPERATURE=${opts.temperature}`);
-      if (opts.thinkingBudget) lines.push(`NOVELIX_LLM_THINKING_BUDGET=${opts.thinkingBudget}`);
-      if (opts.apiFormat) lines.push(`NOVELIX_LLM_API_FORMAT=${opts.apiFormat}`);
+      if (opts.temperature)
+        lines.push(`NOVELIX_LLM_TEMPERATURE=${opts.temperature}`);
+      if (opts.thinkingBudget)
+        lines.push(`NOVELIX_LLM_THINKING_BUDGET=${opts.thinkingBudget}`);
+      if (opts.apiFormat)
+        lines.push(`NOVELIX_LLM_API_FORMAT=${opts.apiFormat}`);
       if (opts.lang) lines.push(`NOVELIX_DEFAULT_LANGUAGE=${opts.lang}`);
 
       await writeFile(GLOBAL_ENV_PATH, lines.join("\n") + "\n", "utf-8");
       log(`Global config saved to ${GLOBAL_ENV_PATH}`);
-      log("All projects will use this config unless overridden by project .env");
+      log(
+        "All projects will use this config unless overridden by project .env",
+      );
     } catch (e) {
       logError(`Failed to set global config: ${e}`);
       process.exit(1);
@@ -136,7 +177,9 @@ configCommand
       );
       log(masked);
     } catch {
-      log("No global config found. Run 'jiaos config set-global' to create one.");
+      log(
+        "No global config found. Run 'novelix config set-global' to create one.",
+      );
     }
   });
 
@@ -162,7 +205,14 @@ configCommand
     }
   });
 
-const KNOWN_AGENTS = ["writer", "auditor", "reviser", "architect", "radar", "chapter-analyzer"] as const;
+const KNOWN_AGENTS = [
+  "writer",
+  "auditor",
+  "reviser",
+  "architect",
+  "radar",
+  "chapter-analyzer",
+] as const;
 const ENV_VAR_NAME_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
 function validateApiKeyEnvName(value: string): string | undefined {
@@ -175,59 +225,88 @@ function validateApiKeyEnvName(value: string): string | undefined {
 
 configCommand
   .command("set-model")
-  .description("Set model override for a specific agent (with optional provider routing)")
+  .description(
+    "Set model override for a specific agent (with optional provider routing)",
+  )
   .argument("<agent>", `Agent name (${KNOWN_AGENTS.join(", ")})`)
   .argument("<model>", "Model name")
   .option("--base-url <url>", "API base URL (for different provider)")
-  .option("--provider <provider>", "Provider type (openai / anthropic / custom)")
-  .option("--api-key-env <envVar>", "Env variable name for API key (e.g., PACKYAPI_KEY)")
+  .option(
+    "--provider <provider>",
+    "Provider type (openai / anthropic / custom)",
+  )
+  .option(
+    "--api-key-env <envVar>",
+    "Env variable name for API key (e.g., PACKYAPI_KEY)",
+  )
   .option("--stream", "Enable streaming (default)")
   .option("--no-stream", "Disable streaming")
-  .action(async (agent: string, model: string, opts: { baseUrl?: string; provider?: string; apiKeyEnv?: string; stream?: boolean }) => {
-    if (!KNOWN_AGENTS.includes(agent as typeof KNOWN_AGENTS[number])) {
-      logError(`Unknown agent "${agent}". Valid agents: ${KNOWN_AGENTS.join(", ")}`);
-      process.exit(1);
-    }
-
-    if (opts.apiKeyEnv) {
-      const validationError = validateApiKeyEnvName(opts.apiKeyEnv);
-      if (validationError) {
-        logError(validationError);
+  .action(
+    async (
+      agent: string,
+      model: string,
+      opts: {
+        baseUrl?: string;
+        provider?: string;
+        apiKeyEnv?: string;
+        stream?: boolean;
+      },
+    ) => {
+      if (!KNOWN_AGENTS.includes(agent as (typeof KNOWN_AGENTS)[number])) {
+        logError(
+          `Unknown agent "${agent}". Valid agents: ${KNOWN_AGENTS.join(", ")}`,
+        );
         process.exit(1);
       }
-    }
 
-    const root = findProjectRoot();
-    const configPath = join(root, "novelix.json");
-
-    try {
-      const raw = await readFile(configPath, "utf-8");
-      const config = JSON.parse(raw);
-      const overrides = config.modelOverrides ?? {};
-
-      const hasProviderOpts = opts.baseUrl || opts.provider || opts.apiKeyEnv || opts.stream === false;
-      if (hasProviderOpts) {
-        const override: Record<string, unknown> = { model };
-        if (opts.baseUrl) override.baseUrl = opts.baseUrl;
-        if (opts.provider) override.provider = opts.provider;
-        if (opts.apiKeyEnv) override.apiKeyEnv = opts.apiKeyEnv;
-        if (opts.stream === false) override.stream = false;
-        config.modelOverrides = { ...overrides, [agent]: override };
-      } else {
-        config.modelOverrides = { ...overrides, [agent]: model };
+      if (opts.apiKeyEnv) {
+        const validationError = validateApiKeyEnvName(opts.apiKeyEnv);
+        if (validationError) {
+          logError(validationError);
+          process.exit(1);
+        }
       }
 
-      await writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
-      log(`Model override: ${agent} → ${model}${opts.baseUrl ? ` (${opts.baseUrl})` : ""}`);
-    } catch (e) {
-      logError(`Failed to update config: ${e}`);
-      process.exit(1);
-    }
-  });
+      const root = findProjectRoot();
+      const configPath = join(root, "novelix.json");
+
+      try {
+        const raw = await readFile(configPath, "utf-8");
+        const config = JSON.parse(raw);
+        const overrides = config.modelOverrides ?? {};
+
+        const hasProviderOpts =
+          opts.baseUrl ||
+          opts.provider ||
+          opts.apiKeyEnv ||
+          opts.stream === false;
+        if (hasProviderOpts) {
+          const override: Record<string, unknown> = { model };
+          if (opts.baseUrl) override.baseUrl = opts.baseUrl;
+          if (opts.provider) override.provider = opts.provider;
+          if (opts.apiKeyEnv) override.apiKeyEnv = opts.apiKeyEnv;
+          if (opts.stream === false) override.stream = false;
+          config.modelOverrides = { ...overrides, [agent]: override };
+        } else {
+          config.modelOverrides = { ...overrides, [agent]: model };
+        }
+
+        await writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
+        log(
+          `Model override: ${agent} → ${model}${opts.baseUrl ? ` (${opts.baseUrl})` : ""}`,
+        );
+      } catch (e) {
+        logError(`Failed to update config: ${e}`);
+        process.exit(1);
+      }
+    },
+  );
 
 configCommand
   .command("remove-model")
-  .description("Remove model override for a specific agent (falls back to default)")
+  .description(
+    "Remove model override for a specific agent (falls back to default)",
+  )
   .argument("<agent>", "Agent name")
   .action(async (agent: string) => {
     const root = findProjectRoot();
@@ -301,25 +380,35 @@ configCommand
 // B17: list-models 命令 —— 列出指定 service 的可用模型（含元数据）
 configCommand
   .command("list-models <service>")
-  .description("List available models for a service (with maxOutput / contextWindow / abilities)")
-  .option("--api-key <key>", "API Key (also reads from NOVELIX_LLM_API_KEY env)")
+  .description(
+    "List available models for a service (with maxOutput / contextWindow / abilities)",
+  )
+  .option(
+    "--api-key <key>",
+    "API Key (also reads from NOVELIX_LLM_API_KEY env)",
+  )
   .option("--base-url <url>", "Live /models probe baseUrl (for custom/newapi)")
   .option("--json", "Output as JSON")
-  .action(async (service: string, opts: { apiKey?: string; baseUrl?: string; json?: boolean }) => {
-    const apiKey = opts.apiKey ?? process.env.NOVELIX_LLM_API_KEY;
-    const models = await listModelsForService(service, apiKey, opts.baseUrl);
-    if (models.length === 0) {
-      logError(`${service} 没有可用模型（可能需要 --api-key 和 --base-url）`);
-      process.exit(1);
-    }
-    if (opts.json) {
-      log(JSON.stringify(models, null, 2));
-      return;
-    }
-    log(`${service}：${models.length} 个模型\n`);
-    for (const m of models) {
-      const maxOut = m.maxOutput ? `out=${m.maxOutput}` : "out=?";
-      const ctx = m.contextWindow > 0 ? `ctx=${m.contextWindow}` : "ctx=?";
-      log(`  ${m.id.padEnd(42)} ${maxOut.padEnd(14)} ${ctx}`);
-    }
-  });
+  .action(
+    async (
+      service: string,
+      opts: { apiKey?: string; baseUrl?: string; json?: boolean },
+    ) => {
+      const apiKey = opts.apiKey ?? process.env.NOVELIX_LLM_API_KEY;
+      const models = await listModelsForService(service, apiKey, opts.baseUrl);
+      if (models.length === 0) {
+        logError(`${service} 没有可用模型（可能需要 --api-key 和 --base-url）`);
+        process.exit(1);
+      }
+      if (opts.json) {
+        log(JSON.stringify(models, null, 2));
+        return;
+      }
+      log(`${service}：${models.length} 个模型\n`);
+      for (const m of models) {
+        const maxOut = m.maxOutput ? `out=${m.maxOutput}` : "out=?";
+        const ctx = m.contextWindow > 0 ? `ctx=${m.contextWindow}` : "ctx=?";
+        log(`  ${m.id.padEnd(42)} ${maxOut.padEnd(14)} ${ctx}`);
+      }
+    },
+  );

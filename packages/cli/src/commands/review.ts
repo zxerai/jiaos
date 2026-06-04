@@ -1,9 +1,15 @@
 import { Command } from "commander";
-import { StateManager, formatLengthCount, readGenreProfile, resolveLengthCountingMode } from "@actalk/novelix-core";
+import {
+  StateManager,
+  formatLengthCount,
+  readGenreProfile,
+  resolveLengthCountingMode,
+} from "@actalk/novelix-core";
 import { findProjectRoot, resolveBookId, log, logError } from "../utils.js";
 
-export const reviewCommand = new Command("review")
-  .description("Review and approve chapters");
+export const reviewCommand = new Command("review").description(
+  "Review and approve chapters",
+);
 
 reviewCommand
   .command("list")
@@ -36,8 +42,13 @@ reviewCommand
         if (pending.length === 0) continue;
 
         const book = await state.loadBookConfig(id);
-        const { profile: genreProfile } = await readGenreProfile(root, book.genre);
-        const countingMode = resolveLengthCountingMode(book.language ?? genreProfile.language);
+        const { profile: genreProfile } = await readGenreProfile(
+          root,
+          book.genre,
+        );
+        const countingMode = resolveLengthCountingMode(
+          book.language ?? genreProfile.language,
+        );
 
         if (!opts.json) {
           log(`\n${book.title} (${id}):`);
@@ -84,9 +95,10 @@ reviewCommand
  * Parse "[book-id] <chapter>" style arguments from variadic args.
  * Supports: "3" (auto-detect book) or "my-book 3"
  */
-function parseBookAndChapter(
-  args: ReadonlyArray<string>,
-): { readonly bookIdArg: string | undefined; readonly chapterNum: number } {
+function parseBookAndChapter(args: ReadonlyArray<string>): {
+  readonly bookIdArg: string | undefined;
+  readonly chapterNum: number;
+} {
   if (args.length === 1) {
     const num = parseInt(args[0]!, 10);
     if (isNaN(num)) {
@@ -97,16 +109,20 @@ function parseBookAndChapter(
   if (args.length === 2) {
     const num = parseInt(args[1]!, 10);
     if (isNaN(num)) {
-      throw new Error(`Expected chapter number as second argument, got "${args[1]}"`);
+      throw new Error(
+        `Expected chapter number as second argument, got "${args[1]}"`,
+      );
     }
     return { bookIdArg: args[0], chapterNum: num };
   }
-  throw new Error("Usage: jiaos review approve [book-id] <chapter>");
+  throw new Error("Usage: novelix review approve [book-id] <chapter>");
 }
 
 reviewCommand
   .command("approve")
-  .description("Approve a chapter and commit its state: approve [book-id] <chapter>")
+  .description(
+    "Approve a chapter and commit its state: approve [book-id] <chapter>",
+  )
   .argument("<args...>", "Book ID (optional) and chapter number")
   .option("--json", "Output JSON")
   .action(async (args: ReadonlyArray<string>, opts) => {
@@ -130,7 +146,9 @@ reviewCommand
       await state.saveChapterIndex(bookId, index);
 
       if (opts.json) {
-        log(JSON.stringify({ bookId, chapter: chapterNum, status: "approved" }));
+        log(
+          JSON.stringify({ bookId, chapter: chapterNum, status: "approved" }),
+        );
       } else {
         log(`Chapter ${chapterNum} approved (state committed).`);
       }
@@ -186,10 +204,15 @@ reviewCommand
 
 reviewCommand
   .command("reject")
-  .description("Reject a chapter and roll back state: reject [book-id] <chapter>")
+  .description(
+    "Reject a chapter and roll back state: reject [book-id] <chapter>",
+  )
   .argument("<args...>", "Book ID (optional) and chapter number")
   .option("--reason <reason>", "Rejection reason")
-  .option("--keep-subsequent", "Only reject this chapter, do not discard subsequent chapters")
+  .option(
+    "--keep-subsequent",
+    "Only reject this chapter, do not discard subsequent chapters",
+  )
   .option("--json", "Output JSON")
   .action(async (args: ReadonlyArray<string>, opts) => {
     try {
@@ -216,7 +239,14 @@ reviewCommand
         await state.saveChapterIndex(bookId, updated);
 
         if (opts.json) {
-          log(JSON.stringify({ bookId, chapter: chapterNum, status: "rejected", discarded: [] }));
+          log(
+            JSON.stringify({
+              bookId,
+              chapter: chapterNum,
+              status: "rejected",
+              discarded: [],
+            }),
+          );
         } else {
           log(`Chapter ${chapterNum} rejected (state not rolled back).`);
         }
@@ -229,17 +259,23 @@ reviewCommand
       const discarded = await state.rollbackToChapter(bookId, rollbackTarget);
 
       if (opts.json) {
-        log(JSON.stringify({
-          bookId,
-          chapter: chapterNum,
-          status: "rejected",
-          rolledBackTo: rollbackTarget,
-          discarded,
-        }));
+        log(
+          JSON.stringify({
+            bookId,
+            chapter: chapterNum,
+            status: "rejected",
+            rolledBackTo: rollbackTarget,
+            discarded,
+          }),
+        );
       } else {
-        log(`Chapter ${chapterNum} rejected. State rolled back to chapter ${rollbackTarget}.`);
+        log(
+          `Chapter ${chapterNum} rejected. State rolled back to chapter ${rollbackTarget}.`,
+        );
         if (discarded.length > 1) {
-          log(`  Also discarded ${discarded.length - 1} subsequent chapter(s): ${discarded.filter((n) => n !== chapterNum).join(", ")}`);
+          log(
+            `  Also discarded ${discarded.length - 1} subsequent chapter(s): ${discarded.filter((n) => n !== chapterNum).join(", ")}`,
+          );
         }
       }
     } catch (e) {

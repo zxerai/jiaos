@@ -1,6 +1,12 @@
 import { Command } from "commander";
 import { Scheduler } from "@actalk/novelix-core";
-import { loadConfig, findProjectRoot, buildPipelineConfig, log, logError } from "../utils.js";
+import {
+  loadConfig,
+  findProjectRoot,
+  buildPipelineConfig,
+  log,
+  logError,
+} from "../utils.js";
 import { createWriteStream, type WriteStream } from "node:fs";
 import { writeFile, readFile, unlink } from "node:fs/promises";
 import { join } from "node:path";
@@ -21,7 +27,9 @@ export const upCommand = new Command("up")
       pidPath = join(root, PID_FILE);
       try {
         const existingPid = await readFile(pidPath, "utf-8");
-        logError(`Daemon already running (PID: ${existingPid.trim()}). Run 'jiaos down' first.`);
+        logError(
+          `Daemon already running (PID: ${existingPid.trim()}). Run 'novelix down' first.`,
+        );
         process.exit(1);
       } catch {
         // No PID file, good
@@ -41,7 +49,10 @@ export const upCommand = new Command("up")
       logStream = createWriteStream(logPath, { flags: "a" });
 
       const scheduler = new Scheduler({
-        ...buildPipelineConfig(config, root, { logFile: logStream, quiet: opts.quiet }),
+        ...buildPipelineConfig(config, root, {
+          logFile: logStream,
+          quiet: opts.quiet,
+        }),
         radarCron: config.daemon.schedule.radarCron,
         writeCron: config.daemon.schedule.writeCron,
         maxConcurrentBooks: config.daemon.maxConcurrentBooks,
@@ -50,11 +61,12 @@ export const upCommand = new Command("up")
         cooldownAfterChapterMs: config.daemon.cooldownAfterChapterMs,
         maxChaptersPerDay: config.daemon.maxChaptersPerDay,
         onChapterComplete: (bookId, chapter, status) => {
-          const icon = status === "ready-for-review"
-            ? "+"
-            : status === "state-degraded"
-              ? "x"
-              : "!";
+          const icon =
+            status === "ready-for-review"
+              ? "+"
+              : status === "state-degraded"
+                ? "x"
+                : "!";
           log(`  [${icon}] ${bookId} Ch.${chapter} — ${status}`);
         },
         onError: (bookId, error) => {
@@ -114,7 +126,11 @@ export const downCommand = new Command("down")
       } catch {
         log(`Daemon (PID: ${pid}) not found. Cleaning up.`);
       }
-      try { await unlink(pidPath); } catch { /* already cleaned up by daemon */ }
+      try {
+        await unlink(pidPath);
+      } catch {
+        /* already cleaned up by daemon */
+      }
     } catch {
       log("No daemon running.");
     }

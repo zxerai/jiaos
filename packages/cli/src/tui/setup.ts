@@ -4,9 +4,18 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, basename } from "node:path";
 import readline from "node:readline/promises";
 import {
-  c, bold, dim, italic,
-  cyan, green, yellow, gray, red,
-  brightCyan, brightGreen, brightWhite,
+  c,
+  bold,
+  dim,
+  italic,
+  cyan,
+  green,
+  yellow,
+  gray,
+  red,
+  brightCyan,
+  brightGreen,
+  brightWhite,
 } from "./ansi.js";
 import { resolveTuiLocale, type TuiLocale } from "./i18n.js";
 import { GLOBAL_ENV_PATH, loadConfig } from "../utils.js";
@@ -14,12 +23,17 @@ import { ensureProjectGitignore } from "../project-bootstrap.js";
 
 const PROVIDERS = ["openai", "anthropic", "kkaiapi", "custom"] as const;
 const KKAIAPI_BASE_URL = "https://api.kkaiapi.com/v1";
-type SetupProvider = typeof PROVIDERS[number];
+type SetupProvider = (typeof PROVIDERS)[number];
 type RuntimeProvider = "openai" | "anthropic" | "custom";
 
-export function resolveSetupProvider(provider: string, baseUrl: string): RuntimeProvider {
-  const normalizedProvider = PROVIDERS.includes(provider.trim() as SetupProvider)
-    ? provider.trim() as SetupProvider
+export function resolveSetupProvider(
+  provider: string,
+  baseUrl: string,
+): RuntimeProvider {
+  const normalizedProvider = PROVIDERS.includes(
+    provider.trim() as SetupProvider,
+  )
+    ? (provider.trim() as SetupProvider)
     : "openai";
   const normalizedUrl = baseUrl.trim().toLowerCase();
   if (normalizedUrl.includes("api.kimi.com/coding")) {
@@ -31,10 +45,16 @@ export function resolveSetupProvider(provider: string, baseUrl: string): Runtime
   return "openai";
 }
 
-export function resolveSetupService(provider: string, baseUrl: string): string | undefined {
+export function resolveSetupService(
+  provider: string,
+  baseUrl: string,
+): string | undefined {
   const normalizedProvider = provider.trim().toLowerCase();
   const normalizedUrl = baseUrl.trim().toLowerCase();
-  if (normalizedProvider === "kkaiapi" || normalizedUrl.includes("api.kkaiapi.com")) {
+  if (
+    normalizedProvider === "kkaiapi" ||
+    normalizedUrl.includes("api.kkaiapi.com")
+  ) {
     return "kkaiapi";
   }
   return undefined;
@@ -74,7 +94,9 @@ export interface InteractiveSetupCopy {
   readonly savedTo: string;
 }
 
-export function buildInteractiveSetupCopy(locale: TuiLocale): InteractiveSetupCopy {
+export function buildInteractiveSetupCopy(
+  locale: TuiLocale,
+): InteractiveSetupCopy {
   if (locale === "en") {
     return {
       title: "LLM Setup",
@@ -87,7 +109,8 @@ export function buildInteractiveSetupCopy(locale: TuiLocale): InteractiveSetupCo
         scope: "Save scope",
       },
       hints: {
-        provider: "openai / anthropic / kkaiapi / custom (OpenAI-compatible proxy)",
+        provider:
+          "openai / anthropic / kkaiapi / custom (OpenAI-compatible proxy)",
         baseUrl: "Your API endpoint",
         apiKey: "Paste the API key for the selected provider.",
         model: "e.g. gpt-4o, claude-sonnet-4-20250514, deepseek-chat",
@@ -136,7 +159,10 @@ export function buildInteractiveSetupCopy(locale: TuiLocale): InteractiveSetupCo
   };
 }
 
-export function buildAutoInitMessages(projectName: string, locale: TuiLocale): {
+export function buildAutoInitMessages(
+  projectName: string,
+  locale: TuiLocale,
+): {
   readonly initializing: string;
   readonly initialized: string;
   readonly envTemplateHeader: string;
@@ -145,14 +171,15 @@ export function buildAutoInitMessages(projectName: string, locale: TuiLocale): {
     return {
       initializing: `Initializing project in ${projectName}/ ...`,
       initialized: "Project initialized",
-      envTemplateHeader: "# LLM Configuration — run jiaos tui to configure interactively",
+      envTemplateHeader:
+        "# LLM Configuration — run novelix tui to configure interactively",
     };
   }
 
   return {
     initializing: `正在初始化项目：${projectName}/ ...`,
     initialized: "项目已初始化",
-    envTemplateHeader: "# LLM 配置 —— 运行 jiaos tui 进行交互式配置",
+    envTemplateHeader: "# LLM 配置 —— 运行 novelix tui 进行交互式配置",
   };
 }
 
@@ -168,9 +195,7 @@ export async function ensureProject(cwd: string): Promise<SetupResult> {
   return { projectRoot: cwd, hasLlmConfig: hasLlm };
 }
 
-export async function interactiveLlmSetup(
-  projectRoot: string,
-): Promise<void> {
+export async function interactiveLlmSetup(projectRoot: string): Promise<void> {
   const projectLanguage = await detectProjectLanguage(projectRoot);
   const locale = resolveTuiLocale(process.env, projectLanguage);
   const copy = buildInteractiveSetupCopy(locale);
@@ -190,9 +215,10 @@ export async function interactiveLlmSetup(
     console.log(c(`     ${copy.hints.provider}`, dim));
     const providerInput = await rl.question(`     ${c("❯", cyan)} `);
     const provider = PROVIDERS.includes(providerInput.trim() as SetupProvider)
-      ? providerInput.trim() as SetupProvider
-      : copy.defaults.provider as SetupProvider;
-    const providerDefaultBaseUrl = provider === "kkaiapi" ? KKAIAPI_BASE_URL : copy.defaults.baseUrl;
+      ? (providerInput.trim() as SetupProvider)
+      : (copy.defaults.provider as SetupProvider);
+    const providerDefaultBaseUrl =
+      provider === "kkaiapi" ? KKAIAPI_BASE_URL : copy.defaults.baseUrl;
     console.log(`     ${c("✓", brightGreen)} ${provider}`);
     console.log();
 
@@ -200,16 +226,19 @@ export async function interactiveLlmSetup(
     console.log(`  ${c("2", cyan)}  ${c(copy.steps.baseUrl, gray)}`);
     console.log(c(`     ${copy.hints.baseUrl}`, dim));
     const baseUrl = await rl.question(`     ${c("❯", cyan)} `);
-    console.log(`     ${c("✓", brightGreen)} ${baseUrl.trim() || providerDefaultBaseUrl}`);
+    console.log(
+      `     ${c("✓", brightGreen)} ${baseUrl.trim() || providerDefaultBaseUrl}`,
+    );
     console.log();
 
     // API Key
     console.log(`  ${c("3", cyan)}  ${c(copy.steps.apiKey, gray)}`);
     console.log(c(`     ${copy.hints.apiKey}`, dim));
     const apiKey = await rl.question(`     ${c("❯", cyan)} `);
-    const maskedKey = apiKey.trim().length > 8
-      ? apiKey.trim().slice(0, 4) + "···" + apiKey.trim().slice(-4)
-      : "···";
+    const maskedKey =
+      apiKey.trim().length > 8
+        ? apiKey.trim().slice(0, 4) + "···" + apiKey.trim().slice(-4)
+        : "···";
     console.log(`     ${c("✓", brightGreen)} ${maskedKey}`);
     console.log();
 
@@ -223,9 +252,12 @@ export async function interactiveLlmSetup(
     // Scope
     console.log(`  ${c("5", cyan)}  ${c(copy.steps.scope, gray)}`);
     console.log(c(`     ${copy.hints.scope}`, dim));
-    const scope = await rl.question(`     ${c("❯", cyan)} ${c(copy.defaults.scope, dim)} `);
+    const scope = await rl.question(
+      `     ${c("❯", cyan)} ${c(copy.defaults.scope, dim)} `,
+    );
     const useGlobal = scope.trim().toLowerCase() !== "project";
-    const effectiveBaseUrl = baseUrl.trim() || (provider === "kkaiapi" ? providerDefaultBaseUrl : "");
+    const effectiveBaseUrl =
+      baseUrl.trim() || (provider === "kkaiapi" ? providerDefaultBaseUrl : "");
     const finalProvider = resolveSetupProvider(provider, effectiveBaseUrl);
     const finalService = resolveSetupService(provider, effectiveBaseUrl);
 
@@ -242,11 +274,15 @@ export async function interactiveLlmSetup(
       await mkdir(globalDir, { recursive: true });
       await writeFile(GLOBAL_ENV_PATH, envContent + "\n", "utf-8");
       console.log();
-      console.log(`  ${c("✓", brightGreen, bold)} ${c(copy.savedTo, dim)} ${c(GLOBAL_ENV_PATH, gray)}`);
+      console.log(
+        `  ${c("✓", brightGreen, bold)} ${c(copy.savedTo, dim)} ${c(GLOBAL_ENV_PATH, gray)}`,
+      );
     } else {
       await writeFile(join(projectRoot, ".env"), envContent + "\n", "utf-8");
       console.log();
-      console.log(`  ${c("✓", brightGreen, bold)} ${c(copy.savedTo, dim)} ${c(".env", gray)}`);
+      console.log(
+        `  ${c("✓", brightGreen, bold)} ${c(copy.savedTo, dim)} ${c(".env", gray)}`,
+      );
     }
     console.log();
   } finally {
@@ -323,7 +359,11 @@ async function checkEnvForKey(envPath: string): Promise<boolean> {
   try {
     const content = await readFile(envPath, "utf-8");
     const match = content.match(/NOVELIX_LLM_API_KEY=(.+)/);
-    return !!match && match[1]!.trim().length > 0 && !match[1]!.includes("your-api-key");
+    return (
+      !!match &&
+      match[1]!.trim().length > 0 &&
+      !match[1]!.includes("your-api-key")
+    );
   } catch {
     return false;
   }
@@ -335,7 +375,9 @@ export interface ModelInfo {
   readonly baseUrl: string;
 }
 
-export async function detectModelInfo(projectRoot: string): Promise<ModelInfo | undefined> {
+export async function detectModelInfo(
+  projectRoot: string,
+): Promise<ModelInfo | undefined> {
   try {
     const config = await loadConfig({ requireApiKey: false, projectRoot });
     const service = config.llm.service?.trim();
@@ -358,7 +400,9 @@ export async function detectModelInfo(projectRoot: string): Promise<ModelInfo | 
   return undefined;
 }
 
-export async function detectProjectLanguage(projectRoot: string): Promise<string | undefined> {
+export async function detectProjectLanguage(
+  projectRoot: string,
+): Promise<string | undefined> {
   try {
     const raw = await readFile(join(projectRoot, "novelix.json"), "utf-8");
     const parsed = JSON.parse(raw) as { language?: string };

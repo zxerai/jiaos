@@ -79,12 +79,16 @@ async function fetchDoctorModels(
 ): Promise<Array<{ id: string; name: string }>> {
   const modelsUrl = modelsBaseUrl.replace(/\/$/, "") + "/models";
   try {
-    const res = await fetchWithProxy(modelsUrl, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-      signal: AbortSignal.timeout(10_000),
-    }, proxyUrl);
+    const res = await fetchWithProxy(
+      modelsUrl,
+      {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(10_000),
+      },
+      proxyUrl,
+    );
     if (!res.ok) return [];
-    const json = await res.json() as { data?: Array<{ id: string }> };
+    const json = (await res.json()) as { data?: Array<{ id: string }> };
     return (json.data ?? []).map((model) => ({ id: model.id, name: model.id }));
   } catch {
     return [];
@@ -93,7 +97,10 @@ async function fetchDoctorModels(
 
 export const doctorCommand = new Command("doctor")
   .description("Check environment and project health")
-  .option("--repair-node-runtime", "Write .nvmrc and .node-version pinned to Node 22 for this project")
+  .option(
+    "--repair-node-runtime",
+    "Write .nvmrc and .node-version pinned to Node 22 for this project",
+  )
   .action(async (opts: { repairNodeRuntime?: boolean }) => {
     const checks: Array<{ name: string; ok: boolean; detail: string }> = [];
     const root = findProjectRoot();
@@ -123,7 +130,7 @@ export const doctorCommand = new Command("doctor")
     });
     checks.push({
       name: "Node runtime pin files",
-      ...await inspectNodeRuntimePinFiles(root),
+      ...(await inspectNodeRuntimePinFiles(root)),
     });
 
     // 2. Check novelix.json exists
@@ -131,7 +138,11 @@ export const doctorCommand = new Command("doctor")
       await readFile(join(root, "novelix.json"), "utf-8");
       checks.push({ name: "novelix.json", ok: true, detail: "Found" });
     } catch {
-      checks.push({ name: "novelix.json", ok: false, detail: "Not found. Run 'jiaos init'" });
+      checks.push({
+        name: "novelix.json",
+        ok: false,
+        detail: "Not found. Run 'novelix init'",
+      });
     }
 
     // 3. Check .env exists
@@ -147,22 +158,33 @@ export const doctorCommand = new Command("doctor")
       let hasGlobal = false;
       try {
         const globalContent = await readFile(GLOBAL_ENV_PATH, "utf-8");
-        hasGlobal = globalContent.includes("NOVELIX_LLM_API_KEY=") && !globalContent.includes("your-api-key-here");
-      } catch { /* no global config */ }
+        hasGlobal =
+          globalContent.includes("NOVELIX_LLM_API_KEY=") &&
+          !globalContent.includes("your-api-key-here");
+      } catch {
+        /* no global config */
+      }
       checks.push({
         name: "Global Config",
         ok: hasGlobal,
-        detail: hasGlobal ? `Found (${GLOBAL_ENV_PATH})` : "Not set. Run 'jiaos config set-global'",
+        detail: hasGlobal
+          ? `Found (${GLOBAL_ENV_PATH})`
+          : "Not set. Run 'novelix config set-global'",
       });
     }
 
     // 5. Check effective LLM config (Studio project base + env/CLI overlay, or legacy env)
     {
       const { loadConfigWithDiagnostics } = await import("../utils.js");
-      const { isApiKeyOptionalForEndpoint } = await import("@actalk/novelix-core");
-      let configResult: Awaited<ReturnType<typeof loadConfigWithDiagnostics>> | undefined;
+      const { isApiKeyOptionalForEndpoint } =
+        await import("@actalk/novelix-core");
+      let configResult:
+        | Awaited<ReturnType<typeof loadConfigWithDiagnostics>>
+        | undefined;
       try {
-        configResult = await loadConfigWithDiagnostics({ requireApiKey: false });
+        configResult = await loadConfigWithDiagnostics({
+          requireApiKey: false,
+        });
         checks.push({
           name: "LLM Config Mode",
           ok: true,
@@ -178,7 +200,9 @@ export const doctorCommand = new Command("doctor")
       const baseUrl = configResult?.llm.baseUrl;
       const apiKey = configResult?.llm.apiKey;
       const apiKeyOptional = isApiKeyOptionalForEndpoint({ provider, baseUrl });
-      const hasKey = apiKeyOptional || (!!apiKey && apiKey.length > 10 && apiKey !== "your-api-key-here");
+      const hasKey =
+        apiKeyOptional ||
+        (!!apiKey && apiKey.length > 10 && apiKey !== "your-api-key-here");
       checks.push({
         name: "LLM API Key",
         ok: hasKey,
@@ -222,7 +246,7 @@ export const doctorCommand = new Command("doctor")
           checks.push({
             name: "Version Migration",
             ok: false,
-            detail: `${legacyCount} book(s) using legacy format (pre-v0.6). Run 'jiaos write next' on each to auto-migrate, or re-init with 'jiaos init'.`,
+            detail: `${legacyCount} book(s) using legacy format (pre-v0.6). Run 'novelix write next' on each to auto-migrate, or re-init with 'novelix init'.`,
           });
         } else if (bookIds.length > 0) {
           checks.push({
@@ -236,7 +260,13 @@ export const doctorCommand = new Command("doctor")
 
     // 6. API connectivity test
     try {
-      const { createLLMClient, chatCompletion, LLMConfigSchema, isApiKeyOptionalForEndpoint, resolveServiceModelsBaseUrl } = await import("@actalk/novelix-core");
+      const {
+        createLLMClient,
+        chatCompletion,
+        LLMConfigSchema,
+        isApiKeyOptionalForEndpoint,
+        resolveServiceModelsBaseUrl,
+      } = await import("@actalk/novelix-core");
       const { loadConfig } = await import("../utils.js");
 
       let llmConfig;
@@ -252,7 +282,11 @@ export const doctorCommand = new Command("doctor")
           provider: env.NOVELIX_LLM_PROVIDER,
           baseUrl: env.NOVELIX_LLM_BASE_URL,
         });
-        if ((env.NOVELIX_LLM_API_KEY || apiKeyOptional) && env.NOVELIX_LLM_BASE_URL && env.NOVELIX_LLM_MODEL) {
+        if (
+          (env.NOVELIX_LLM_API_KEY || apiKeyOptional) &&
+          env.NOVELIX_LLM_BASE_URL &&
+          env.NOVELIX_LLM_MODEL
+        ) {
           llmConfig = LLMConfigSchema.parse({
             provider: env.NOVELIX_LLM_PROVIDER ?? "custom",
             baseUrl: env.NOVELIX_LLM_BASE_URL,
@@ -271,7 +305,8 @@ export const doctorCommand = new Command("doctor")
         checks.push({
           name: "  Hint",
           ok: false,
-          detail: "Run `jiaos setup`, `jiaos config set-global`, or add LLM settings to the project .env file.",
+          detail:
+            "Run `novelix setup`, `novelix config set-global`, or add LLM settings to the project .env file.",
         });
       } else {
         checks.push({
@@ -290,15 +325,29 @@ export const doctorCommand = new Command("doctor")
           llmConfig.baseUrl,
           resolveServiceModelsBaseUrl,
         );
-        const discoveredModels = (llmConfig.apiKey && modelsBaseUrl)
-          ? await fetchDoctorModels(modelsBaseUrl, llmConfig.apiKey, llmConfig.proxyUrl)
-          : [];
-        const modelCandidates = (llmConfig.provider === "openai" || discoveredModels.length > 0)
-          ? buildDoctorModelCandidates(llmConfig.model, discoveredModels)
-          : [llmConfig.model];
-        const plans = llmConfig.provider === "openai"
-          ? buildDoctorProbePlans(llmConfig.apiFormat, llmConfig.stream)
-          : [{ apiFormat: (llmConfig.apiFormat ?? "chat") as "chat" | "responses", stream: llmConfig.stream ?? true }];
+        const discoveredModels =
+          llmConfig.apiKey && modelsBaseUrl
+            ? await fetchDoctorModels(
+                modelsBaseUrl,
+                llmConfig.apiKey,
+                llmConfig.proxyUrl,
+              )
+            : [];
+        const modelCandidates =
+          llmConfig.provider === "openai" || discoveredModels.length > 0
+            ? buildDoctorModelCandidates(llmConfig.model, discoveredModels)
+            : [llmConfig.model];
+        const plans =
+          llmConfig.provider === "openai"
+            ? buildDoctorProbePlans(llmConfig.apiFormat, llmConfig.stream)
+            : [
+                {
+                  apiFormat: (llmConfig.apiFormat ?? "chat") as
+                    | "chat"
+                    | "responses",
+                  stream: llmConfig.stream ?? true,
+                },
+              ];
 
         for (const model of modelCandidates) {
           for (const plan of plans) {
@@ -309,15 +358,19 @@ export const doctorCommand = new Command("doctor")
                 apiFormat: plan.apiFormat,
                 stream: plan.stream,
               });
-              const response = await chatCompletion(client, model, [
-                { role: "user", content: "Say OK" },
-              ], { maxTokens: 16 });
+              const response = await chatCompletion(
+                client,
+                model,
+                [{ role: "user", content: "Say OK" }],
+                { maxTokens: 16 },
+              );
 
               connected = true;
               detectedDetail = `OK (model: ${model}, apiFormat=${plan.apiFormat}, stream=${plan.stream}, tokens: ${response.usage.totalTokens})`;
               break;
             } catch (error) {
-              lastError = error instanceof Error ? error.message : String(error);
+              lastError =
+                error instanceof Error ? error.message : String(error);
             }
           }
           if (connected) {
@@ -331,11 +384,17 @@ export const doctorCommand = new Command("doctor")
           detail: connected ? detectedDetail : lastError.split("\n")[0]!,
         });
 
-        if (!connected && /\b(?:401|403|429)\b|unauthorized|forbidden|quota|额度|余额|配额/i.test(lastError)) {
+        if (
+          !connected &&
+          /\b(?:401|403|429)\b|unauthorized|forbidden|quota|额度|余额|配额/i.test(
+            lastError,
+          )
+        ) {
           checks.push({
             name: "  Hint",
             ok: false,
-            detail: "检查 API Key 是否正确、模型是否可用，以及账号余额或配额是否足够。",
+            detail:
+              "检查 API Key 是否正确、模型是否可用，以及账号余额或配额是否足够。",
           });
         }
 
@@ -343,7 +402,8 @@ export const doctorCommand = new Command("doctor")
           checks.push({
             name: "  Hint",
             ok: false,
-            detail: "当前已自动尝试 chat/responses 与流式开关组合；如果仍失败，问题更可能在模型名、baseUrl 路径或服务商兼容性本身。",
+            detail:
+              "当前已自动尝试 chat/responses 与流式开关组合；如果仍失败，问题更可能在模型名、baseUrl 路径或服务商兼容性本身。",
           });
         }
       }
@@ -351,11 +411,19 @@ export const doctorCommand = new Command("doctor")
       const errMsg = String(e);
       const hints: string[] = [];
 
-      if (errMsg.includes("Connection error") || errMsg.includes("ECONNREFUSED") || errMsg.includes("fetch failed")) {
-        hints.push("baseUrl 可能不正确，检查 NOVELIX_LLM_BASE_URL 是否包含完整路径（如 /v1）");
+      if (
+        errMsg.includes("Connection error") ||
+        errMsg.includes("ECONNREFUSED") ||
+        errMsg.includes("fetch failed")
+      ) {
+        hints.push(
+          "baseUrl 可能不正确，检查 NOVELIX_LLM_BASE_URL 是否包含完整路径（如 /v1）",
+        );
       }
       if (errMsg.includes("400")) {
-        hints.push("检查提供方文档，确认该接口要求 stream=true、stream=false，还是根本不支持 stream");
+        hints.push(
+          "检查提供方文档，确认该接口要求 stream=true、stream=false，还是根本不支持 stream",
+        );
         hints.push("检查模型名称是否正确（NOVELIX_LLM_MODEL）");
       }
       if (errMsg.includes("401")) {

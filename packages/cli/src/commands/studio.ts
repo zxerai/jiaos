@@ -18,15 +18,24 @@ export interface BrowserLaunchSpec {
 }
 
 export interface StudioCommandHooks {
-  readonly launchStudio?: (projectRoot: string, port: string) => Promise<void> | void;
+  readonly launchStudio?: (
+    projectRoot: string,
+    port: string,
+  ) => Promise<void> | void;
 }
 
-async function prepareStudioRoot(root: string): Promise<{ readonly root: string; readonly initialized: boolean }> {
-  const initialized = await ensureProjectDirectoryInitialized(root, { language: "zh" });
+async function prepareStudioRoot(
+  root: string,
+): Promise<{ readonly root: string; readonly initialized: boolean }> {
+  const initialized = await ensureProjectDirectoryInitialized(root, {
+    language: "zh",
+  });
   return { root, initialized };
 }
 
-async function firstAccessiblePath(paths: readonly string[]): Promise<string | undefined> {
+async function firstAccessiblePath(
+  paths: readonly string[],
+): Promise<string | undefined> {
   for (const path of paths) {
     try {
       await access(path);
@@ -38,7 +47,11 @@ async function firstAccessiblePath(paths: readonly string[]): Promise<string | u
   return undefined;
 }
 
-const cliPackageRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const cliPackageRoot = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+);
 
 export function toNodeImportSpecifier(path: string): string {
   if (/^[A-Za-z]:[\\/]/.test(path)) {
@@ -60,7 +73,9 @@ export function resolveBrowserLaunch(
   return { command: "xdg-open", args: [url] };
 }
 
-export async function resolveStudioLaunch(root: string): Promise<StudioLaunchSpec | null> {
+export async function resolveStudioLaunch(
+  root: string,
+): Promise<StudioLaunchSpec | null> {
   const sourceEntry = await firstAccessiblePath([
     join(root, "packages", "studio", "src", "api", "index.ts"),
     join(root, "..", "packages", "studio", "src", "api", "index.ts"),
@@ -75,7 +90,12 @@ export async function resolveStudioLaunch(root: string): Promise<StudioLaunchSpe
       return {
         studioEntry: sourceEntry,
         command: "node",
-        args: ["--import", toNodeImportSpecifier(localTsxLoader), sourceEntry, root],
+        args: [
+          "--import",
+          toNodeImportSpecifier(localTsxLoader),
+          sourceEntry,
+          root,
+        ],
       };
     }
 
@@ -97,12 +117,34 @@ export async function resolveStudioLaunch(root: string): Promise<StudioLaunchSpe
   }
 
   const builtEntry = await firstAccessiblePath([
-    join(root, "node_modules", "@actalk", "jiaos-studio", "dist", "api", "index.js"),
-    join(root, "node_modules", "@actalk", "jiaos-studio", "server.cjs"),
-    join(cliPackageRoot, "node_modules", "@actalk", "jiaos-studio", "dist", "api", "index.js"),
-    join(cliPackageRoot, "node_modules", "@actalk", "jiaos-studio", "server.cjs"),
-    join(cliPackageRoot, "..", "jiaos-studio", "dist", "api", "index.js"),
-    join(cliPackageRoot, "..", "jiaos-studio", "server.cjs"),
+    join(
+      root,
+      "node_modules",
+      "@actalk",
+      "novelix-studio",
+      "dist",
+      "api",
+      "index.js",
+    ),
+    join(root, "node_modules", "@actalk", "novelix-studio", "server.cjs"),
+    join(
+      cliPackageRoot,
+      "node_modules",
+      "@actalk",
+      "novelix-studio",
+      "dist",
+      "api",
+      "index.js",
+    ),
+    join(
+      cliPackageRoot,
+      "node_modules",
+      "@actalk",
+      "novelix-studio",
+      "server.cjs",
+    ),
+    join(cliPackageRoot, "..", "novelix-studio", "dist", "api", "index.js"),
+    join(cliPackageRoot, "..", "novelix-studio", "server.cjs"),
   ]);
   if (builtEntry) {
     return {
@@ -115,7 +157,10 @@ export async function resolveStudioLaunch(root: string): Promise<StudioLaunchSpe
   return null;
 }
 
-export async function launchStudioWorkbench(root: string, port: string): Promise<void> {
+export async function launchStudioWorkbench(
+  root: string,
+  port: string,
+): Promise<void> {
   const prepared = await prepareStudioRoot(root);
   const url = prepared.initialized
     ? `http://localhost:${port}#/services`
@@ -125,8 +170,8 @@ export async function launchStudioWorkbench(root: string, port: string): Promise
   if (!launch) {
     logError(
       "Novelix Studio not found. If you cloned the repo, run:\n" +
-      "  cd packages/studio && pnpm install && pnpm build\n" +
-      "Then run 'jiaos studio' from the project root.",
+        "  cd packages/studio && pnpm install && pnpm build\n" +
+        "Then run 'novelix studio' from the project root.",
     );
     process.exit(1);
   }
@@ -169,7 +214,9 @@ export async function launchStudioEntry(
 ): Promise<void> {
   const prepared = await prepareStudioRoot(root);
   if (prepared.initialized) {
-    log(`No novelix.json found in ${root}. Initialized a minimal Novelix project for Studio.`);
+    log(
+      `No novelix.json found in ${root}. Initialized a minimal Novelix project for Studio.`,
+    );
   }
 
   if (hooks.launchStudio) {
@@ -182,13 +229,13 @@ export async function launchStudioEntry(
 
 export function createStudioCommand(hooks: StudioCommandHooks = {}): Command {
   return new Command("studio")
-  .description("Start Novelix Studio web workbench")
-  .option("-p, --port <port>", "Server port", "4567")
-  .action(async (opts) => {
-    const root = findProjectRoot();
-    const port = opts.port;
-    await launchStudioEntry(root, port, hooks);
-  });
+    .description("Start Novelix Studio web workbench")
+    .option("-p, --port <port>", "Server port", "4567")
+    .action(async (opts) => {
+      const root = findProjectRoot();
+      const port = opts.port;
+      await launchStudioEntry(root, port, hooks);
+    });
 }
 
 export const studioCommand = createStudioCommand();

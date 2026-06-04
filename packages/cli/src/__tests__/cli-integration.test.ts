@@ -1,4 +1,11 @@
-import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
+import {
+  mkdtemp,
+  mkdir,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,11 +23,12 @@ let projectDir: string;
 
 function buildTestEnv(overrides?: Record<string, string>) {
   const baseEnv = Object.fromEntries(
-    Object.entries(process.env).filter(([key]) =>
-      !key.startsWith("JIAOS_")
-      && !key.startsWith("OPENAI_")
-      && !key.startsWith("ANTHROPIC_")
-      && key !== "TAVILY_API_KEY",
+    Object.entries(process.env).filter(
+      ([key]) =>
+        !key.startsWith("JIAOS_") &&
+        !key.startsWith("OPENAI_") &&
+        !key.startsWith("ANTHROPIC_") &&
+        key !== "TAVILY_API_KEY",
     ),
   );
 
@@ -32,7 +40,10 @@ function buildTestEnv(overrides?: Record<string, string>) {
   };
 }
 
-function run(args: string[], options?: { env?: Record<string, string> }): string {
+function run(
+  args: string[],
+  options?: { env?: Record<string, string> },
+): string {
   return execFileSync("node", [cliEntry, ...args], {
     cwd: projectDir,
     encoding: "utf-8",
@@ -41,7 +52,10 @@ function run(args: string[], options?: { env?: Record<string, string> }): string
   });
 }
 
-function runStderr(args: string[], options?: { env?: Record<string, string> }): { stdout: string; stderr: string; exitCode: number } {
+function runStderr(
+  args: string[],
+  options?: { env?: Record<string, string> },
+): { stdout: string; stderr: string; exitCode: number } {
   try {
     const stdout = execFileSync("node", [cliEntry, ...args], {
       cwd: projectDir,
@@ -52,7 +66,11 @@ function runStderr(args: string[], options?: { env?: Record<string, string> }): 
     return { stdout, stderr: "", exitCode: 0 };
   } catch (e: unknown) {
     const err = e as { stdout: string; stderr: string; status: number };
-    return { stdout: err.stdout ?? "", stderr: err.stderr ?? "", exitCode: err.status ?? 1 };
+    return {
+      stdout: err.stdout ?? "",
+      stderr: err.stderr ?? "",
+      exitCode: err.status ?? 1,
+    };
   }
 }
 
@@ -116,8 +134,12 @@ describe("CLI integration", () => {
     });
 
     it("creates Node version hints for sqlite-backed memory features", async () => {
-      await expect(readFile(join(projectDir, ".nvmrc"), "utf-8")).resolves.toContain("22");
-      await expect(readFile(join(projectDir, ".node-version"), "utf-8")).resolves.toContain("22");
+      await expect(
+        readFile(join(projectDir, ".nvmrc"), "utf-8"),
+      ).resolves.toContain("22");
+      await expect(
+        readFile(join(projectDir, ".node-version"), "utf-8"),
+      ).resolves.toContain("22");
     });
 
     it("creates books/ and radar/ directories", async () => {
@@ -135,13 +157,18 @@ describe("CLI integration", () => {
     });
 
     it("creates novelix.json in subdirectory", async () => {
-      const raw = await readFile(join(projectDir, "subproject", "novelix.json"), "utf-8");
+      const raw = await readFile(
+        join(projectDir, "subproject", "novelix.json"),
+        "utf-8",
+      );
       const config = JSON.parse(raw);
       expect(config.name).toBe("subproject");
     });
 
     it("supports absolute project paths instead of nesting them under cwd", async () => {
-      const absoluteDir = await mkdtemp(join(tmpdir(), "novelix-cli-abs-init-"));
+      const absoluteDir = await mkdtemp(
+        join(tmpdir(), "novelix-cli-abs-init-"),
+      );
 
       try {
         const output = run(["init", absoluteDir]);
@@ -161,7 +188,7 @@ describe("CLI integration", () => {
       try {
         const output = run(["init", englishDir, "--lang", "en"]);
         expect(output).toContain("Project initialized");
-        expect(output).toContain("jiaos book create --title 'My Novel'");
+        expect(output).toContain("novelix book create --title 'My Novel'");
         expect(output).not.toContain("我的小说");
       } finally {
         await rm(englishDir, { recursive: true, force: true });
@@ -217,14 +244,18 @@ describe("CLI integration", () => {
 
   describe("jiaos interact", () => {
     it("returns structured JSON for shared interaction mode switches", async () => {
-      const initialized = await stat(join(projectDir, "novelix.json")).then(() => true).catch(() => false);
+      const initialized = await stat(join(projectDir, "novelix.json"))
+        .then(() => true)
+        .catch(() => false);
       if (!initialized) run(["init"]);
       const envPath = join(projectDir, ".env");
       const originalEnv = await readFile(envPath, "utf-8");
       try {
         await writeFile(
           envPath,
-          Object.entries(failingLlmEnv).map(([key, value]) => `${key}=${value}`).join("\n"),
+          Object.entries(failingLlmEnv)
+            .map(([key, value]) => `${key}=${value}`)
+            .join("\n"),
           "utf-8",
         );
         const output = run(["interact", "--json", "--message", "切换到全自动"]);
@@ -239,14 +270,18 @@ describe("CLI integration", () => {
     });
 
     it("binds the requested book when interact is called with --book", async () => {
-      const initialized = await stat(join(projectDir, "novelix.json")).then(() => true).catch(() => false);
+      const initialized = await stat(join(projectDir, "novelix.json"))
+        .then(() => true)
+        .catch(() => false);
       if (!initialized) run(["init"]);
       const envPath = join(projectDir, ".env");
       const originalEnv = await readFile(envPath, "utf-8");
       try {
         await writeFile(
           envPath,
-          Object.entries(failingLlmEnv).map(([key, value]) => `${key}=${value}`).join("\n"),
+          Object.entries(failingLlmEnv)
+            .map(([key, value]) => `${key}=${value}`)
+            .join("\n"),
           "utf-8",
         );
         const state = new StateManager(projectDir);
@@ -262,14 +297,26 @@ describe("CLI integration", () => {
           updatedAt: "2026-04-07T00:00:00.000Z",
         });
 
-        const output = run(["interact", "--json", "--book", "harbor", "--message", "/books"]);
+        const output = run([
+          "interact",
+          "--json",
+          "--book",
+          "harbor",
+          "--message",
+          "/books",
+        ]);
         const data = JSON.parse(output);
 
         expect(data.session.activeBookId).toBe("harbor");
       } finally {
         await writeFile(envPath, originalEnv, "utf-8");
-        await rm(join(projectDir, "books", "harbor"), { recursive: true, force: true });
-        await rm(join(projectDir, ".novelix-session.json"), { force: true }).catch(() => {});
+        await rm(join(projectDir, "books", "harbor"), {
+          recursive: true,
+          force: true,
+        });
+        await rm(join(projectDir, ".novelix-session.json"), {
+          force: true,
+        }).catch(() => {});
       }
     });
   });
@@ -290,7 +337,9 @@ describe("CLI integration", () => {
       ]);
 
       expect(exitCode).not.toBe(0);
-      expect(stderr).toContain("--api-key-env expects an environment variable name");
+      expect(stderr).toContain(
+        "--api-key-env expects an environment variable name",
+      );
 
       const raw = await readFile(join(projectDir, "novelix.json"), "utf-8");
       const config = JSON.parse(raw);
@@ -321,20 +370,29 @@ describe("CLI integration", () => {
       const bookId = "stale-book";
       const staleDir = join(projectDir, "books", bookId);
       await mkdir(join(staleDir, "story"), { recursive: true });
-      await writeFile(join(staleDir, "book.json"), JSON.stringify({
-        id: bookId,
-        title: "Stale Book",
-      }, null, 2));
-      await writeFile(join(staleDir, "story", "current_state.md"), "# stale\n", "utf-8");
+      await writeFile(
+        join(staleDir, "book.json"),
+        JSON.stringify(
+          {
+            id: bookId,
+            title: "Stale Book",
+          },
+          null,
+          2,
+        ),
+      );
+      await writeFile(
+        join(staleDir, "story", "current_state.md"),
+        "# stale\n",
+        "utf-8",
+      );
 
-      const { exitCode, stderr } = runStderr([
-        "book",
-        "create",
-        "--title",
-        "stale book",
-      ], {
-        env: failingLlmEnv,
-      });
+      const { exitCode, stderr } = runStderr(
+        ["book", "create", "--title", "stale book"],
+        {
+          env: failingLlmEnv,
+        },
+      );
 
       expect(exitCode).not.toBe(0);
       expect(stderr).toContain("Failed to create book");
@@ -365,85 +423,113 @@ describe("CLI integration", () => {
       await mkdir(join(bookDir, "chapters"), { recursive: true });
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: "english-status",
-          title: "English Status Book",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          language: "en",
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: "english-status",
+            title: "English Status Book",
+            platform: "other",
+            genre: "other",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2200,
+            language: "en",
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
       await writeFile(
         join(bookDir, "chapters", "index.json"),
-        JSON.stringify([
-          {
-            number: 1,
-            title: "A Quiet Sky",
-            status: "ready-for-review",
-            wordCount: 7,
-            createdAt: "2026-03-22T00:00:00.000Z",
-            updatedAt: "2026-03-22T00:00:00.000Z",
-            auditIssues: [],
-            lengthWarnings: [],
-          },
-        ], null, 2),
+        JSON.stringify(
+          [
+            {
+              number: 1,
+              title: "A Quiet Sky",
+              status: "ready-for-review",
+              wordCount: 7,
+              createdAt: "2026-03-22T00:00:00.000Z",
+              updatedAt: "2026-03-22T00:00:00.000Z",
+              auditIssues: [],
+              lengthWarnings: [],
+            },
+          ],
+          null,
+          2,
+        ),
         "utf-8",
       );
 
       const output = run(["status", "english-status", "--chapters"]);
-      expect(output).toContain('Ch.1 "A Quiet Sky" | 7 words | ready-for-review');
+      expect(output).toContain(
+        'Ch.1 "A Quiet Sky" | 7 words | ready-for-review',
+      );
       expect(output).not.toContain("7字");
     });
 
-    it("shows degraded chapter counts and issues explicitly", async () => {
-      const bookDir = join(projectDir, "books", "degraded-status");
-      await mkdir(join(bookDir, "chapters"), { recursive: true });
-      await writeFile(
-        join(bookDir, "book.json"),
-        JSON.stringify({
-          id: "degraded-status",
-          title: "Degraded Status Book",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-04-01T00:00:00.000Z",
-          updatedAt: "2026-04-01T00:00:00.000Z",
-        }, null, 2),
-        "utf-8",
-      );
-      await writeFile(
-        join(bookDir, "chapters", "index.json"),
-        JSON.stringify([
-          {
-            number: 1,
-            title: "Broken State",
-            status: "state-degraded",
-            wordCount: 1800,
-            createdAt: "2026-04-01T00:00:00.000Z",
-            updatedAt: "2026-04-01T00:00:00.000Z",
-            auditIssues: ["[warning] state validation still failed after retry"],
-            lengthWarnings: [],
-          },
-        ], null, 2),
-        "utf-8",
-      );
+    it(
+      "shows degraded chapter counts and issues explicitly",
+      async () => {
+        const bookDir = join(projectDir, "books", "degraded-status");
+        await mkdir(join(bookDir, "chapters"), { recursive: true });
+        await writeFile(
+          join(bookDir, "book.json"),
+          JSON.stringify(
+            {
+              id: "degraded-status",
+              title: "Degraded Status Book",
+              platform: "other",
+              genre: "other",
+              status: "active",
+              targetChapters: 10,
+              chapterWordCount: 2200,
+              createdAt: "2026-04-01T00:00:00.000Z",
+              updatedAt: "2026-04-01T00:00:00.000Z",
+            },
+            null,
+            2,
+          ),
+          "utf-8",
+        );
+        await writeFile(
+          join(bookDir, "chapters", "index.json"),
+          JSON.stringify(
+            [
+              {
+                number: 1,
+                title: "Broken State",
+                status: "state-degraded",
+                wordCount: 1800,
+                createdAt: "2026-04-01T00:00:00.000Z",
+                updatedAt: "2026-04-01T00:00:00.000Z",
+                auditIssues: [
+                  "[warning] state validation still failed after retry",
+                ],
+                lengthWarnings: [],
+              },
+            ],
+            null,
+            2,
+          ),
+          "utf-8",
+        );
 
-      const output = run(["status", "degraded-status", "--chapters"]);
-      expect(output).toContain("Degraded: 1");
-      expect(output).toContain('Ch.1 "Broken State" | 1800字 | state-degraded');
-      expect(output).toContain("[warning] state validation still failed after retry");
+        const output = run(["status", "degraded-status", "--chapters"]);
+        expect(output).toContain("Degraded: 1");
+        expect(output).toContain(
+          'Ch.1 "Broken State" | 1800字 | state-degraded',
+        );
+        expect(output).toContain(
+          "[warning] state validation still failed after retry",
+        );
 
-      const json = JSON.parse(run(["status", "degraded-status", "--json"]));
-      expect(json.books[0]?.degraded).toBe(1);
-    }, DOUBLE_CLI_INVOCATION_TEST_TIMEOUT_MS);
+        const json = JSON.parse(run(["status", "degraded-status", "--json"]));
+        expect(json.books[0]?.degraded).toBe(1);
+      },
+      DOUBLE_CLI_INVOCATION_TEST_TIMEOUT_MS,
+    );
 
     it("shows a migration hint for legacy pre-v0.6 books", async () => {
       const bookDir = join(projectDir, "books", "legacy-status-hint");
@@ -452,98 +538,142 @@ describe("CLI integration", () => {
       await mkdir(storyDir, { recursive: true });
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: "legacy-status-hint",
-          title: "Legacy Status Hint",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: "legacy-status-hint",
+            title: "Legacy Status Hint",
+            platform: "other",
+            genre: "other",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2200,
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
       await writeFile(join(bookDir, "chapters", "index.json"), "[]", "utf-8");
-      await writeFile(join(storyDir, "current_state.md"), "# Current State\n\nLegacy state.\n", "utf-8");
-      await writeFile(join(storyDir, "pending_hooks.md"), "# Pending Hooks\n\n", "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "# Current State\n\nLegacy state.\n",
+        "utf-8",
+      );
+      await writeFile(
+        join(storyDir, "pending_hooks.md"),
+        "# Pending Hooks\n\n",
+        "utf-8",
+      );
 
       const output = run(["status", "legacy-status-hint"]);
       expect(output).toContain("legacy format");
     });
 
-    it("reports persisted chapter file count instead of runtime progress when state runs ahead", async () => {
-      const bookId = "ahead-status";
-      const bookDir = join(projectDir, "books", bookId);
-      const chaptersDir = join(bookDir, "chapters");
-      const stateDir = join(bookDir, "story", "state");
+    it(
+      "reports persisted chapter file count instead of runtime progress when state runs ahead",
+      async () => {
+        const bookId = "ahead-status";
+        const bookDir = join(projectDir, "books", bookId);
+        const chaptersDir = join(bookDir, "chapters");
+        const stateDir = join(bookDir, "story", "state");
 
-      await mkdir(chaptersDir, { recursive: true });
-      await mkdir(stateDir, { recursive: true });
-      await writeFile(
-        join(bookDir, "book.json"),
-        JSON.stringify({
-          id: bookId,
-          title: "Ahead Status Book",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-03-29T00:00:00.000Z",
-          updatedAt: "2026-03-29T00:00:00.000Z",
-        }, null, 2),
-        "utf-8",
-      );
-      await writeFile(join(chaptersDir, "0001_First.md"), "# 第1章 First\n\nOnly persisted chapter.", "utf-8");
-      await writeFile(
-        join(chaptersDir, "index.json"),
-        JSON.stringify([
-          {
-            number: 1,
-            title: "First",
-            status: "ready-for-review",
-            wordCount: 42,
-            createdAt: "2026-03-29T00:00:00.000Z",
-            updatedAt: "2026-03-29T00:00:00.000Z",
-            auditIssues: [],
-            lengthWarnings: [],
-          },
-        ], null, 2),
-        "utf-8",
-      );
-      await Promise.all([
-        writeFile(
-          join(stateDir, "manifest.json"),
-          JSON.stringify({
-            schemaVersion: 2,
-            language: "zh",
-            lastAppliedChapter: 4,
-            projectionVersion: 1,
-            migrationWarnings: [],
-          }, null, 2),
+        await mkdir(chaptersDir, { recursive: true });
+        await mkdir(stateDir, { recursive: true });
+        await writeFile(
+          join(bookDir, "book.json"),
+          JSON.stringify(
+            {
+              id: bookId,
+              title: "Ahead Status Book",
+              platform: "other",
+              genre: "other",
+              status: "active",
+              targetChapters: 10,
+              chapterWordCount: 2200,
+              createdAt: "2026-03-29T00:00:00.000Z",
+              updatedAt: "2026-03-29T00:00:00.000Z",
+            },
+            null,
+            2,
+          ),
           "utf-8",
-        ),
-        writeFile(
-          join(stateDir, "current_state.json"),
-          JSON.stringify({
-            chapter: 4,
-            facts: [],
-          }, null, 2),
+        );
+        await writeFile(
+          join(chaptersDir, "0001_First.md"),
+          "# 第1章 First\n\nOnly persisted chapter.",
           "utf-8",
-        ),
-        writeFile(join(stateDir, "hooks.json"), JSON.stringify({ hooks: [] }, null, 2), "utf-8"),
-        writeFile(join(stateDir, "chapter_summaries.json"), JSON.stringify({ rows: [] }, null, 2), "utf-8"),
-      ]);
+        );
+        await writeFile(
+          join(chaptersDir, "index.json"),
+          JSON.stringify(
+            [
+              {
+                number: 1,
+                title: "First",
+                status: "ready-for-review",
+                wordCount: 42,
+                createdAt: "2026-03-29T00:00:00.000Z",
+                updatedAt: "2026-03-29T00:00:00.000Z",
+                auditIssues: [],
+                lengthWarnings: [],
+              },
+            ],
+            null,
+            2,
+          ),
+          "utf-8",
+        );
+        await Promise.all([
+          writeFile(
+            join(stateDir, "manifest.json"),
+            JSON.stringify(
+              {
+                schemaVersion: 2,
+                language: "zh",
+                lastAppliedChapter: 4,
+                projectionVersion: 1,
+                migrationWarnings: [],
+              },
+              null,
+              2,
+            ),
+            "utf-8",
+          ),
+          writeFile(
+            join(stateDir, "current_state.json"),
+            JSON.stringify(
+              {
+                chapter: 4,
+                facts: [],
+              },
+              null,
+              2,
+            ),
+            "utf-8",
+          ),
+          writeFile(
+            join(stateDir, "hooks.json"),
+            JSON.stringify({ hooks: [] }, null, 2),
+            "utf-8",
+          ),
+          writeFile(
+            join(stateDir, "chapter_summaries.json"),
+            JSON.stringify({ rows: [] }, null, 2),
+            "utf-8",
+          ),
+        ]);
 
-      const output = run(["status", bookId]);
-      expect(output).toContain("Chapters: 1 / 10");
-      expect(output).not.toContain("Chapters: 4 / 10");
+        const output = run(["status", bookId]);
+        expect(output).toContain("Chapters: 1 / 10");
+        expect(output).not.toContain("Chapters: 4 / 10");
 
-      const json = JSON.parse(run(["status", bookId, "--json"]));
-      expect(json.books[0]?.chapters).toBe(1);
-    }, DOUBLE_CLI_INVOCATION_TEST_TIMEOUT_MS);
+        const json = JSON.parse(run(["status", bookId, "--json"]));
+        expect(json.books[0]?.chapters).toBe(1);
+      },
+      DOUBLE_CLI_INVOCATION_TEST_TIMEOUT_MS,
+    );
   });
 
   describe("jiaos doctor", () => {
@@ -573,8 +703,12 @@ describe("CLI integration", () => {
       expect(repaired.stdout).toContain(".nvmrc");
       expect(repaired.stdout).toContain(".node-version");
 
-      await expect(readFile(join(projectDir, ".nvmrc"), "utf-8")).resolves.toBe("22\n");
-      await expect(readFile(join(projectDir, ".node-version"), "utf-8")).resolves.toBe("22\n");
+      await expect(readFile(join(projectDir, ".nvmrc"), "utf-8")).resolves.toBe(
+        "22\n",
+      );
+      await expect(
+        readFile(join(projectDir, ".node-version"), "utf-8"),
+      ).resolves.toBe("22\n");
     });
 
     it("treats localhost OpenAI-compatible endpoints as API-key optional", async () => {
@@ -592,12 +726,16 @@ describe("CLI integration", () => {
         config.llm.baseUrl = "http://127.0.0.1:11434/v1";
         config.llm.model = "gpt-oss:20b";
         await writeFile(configPath, JSON.stringify(config, null, 2), "utf-8");
-        await writeFile(envPath, [
-          "NOVELIX_LLM_PROVIDER=openai",
-          "NOVELIX_LLM_BASE_URL=http://127.0.0.1:11434/v1",
-          "NOVELIX_LLM_MODEL=gpt-oss:20b",
-          "",
-        ].join("\n"), "utf-8");
+        await writeFile(
+          envPath,
+          [
+            "NOVELIX_LLM_PROVIDER=openai",
+            "NOVELIX_LLM_BASE_URL=http://127.0.0.1:11434/v1",
+            "NOVELIX_LLM_MODEL=gpt-oss:20b",
+            "",
+          ].join("\n"),
+          "utf-8",
+        );
 
         const { stdout } = runStderr(["doctor"], {
           env: { NOVELIX_LLM_API_KEY: "" },
@@ -619,22 +757,34 @@ describe("CLI integration", () => {
       await mkdir(storyDir, { recursive: true });
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: "legacy-doctor-hint",
-          title: "Legacy Doctor Hint",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: "legacy-doctor-hint",
+            title: "Legacy Doctor Hint",
+            platform: "other",
+            genre: "other",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2200,
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
       await writeFile(join(bookDir, "chapters", "index.json"), "[]", "utf-8");
-      await writeFile(join(storyDir, "current_state.md"), "# Current State\n\nLegacy state.\n", "utf-8");
-      await writeFile(join(storyDir, "pending_hooks.md"), "# Pending Hooks\n\n", "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "# Current State\n\nLegacy state.\n",
+        "utf-8",
+      );
+      await writeFile(
+        join(storyDir, "pending_hooks.md"),
+        "# Pending Hooks\n\n",
+        "utf-8",
+      );
 
       const { stdout } = runStderr(["doctor"]);
       expect(stdout).toContain("Version Migration");
@@ -650,26 +800,41 @@ describe("CLI integration", () => {
       await mkdir(storyDir, { recursive: true });
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: "legacy-write-hint",
-          title: "Legacy Write Hint",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: "legacy-write-hint",
+            title: "Legacy Write Hint",
+            platform: "other",
+            genre: "other",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2200,
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
       await writeFile(join(bookDir, "chapters", "index.json"), "[]", "utf-8");
-      await writeFile(join(storyDir, "current_state.md"), "# Current State\n\nLegacy state.\n", "utf-8");
-      await writeFile(join(storyDir, "pending_hooks.md"), "# Pending Hooks\n\n", "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "# Current State\n\nLegacy state.\n",
+        "utf-8",
+      );
+      await writeFile(
+        join(storyDir, "pending_hooks.md"),
+        "# Pending Hooks\n\n",
+        "utf-8",
+      );
 
-      const { stdout, stderr } = runStderr(["write", "next", "legacy-write-hint"], {
-        env: failingLlmEnv,
-      });
+      const { stdout, stderr } = runStderr(
+        ["write", "next", "legacy-write-hint"],
+        {
+          env: failingLlmEnv,
+        },
+      );
       expect(`${stdout}\n${stderr}`).toContain("legacy format");
     });
 
@@ -683,34 +848,87 @@ describe("CLI integration", () => {
       await mkdir(storyDir, { recursive: true });
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: bookId,
-          title: "Rewrite Missing Snapshot",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: bookId,
+            title: "Rewrite Missing Snapshot",
+            platform: "other",
+            genre: "other",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2200,
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
-      await writeFile(join(storyDir, "current_state.md"), "State at ch1", "utf-8");
-      await writeFile(join(storyDir, "pending_hooks.md"), "Hooks at ch1", "utf-8");
-      await writeFile(join(chaptersDir, "0001_ch1.md"), "# Chapter 1\n\nContent 1", "utf-8");
-      await writeFile(join(chaptersDir, "0002_ch2.md"), "# Chapter 2\n\nContent 2", "utf-8");
-      await writeFile(join(chaptersDir, "index.json"), JSON.stringify([
-        { number: 1, title: "Ch1", status: "approved", wordCount: 100, createdAt: "", updatedAt: "", auditIssues: [], lengthWarnings: [] },
-        { number: 2, title: "Ch2", status: "approved", wordCount: 100, createdAt: "", updatedAt: "", auditIssues: [], lengthWarnings: [] },
-      ], null, 2), "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "State at ch1",
+        "utf-8",
+      );
+      await writeFile(
+        join(storyDir, "pending_hooks.md"),
+        "Hooks at ch1",
+        "utf-8",
+      );
+      await writeFile(
+        join(chaptersDir, "0001_ch1.md"),
+        "# Chapter 1\n\nContent 1",
+        "utf-8",
+      );
+      await writeFile(
+        join(chaptersDir, "0002_ch2.md"),
+        "# Chapter 2\n\nContent 2",
+        "utf-8",
+      );
+      await writeFile(
+        join(chaptersDir, "index.json"),
+        JSON.stringify(
+          [
+            {
+              number: 1,
+              title: "Ch1",
+              status: "approved",
+              wordCount: 100,
+              createdAt: "",
+              updatedAt: "",
+              auditIssues: [],
+              lengthWarnings: [],
+            },
+            {
+              number: 2,
+              title: "Ch2",
+              status: "approved",
+              wordCount: 100,
+              createdAt: "",
+              updatedAt: "",
+              auditIssues: [],
+              lengthWarnings: [],
+            },
+          ],
+          null,
+          2,
+        ),
+        "utf-8",
+      );
 
-      const { exitCode, stdout, stderr } = runStderr(["write", "rewrite", bookId, "2", "--force"], {
-        env: failingLlmEnv,
-      });
+      const { exitCode, stdout, stderr } = runStderr(
+        ["write", "rewrite", bookId, "2", "--force"],
+        {
+          env: failingLlmEnv,
+        },
+      );
       expect(exitCode).not.toBe(0);
-      expect(`${stdout}\n${stderr}`).toContain("missing snapshot for chapter 1");
-      await expect(readFile(join(chaptersDir, "0002_ch2.md"), "utf-8")).resolves.toContain("Content 2");
+      expect(`${stdout}\n${stderr}`).toContain(
+        "missing snapshot for chapter 1",
+      );
+      await expect(
+        readFile(join(chaptersDir, "0002_ch2.md"), "utf-8"),
+      ).resolves.toContain("Content 2");
     });
 
     it("keeps next chapter at 2 after rewrite 2 trims later chapters, even if regeneration fails", async () => {
@@ -725,59 +943,139 @@ describe("CLI integration", () => {
       await mkdir(stateDir, { recursive: true });
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: bookId,
-          title: "Rewrite CLI",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: bookId,
+            title: "Rewrite CLI",
+            platform: "other",
+            genre: "other",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2200,
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
-      await writeFile(join(storyDir, "current_state.md"), "State at ch1", "utf-8");
-      await writeFile(join(storyDir, "pending_hooks.md"), "Hooks at ch1", "utf-8");
-      await writeFile(join(chaptersDir, "0001_ch1.md"), "# Chapter 1\n\nContent 1", "utf-8");
-      await writeFile(join(chaptersDir, "0002_ch2.md"), "# Chapter 2\n\nContent 2", "utf-8");
-      await writeFile(join(chaptersDir, "0003_ch3.md"), "# Chapter 3\n\nContent 3", "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "State at ch1",
+        "utf-8",
+      );
+      await writeFile(
+        join(storyDir, "pending_hooks.md"),
+        "Hooks at ch1",
+        "utf-8",
+      );
+      await writeFile(
+        join(chaptersDir, "0001_ch1.md"),
+        "# Chapter 1\n\nContent 1",
+        "utf-8",
+      );
+      await writeFile(
+        join(chaptersDir, "0002_ch2.md"),
+        "# Chapter 2\n\nContent 2",
+        "utf-8",
+      );
+      await writeFile(
+        join(chaptersDir, "0003_ch3.md"),
+        "# Chapter 3\n\nContent 3",
+        "utf-8",
+      );
       await writeFile(
         join(chaptersDir, "index.json"),
-        JSON.stringify([
-          { number: 1, title: "Ch1", status: "approved", wordCount: 100, createdAt: "", updatedAt: "", auditIssues: [], lengthWarnings: [] },
-          { number: 2, title: "Ch2", status: "approved", wordCount: 100, createdAt: "", updatedAt: "", auditIssues: [], lengthWarnings: [] },
-          { number: 3, title: "Ch3", status: "approved", wordCount: 100, createdAt: "", updatedAt: "", auditIssues: [], lengthWarnings: [] },
-        ], null, 2),
+        JSON.stringify(
+          [
+            {
+              number: 1,
+              title: "Ch1",
+              status: "approved",
+              wordCount: 100,
+              createdAt: "",
+              updatedAt: "",
+              auditIssues: [],
+              lengthWarnings: [],
+            },
+            {
+              number: 2,
+              title: "Ch2",
+              status: "approved",
+              wordCount: 100,
+              createdAt: "",
+              updatedAt: "",
+              auditIssues: [],
+              lengthWarnings: [],
+            },
+            {
+              number: 3,
+              title: "Ch3",
+              status: "approved",
+              wordCount: 100,
+              createdAt: "",
+              updatedAt: "",
+              auditIssues: [],
+              lengthWarnings: [],
+            },
+          ],
+          null,
+          2,
+        ),
         "utf-8",
       );
 
       await state.snapshotState(bookId, 1);
 
-      await writeFile(join(storyDir, "current_state.md"), "State at ch3", "utf-8");
-      await writeFile(join(stateDir, "manifest.json"), JSON.stringify({
-        schemaVersion: 2,
-        language: "en",
-        lastAppliedChapter: 4,
-        projectionVersion: 1,
-        migrationWarnings: [],
-      }, null, 2), "utf-8");
-      await writeFile(join(stateDir, "current_state.json"), JSON.stringify({
-        chapter: 3,
-        facts: [],
-      }, null, 2), "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "State at ch3",
+        "utf-8",
+      );
+      await writeFile(
+        join(stateDir, "manifest.json"),
+        JSON.stringify(
+          {
+            schemaVersion: 2,
+            language: "en",
+            lastAppliedChapter: 4,
+            projectionVersion: 1,
+            migrationWarnings: [],
+          },
+          null,
+          2,
+        ),
+        "utf-8",
+      );
+      await writeFile(
+        join(stateDir, "current_state.json"),
+        JSON.stringify(
+          {
+            chapter: 3,
+            facts: [],
+          },
+          null,
+          2,
+        ),
+        "utf-8",
+      );
 
-      const { exitCode, stdout, stderr } = runStderr(["write", "rewrite", bookId, "2", "--force"], {
-        env: failingLlmEnv,
-      });
+      const { exitCode, stdout, stderr } = runStderr(
+        ["write", "rewrite", bookId, "2", "--force"],
+        {
+          env: failingLlmEnv,
+        },
+      );
       expect(exitCode).not.toBe(0);
       expect(`${stdout}\n${stderr}`).toContain("Regenerating chapter 2");
       expect(`${stdout}\n${stderr}`).not.toContain("resolved to 3");
 
       const next = await state.getNextChapterNumber(bookId);
       expect(next).toBe(2);
-      await expect(readFile(join(storyDir, "current_state.md"), "utf-8")).resolves.toBe("State at ch1");
+      await expect(
+        readFile(join(storyDir, "current_state.md"), "utf-8"),
+      ).resolves.toBe("State at ch1");
     });
   });
 
@@ -791,7 +1089,9 @@ describe("CLI integration", () => {
   describe("jiaos review", () => {
     it("preserves the original chapter snapshot when approving review", async () => {
       const configPath = join(projectDir, "novelix.json");
-      const initialized = await stat(configPath).then(() => true).catch(() => false);
+      const initialized = await stat(configPath)
+        .then(() => true)
+        .catch(() => false);
       if (!initialized) run(["init"]);
 
       const state = new StateManager(projectDir);
@@ -804,43 +1104,71 @@ describe("CLI integration", () => {
 
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: bookId,
-          title: "Review Approve CLI",
-          platform: "other",
-          genre: "other",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2200,
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: bookId,
+            title: "Review Approve CLI",
+            platform: "other",
+            genre: "other",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2200,
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
-      await writeFile(join(storyDir, "current_state.md"), "State at ch1", "utf-8");
-      await writeFile(join(storyDir, "pending_hooks.md"), "Hooks at ch1", "utf-8");
-      await writeFile(join(chaptersDir, "0001_ch1.md"), "# Chapter 1\n\nContent 1", "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "State at ch1",
+        "utf-8",
+      );
+      await writeFile(
+        join(storyDir, "pending_hooks.md"),
+        "Hooks at ch1",
+        "utf-8",
+      );
+      await writeFile(
+        join(chaptersDir, "0001_ch1.md"),
+        "# Chapter 1\n\nContent 1",
+        "utf-8",
+      );
       await writeFile(
         join(chaptersDir, "index.json"),
-        JSON.stringify([
-          {
-            number: 1,
-            title: "Ch1",
-            status: "ready-for-review",
-            wordCount: 100,
-            createdAt: "",
-            updatedAt: "",
-            auditIssues: [],
-            lengthWarnings: [],
-          },
-        ], null, 2),
+        JSON.stringify(
+          [
+            {
+              number: 1,
+              title: "Ch1",
+              status: "ready-for-review",
+              wordCount: 100,
+              createdAt: "",
+              updatedAt: "",
+              auditIssues: [],
+              lengthWarnings: [],
+            },
+          ],
+          null,
+          2,
+        ),
         "utf-8",
       );
 
       await state.snapshotState(bookId, 1);
 
-      await writeFile(join(storyDir, "current_state.md"), "State at ch3", "utf-8");
-      await writeFile(join(storyDir, "pending_hooks.md"), "Hooks at ch3", "utf-8");
+      await writeFile(
+        join(storyDir, "current_state.md"),
+        "State at ch3",
+        "utf-8",
+      );
+      await writeFile(
+        join(storyDir, "pending_hooks.md"),
+        "Hooks at ch3",
+        "utf-8",
+      );
 
       const output = run(["review", "approve", bookId, "1"]);
       expect(output).toContain("Chapter 1 approved");
@@ -860,7 +1188,9 @@ describe("CLI integration", () => {
   describe("jiaos plan/compose", () => {
     beforeAll(async () => {
       const configPath = join(projectDir, "novelix.json");
-      const initialized = await stat(configPath).then(() => true).catch(() => false);
+      const initialized = await stat(configPath)
+        .then(() => true)
+        .catch(() => false);
       if (!initialized) run(["init"]);
 
       const bookDir = join(projectDir, "books", "cli-book");
@@ -869,25 +1199,34 @@ describe("CLI integration", () => {
 
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: "cli-book",
-          title: "CLI Book",
-          platform: "tomato",
-          genre: "other",
-          status: "active",
-          targetChapters: 20,
-          chapterWordCount: 3000,
-          createdAt: "2026-03-22T00:00:00.000Z",
-          updatedAt: "2026-03-22T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: "cli-book",
+            title: "CLI Book",
+            platform: "tomato",
+            genre: "other",
+            status: "active",
+            targetChapters: 20,
+            chapterWordCount: 3000,
+            createdAt: "2026-03-22T00:00:00.000Z",
+            updatedAt: "2026-03-22T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
-      await writeFile(join(bookDir, "chapters", "index.json"), "[]", "utf-8").catch(async () => {
+      await writeFile(
+        join(bookDir, "chapters", "index.json"),
+        "[]",
+        "utf-8",
+      ).catch(async () => {
         await mkdir(join(bookDir, "chapters"), { recursive: true });
         await writeFile(join(bookDir, "chapters", "index.json"), "[]", "utf-8");
       });
 
-      const plannedGoal = "Ignore the guild chase and focus on the mentor conflict.";
+      const plannedGoal =
+        "Ignore the guild chase and focus on the mentor conflict.";
       const intentMarkdown = [
         "# Chapter Intent",
         "",
@@ -925,14 +1264,46 @@ describe("CLI integration", () => {
       ].join("\n");
 
       await Promise.all([
-        writeFile(join(storyDir, "author_intent.md"), "# Author Intent\n\nKeep the story centered on the mentor conflict.\n", "utf-8"),
-        writeFile(join(storyDir, "current_focus.md"), "# Current Focus\n\nBring focus back to the mentor conflict.\n", "utf-8"),
-        writeFile(join(storyDir, "story_bible.md"), "# Story Bible\n\n- The jade seal cannot be destroyed.\n", "utf-8"),
-        writeFile(join(storyDir, "volume_outline.md"), "# Volume Outline\n\n## Chapter 1\nTrack the merchant guild trail.\n", "utf-8"),
-        writeFile(join(storyDir, "book_rules.md"), "---\nprohibitions:\n  - Do not reveal the mastermind\n---\n\n# Book Rules\n", "utf-8"),
-        writeFile(join(storyDir, "current_state.md"), "# Current State\n\n- Lin Yue still hides the broken oath token.\n", "utf-8"),
-        writeFile(join(storyDir, "pending_hooks.md"), "# Pending Hooks\n\n- Why the mentor vanished after the trial.\n", "utf-8"),
-        writeFile(join(storyDir, "runtime", "chapter-0001.intent.md"), intentMarkdown, "utf-8"),
+        writeFile(
+          join(storyDir, "author_intent.md"),
+          "# Author Intent\n\nKeep the story centered on the mentor conflict.\n",
+          "utf-8",
+        ),
+        writeFile(
+          join(storyDir, "current_focus.md"),
+          "# Current Focus\n\nBring focus back to the mentor conflict.\n",
+          "utf-8",
+        ),
+        writeFile(
+          join(storyDir, "story_bible.md"),
+          "# Story Bible\n\n- The jade seal cannot be destroyed.\n",
+          "utf-8",
+        ),
+        writeFile(
+          join(storyDir, "volume_outline.md"),
+          "# Volume Outline\n\n## Chapter 1\nTrack the merchant guild trail.\n",
+          "utf-8",
+        ),
+        writeFile(
+          join(storyDir, "book_rules.md"),
+          "---\nprohibitions:\n  - Do not reveal the mastermind\n---\n\n# Book Rules\n",
+          "utf-8",
+        ),
+        writeFile(
+          join(storyDir, "current_state.md"),
+          "# Current State\n\n- Lin Yue still hides the broken oath token.\n",
+          "utf-8",
+        ),
+        writeFile(
+          join(storyDir, "pending_hooks.md"),
+          "# Pending Hooks\n\n- Why the mentor vanished after the trial.\n",
+          "utf-8",
+        ),
+        writeFile(
+          join(storyDir, "runtime", "chapter-0001.intent.md"),
+          intentMarkdown,
+          "utf-8",
+        ),
       ]);
     });
 
@@ -943,7 +1314,9 @@ describe("CLI integration", () => {
       expect(data.bookId).toBe("cli-book");
       expect(data.chapterNumber).toBe(1);
       expect(data.intentPath).toContain("story/runtime/chapter-0001.intent.md");
-      await expect(stat(join(projectDir, "books", "cli-book", data.intentPath))).resolves.toBeTruthy();
+      await expect(
+        stat(join(projectDir, "books", "cli-book", data.intentPath)),
+      ).resolves.toBeTruthy();
     });
 
     it("runs compose chapter and returns runtime artifact paths in JSON mode", async () => {
@@ -952,19 +1325,32 @@ describe("CLI integration", () => {
 
       expect(data.bookId).toBe("cli-book");
       expect(data.chapterNumber).toBe(1);
-      expect(data.contextPath).toContain("story/runtime/chapter-0001.context.json");
-      expect(data.ruleStackPath).toContain("story/runtime/chapter-0001.rule-stack.yaml");
+      expect(data.contextPath).toContain(
+        "story/runtime/chapter-0001.context.json",
+      );
+      expect(data.ruleStackPath).toContain(
+        "story/runtime/chapter-0001.rule-stack.yaml",
+      );
       expect(data.tracePath).toContain("story/runtime/chapter-0001.trace.json");
 
-      await expect(stat(join(projectDir, "books", "cli-book", data.contextPath))).resolves.toBeTruthy();
-      await expect(stat(join(projectDir, "books", "cli-book", data.ruleStackPath))).resolves.toBeTruthy();
-      await expect(stat(join(projectDir, "books", "cli-book", data.tracePath))).resolves.toBeTruthy();
+      await expect(
+        stat(join(projectDir, "books", "cli-book", data.contextPath)),
+      ).resolves.toBeTruthy();
+      await expect(
+        stat(join(projectDir, "books", "cli-book", data.ruleStackPath)),
+      ).resolves.toBeTruthy();
+      await expect(
+        stat(join(projectDir, "books", "cli-book", data.tracePath)),
+      ).resolves.toBeTruthy();
     });
 
     it("re-plans from outline when compose runs without a new context (Phase 1: persisted plans disabled)", async () => {
       const output = run(["compose", "chapter", "cli-book", "--json"]);
       const data = JSON.parse(output);
-      const intentMarkdown = await readFile(join(projectDir, "books", "cli-book", data.intentPath), "utf-8");
+      const intentMarkdown = await readFile(
+        join(projectDir, "books", "cli-book", data.intentPath),
+        "utf-8",
+      );
 
       expect(typeof data.goal).toBe("string");
       expect(data.goal.length).toBeGreaterThan(0);
@@ -975,7 +1361,9 @@ describe("CLI integration", () => {
   describe("jiaos export", () => {
     beforeAll(async () => {
       const configPath = join(projectDir, "novelix.json");
-      const initialized = await stat(configPath).then(() => true).catch(() => false);
+      const initialized = await stat(configPath)
+        .then(() => true)
+        .catch(() => false);
       if (!initialized) run(["init"]);
 
       const bookDir = join(projectDir, "books", "export-book");
@@ -983,32 +1371,40 @@ describe("CLI integration", () => {
 
       await writeFile(
         join(bookDir, "book.json"),
-        JSON.stringify({
-          id: "export-book",
-          title: "Export Book",
-          platform: "tomato",
-          genre: "xuanhuan",
-          status: "active",
-          targetChapters: 10,
-          chapterWordCount: 2000,
-          createdAt: "2026-03-23T00:00:00.000Z",
-          updatedAt: "2026-03-23T00:00:00.000Z",
-        }, null, 2),
+        JSON.stringify(
+          {
+            id: "export-book",
+            title: "Export Book",
+            platform: "tomato",
+            genre: "xuanhuan",
+            status: "active",
+            targetChapters: 10,
+            chapterWordCount: 2000,
+            createdAt: "2026-03-23T00:00:00.000Z",
+            updatedAt: "2026-03-23T00:00:00.000Z",
+          },
+          null,
+          2,
+        ),
         "utf-8",
       );
       await writeFile(
         join(bookDir, "chapters", "index.json"),
-        JSON.stringify([
-          {
-            number: 1,
-            title: "Dawn Ledger",
-            status: "ready-for-review",
-            wordCount: 1200,
-            createdAt: "2026-03-23T00:00:00.000Z",
-            updatedAt: "2026-03-23T00:00:00.000Z",
-            auditIssues: [],
-          },
-        ], null, 2),
+        JSON.stringify(
+          [
+            {
+              number: 1,
+              title: "Dawn Ledger",
+              status: "ready-for-review",
+              wordCount: 1200,
+              createdAt: "2026-03-23T00:00:00.000Z",
+              updatedAt: "2026-03-23T00:00:00.000Z",
+              auditIssues: [],
+            },
+          ],
+          null,
+          2,
+        ),
         "utf-8",
       );
       await writeFile(
@@ -1020,12 +1416,22 @@ describe("CLI integration", () => {
 
     it("creates missing parent directories for custom output paths", async () => {
       const outputPath = join(projectDir, "exports", "nested", "book.md");
-      const output = run(["export", "export-book", "--format", "md", "--output", outputPath, "--json"]);
+      const output = run([
+        "export",
+        "export-book",
+        "--format",
+        "md",
+        "--output",
+        outputPath,
+        "--json",
+      ]);
       const data = JSON.parse(output);
 
       expect(data.outputPath).toBe(outputPath);
       await expect(stat(outputPath)).resolves.toBeTruthy();
-      await expect(readFile(outputPath, "utf-8")).resolves.toContain("# Export Book");
+      await expect(readFile(outputPath, "utf-8")).resolves.toContain(
+        "# Export Book",
+      );
     });
   });
 });

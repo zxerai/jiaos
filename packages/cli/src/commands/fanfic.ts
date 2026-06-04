@@ -1,23 +1,43 @@
 import { Command } from "commander";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join, resolve, basename } from "node:path";
-import { deriveBookIdFromTitle, normalizePlatformOrOther, PipelineRunner, type BookConfig, type FanficMode } from "@actalk/novelix-core";
-import { loadConfig, buildPipelineConfig, findProjectRoot, resolveBookId, log, logError } from "../utils.js";
+import {
+  deriveBookIdFromTitle,
+  normalizePlatformOrOther,
+  PipelineRunner,
+  type BookConfig,
+  type FanficMode,
+} from "@actalk/novelix-core";
+import {
+  loadConfig,
+  buildPipelineConfig,
+  findProjectRoot,
+  resolveBookId,
+  log,
+  logError,
+} from "../utils.js";
 
-export const fanficCommand = new Command("fanfic")
-  .description("Fan fiction writing tools (同人创作)");
+export const fanficCommand = new Command("fanfic").description(
+  "Fan fiction writing tools (同人创作)",
+);
 
 fanficCommand
   .command("init")
   .description("Create a fanfic book from external source material")
   .requiredOption("--title <title>", "Book title")
-  .requiredOption("--from <path>", "Source file or directory (novel text, wiki, character docs)")
+  .requiredOption(
+    "--from <path>",
+    "Source file or directory (novel text, wiki, character docs)",
+  )
   .option("--mode <mode>", "Fanfic mode: canon|au|ooc|cp", "canon")
   .option("--genre <genre>", "Genre", "other")
   .option("--platform <platform>", "Target platform", "other")
   .option("--target-chapters <n>", "Target chapter count", "100")
   .option("--chapter-words <n>", "Words per chapter", "3000")
-  .option("--lang <language>", "Writing language: zh or en. Defaults from genre.")
+  .option(
+    "--lang <language>",
+    "Writing language: zh or en. Defaults from genre.",
+  )
   .option("--json", "Output JSON")
   .action(async (opts) => {
     try {
@@ -35,10 +55,13 @@ fanficCommand
       const sourceName = basename(sourcePath);
 
       if (!sourceText || sourceText.length < 100) {
-        throw new Error(`源素材文件内容过短（${sourceText.length} 字符）。请提供至少 100 字符的原作素材。`);
+        throw new Error(
+          `源素材文件内容过短（${sourceText.length} 字符）。请提供至少 100 字符的原作素材。`,
+        );
       }
 
-      const bookId = deriveBookIdFromTitle(opts.title) || `book-${Date.now().toString(36)}`;
+      const bookId =
+        deriveBookIdFromTitle(opts.title) || `book-${Date.now().toString(36)}`;
 
       const now = new Date().toISOString();
       const book: BookConfig = {
@@ -55,29 +78,37 @@ fanficCommand
         fanficMode: mode,
       };
 
-      if (!opts.json) log(`Creating fanfic "${book.title}" (${mode} mode, ${book.genre})...`);
-      if (!opts.json) log(`  Source: ${sourceName} (${sourceText.length} chars)`);
+      if (!opts.json)
+        log(`Creating fanfic "${book.title}" (${mode} mode, ${book.genre})...`);
+      if (!opts.json)
+        log(`  Source: ${sourceName} (${sourceText.length} chars)`);
 
       const pipeline = new PipelineRunner(buildPipelineConfig(config, root));
       await pipeline.initFanficBook(book, sourceText, sourceName, mode);
 
       if (opts.json) {
-        log(JSON.stringify({
-          bookId,
-          title: book.title,
-          genre: book.genre,
-          fanficMode: mode,
-          source: sourceName,
-          location: `books/${bookId}/`,
-          nextStep: `jiaos write next ${bookId}`,
-        }, null, 2));
+        log(
+          JSON.stringify(
+            {
+              bookId,
+              title: book.title,
+              genre: book.genre,
+              fanficMode: mode,
+              source: sourceName,
+              location: `books/${bookId}/`,
+              nextStep: `novelix write next ${bookId}`,
+            },
+            null,
+            2,
+          ),
+        );
       } else {
         log(`Fanfic created: ${bookId}`);
         log(`  Mode: ${mode}`);
         log(`  Location: books/${bookId}/`);
         log(`  fanfic_canon.md + foundation generated.`);
         log("");
-        log(`Next: jiaos write next ${bookId}`);
+        log(`Next: novelix write next ${bookId}`);
       }
     } catch (e) {
       if (opts.json) {
@@ -107,7 +138,9 @@ fanficCommand
       try {
         canon = await readFile(join(bookDir, "story/fanfic_canon.md"), "utf-8");
       } catch {
-        throw new Error(`该书没有同人正典文件。用 jiaos fanfic init 创建同人书。`);
+        throw new Error(
+          `该书没有同人正典文件。用 novelix fanfic init 创建同人书。`,
+        );
       }
 
       if (opts.json) {
@@ -146,13 +179,20 @@ fanficCommand
       const sourceText = await readSourceMaterial(sourcePath);
       const sourceName = basename(sourcePath);
 
-      if (!opts.json) log(`Refreshing fanfic canon for "${bookId}" from ${sourceName}...`);
+      if (!opts.json)
+        log(`Refreshing fanfic canon for "${bookId}" from ${sourceName}...`);
 
       const pipeline = new PipelineRunner(buildPipelineConfig(config, root));
       await pipeline.importFanficCanon(bookId, sourceText, sourceName, mode);
 
       if (opts.json) {
-        log(JSON.stringify({ bookId, source: sourceName, refreshedAt: new Date().toISOString() }));
+        log(
+          JSON.stringify({
+            bookId,
+            source: sourceName,
+            refreshedAt: new Date().toISOString(),
+          }),
+        );
       } else {
         log(`Canon refreshed from "${sourceName}".`);
       }
@@ -170,7 +210,9 @@ async function readSourceMaterial(sourcePath: string): Promise<string> {
   const s = await stat(sourcePath);
   if (s.isDirectory()) {
     const files = await readdir(sourcePath);
-    const textFiles = files.filter((f) => f.endsWith(".txt") || f.endsWith(".md"));
+    const textFiles = files.filter(
+      (f) => f.endsWith(".txt") || f.endsWith(".md"),
+    );
     if (textFiles.length === 0) {
       throw new Error(`目录 ${sourcePath} 中没有 .txt 或 .md 文件。`);
     }

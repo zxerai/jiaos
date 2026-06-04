@@ -35,10 +35,12 @@ export function formatSqliteMemorySupportWarning(options?: {
   });
   if (result.ok) return null;
 
-  return `Node ${nodeVersion} does not support SQLite memory index; memory.db live sync will fall back to Markdown. Use Node 22+ or run 'jiaos doctor'.`;
+  return `Node ${nodeVersion} does not support SQLite memory index; memory.db live sync will fall back to Markdown. Use Node 22+ or run 'novelix doctor'.`;
 }
 
-export async function inspectNodeRuntimePinFiles(root: string): Promise<NodeRuntimePinStatus> {
+export async function inspectNodeRuntimePinFiles(
+  root: string,
+): Promise<NodeRuntimePinStatus> {
   const missing: string[] = [];
 
   for (const file of SQLITE_MEMORY_PIN_FILES) {
@@ -62,12 +64,14 @@ export async function inspectNodeRuntimePinFiles(root: string): Promise<NodeRunt
 
   return {
     ok: false,
-    detail: `Missing or outdated: ${missing.join(", ")}. Run 'jiaos doctor --repair-node-runtime'.`,
+    detail: `Missing or outdated: ${missing.join(", ")}. Run 'novelix doctor --repair-node-runtime'.`,
     missing,
   };
 }
 
-export async function ensureNodeRuntimePinFiles(root: string): Promise<NodeRuntimePinRepairResult> {
+export async function ensureNodeRuntimePinFiles(
+  root: string,
+): Promise<NodeRuntimePinRepairResult> {
   const written: string[] = [];
 
   for (const file of SQLITE_MEMORY_PIN_FILES) {
